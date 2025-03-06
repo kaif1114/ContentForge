@@ -1,20 +1,15 @@
-import "dotenv/config";
 import express from "express";
+import { database } from "./startup/database";
+import { routes } from "./startup/routes";
+import "dotenv/config";
 import "express-async-errors";
-import { database } from "startup/database";
-import { middleware } from "startup/middleware";
-import { routes } from "startup/routes";
 
 const app = express();
 
-middleware(app);
 database();
 routes(app);
 
-app.get("/", (req, res) => {
-  res.send("Server is running");
-});
-
-app.listen(3001, () => {
-  console.log("Server is running on port 3001");
+const port = process.env.PORT || 3001;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
