@@ -1,7 +1,10 @@
 import express from "express"
-import repurpose from "./routes/repurpose"
+import scrape from "./routes/scrape"
 import mongoose from "mongoose"
 import 'dotenv/config'
+import 'express-async-errors'
+import { errorHandler } from "./middleware/error"
+
 
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING).then(() => {
   console.log("Connected to MongoDB")
@@ -14,7 +17,9 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.use("/scrape", repurpose)
+app.use("/scrape", scrape)
+
+app.use(errorHandler)
 
 app.get("/", (req, res) => {
   res.send("Server is running")
