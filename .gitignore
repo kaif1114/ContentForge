@@ -27,6 +27,7 @@ out/
 build
 dist
 
+nodemon.json
 
 # Debug
 npm-debug.log*
