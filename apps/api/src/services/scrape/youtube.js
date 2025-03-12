@@ -1,5 +1,5 @@
 import "dotenv/config";
-async function getYoutubeTranscript(url: string) {
+async function getYoutubeTranscript(url) {
   const transcript = await fetch(
     `https://api.supadata.ai/v1/youtube/transcript?url=${url}&text=true`,
     {
@@ -9,7 +9,7 @@ async function getYoutubeTranscript(url: string) {
     }
   );
   const transcriptData = await transcript.json();
-  return { content: transcriptData.content };
+  return transcriptData.content;
 }
 
 export default getYoutubeTranscript;

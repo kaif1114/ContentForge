@@ -1,6 +1,6 @@
 import express from "express";
-import { database } from "./startup/database";
-import { routes } from "./startup/routes";
+import { database } from "./startup/database.js";
+import { routes } from "./startup/routes.js";
 import "dotenv/config";
 import "express-async-errors";
 
