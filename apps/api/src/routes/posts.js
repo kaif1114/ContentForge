@@ -1,5 +1,6 @@
 import express from "express";
 import Content, { Post } from "../models/Content.js";
+import { Idea } from "../models/Idea.js";
 import {
   generatePostsReqSchema,
   generateFromIdeaReqSchema,
@@ -57,7 +58,12 @@ router.post("/generate-from-idea", async (req, res) => {
     res.status(400).json({ error: validation.error.message });
     return;
   }
-  const { idea, count, platform } = validation.data;
+  const { ideaId, count, platform } = validation.data;
+  const idea = await Idea.findById(ideaId);
+  if (!idea) {
+    res.status(404).json({ error: "Idea not found" });
+    return;
+  }
   const response = await generate(
     undefined,
     undefined,
@@ -65,14 +71,16 @@ router.post("/generate-from-idea", async (req, res) => {
     { schema: postsArraySchema, name: "posts" },
     () => getUserPrompt(idea, count)
   );
-  // const postsDoc = response.posts.map(
-  //   (post) =>
-  //     new Post({
-  //       title: post.title,
-  //       description: post.description,
-  //       platform,
-  //     })
-  // );
+  const postsDoc = response.posts.map(
+    (post) =>
+      new Post({
+        title: post.title,
+        description: post.description,
+        platform,
+      })
+  );
+  idea.posts.push(...postsDoc);
+  await idea.save();
 
   res.json(response.posts);
 });

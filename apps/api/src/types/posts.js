@@ -6,13 +6,8 @@ export const generatePostsReqSchema = z.object({
   platform: z.enum(["linkedin", "twitter"]),
 });
 
-export const ideaSchema = z.object({
-  title: z.string(),
-  description: z.string(),
-});
-
 export const generateFromIdeaReqSchema = z.object({
-  idea: ideaSchema,
+  ideaId: z.string(),
   count: z.number(),
   platform: z.enum(["linkedin", "twitter"]),
 });

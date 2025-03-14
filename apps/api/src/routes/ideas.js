@@ -1,5 +1,6 @@
 import express from "express";
-import Content, { Idea } from "../models/Content.js";
+import Content from "../models/Content.js";
+import { Idea } from "../models/Idea.js";
 import { generateIdeasRequestSchema } from "../types/ideas.js";
 import generate from "../services/generate.js";
 import getGenerateIdeasPrompt from "../prompts/ideas.js";
@@ -26,15 +27,17 @@ router.post("/generate", async (req, res) => {
     () => getGenerateIdeasPrompt(count),
     { schema: ideasArraySchema, name: "ideas" }
   );
-  const ideasDoc = response.ideas.map(
+
+  const ideaObjects = response.ideas.map(
     (idea) =>
       new Idea({
         title: idea.title,
         description: idea.description,
+        content: c._id,
       })
   );
-  c.ideas.push(...ideasDoc);
-  await c.save();
+
+  await Promise.all(ideaObjects.map((idea) => idea.save()));
 
   res.json(response.ideas);
 });

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const postSchema = new mongoose.Schema({
+export const postSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
@@ -12,17 +12,6 @@ const postSchema = new mongoose.Schema({
   platform: {
     type: String,
     enum: ["linkedin", "twitter"],
-  },
-});
-
-const ideaSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
   },
 });
 
@@ -42,7 +31,6 @@ const contentSchema = new mongoose.Schema({
     required: true,
   },
   posts: [postSchema],
-  ideas: [ideaSchema],
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -50,8 +38,7 @@ const contentSchema = new mongoose.Schema({
   },
 });
 
-const Content = mongoose.model("Content", contentSchema);
+export const Content = mongoose.model("Content", contentSchema);
 export const Post = mongoose.model("Post", postSchema);
-export const Idea = mongoose.model("Idea", ideaSchema);
 
 export default Content;
