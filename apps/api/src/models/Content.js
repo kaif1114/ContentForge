@@ -15,6 +15,17 @@ const postSchema = new mongoose.Schema({
   },
 });
 
+const ideaSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+});
+
 const contentSchema = new mongoose.Schema({
   url: {
     type: String,
@@ -31,6 +42,7 @@ const contentSchema = new mongoose.Schema({
     required: true,
   },
   posts: [postSchema],
+  ideas: [ideaSchema],
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -40,5 +52,6 @@ const contentSchema = new mongoose.Schema({
 
 const Content = mongoose.model("Content", contentSchema);
 export const Post = mongoose.model("Post", postSchema);
+export const Idea = mongoose.model("Idea", ideaSchema);
 
 export default Content;

@@ -1,5 +1,6 @@
 import express from "express";
-import generate from "../routes/posts.js";
+import generatePosts from "../routes/posts.js";
+import generateIdeas from "../routes/ideas.js";
 import scrape from "../routes/scrape.js";
 import { errorHandler } from "../middleware/error.js";
 
@@ -9,5 +10,6 @@ export function routes(app) {
   app.use(errorHandler);
 
   app.use("/scrape", scrape);
-  app.use("/posts", generate);
+  app.use("/ideas", generateIdeas);
+  app.use("/posts", generatePosts);
 }

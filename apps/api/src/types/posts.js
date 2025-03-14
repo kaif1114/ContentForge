@@ -6,7 +6,7 @@ export const generatePostsSchema = z.object({
   platform: z.enum(["linkedin", "twitter"]),
 });
 
-const postSchema = z.object({
+export const postSchema = z.object({
   title: z.string(),
   description: z.string(),
 });

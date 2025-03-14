@@ -1,6 +1,6 @@
 function getTwitterPrompt(postCount, contentType) {
   return `
-    You are a professional content writer. You are given long-form content by user, please generate ${postCount} Twitter posts according to the instructions.
+    You are a professional content writer. You are given long-form content by user, You need to repurpose content and generate ${postCount} Twitter posts according to the instructions. 
     
     Content Information:
     -${contentType === "youtube" ? "The content is transcript of a youtube video" : "The content is scraped data from a blog post"}
@@ -11,7 +11,7 @@ function getTwitterPrompt(postCount, contentType) {
     - Post should be engaging and interesting.
     - Follow these rules to create viral posts:
   
-        1. A Strong Outline is the Foundation:
+        1.Strong Outline:
           Viral posts have a clear roadmap:
           → They start with a hook
           → Build up the narrative
@@ -23,10 +23,10 @@ function getTwitterPrompt(postCount, contentType) {
             Viral posts create:
               → A sense of curiosity from the start
               → They hint at valuable insights but
-              → Don’t reveal everything at once
+              → Do not reveal everything at once
               → Keeping readers engaged to find out more.
   
-            → Lesson: Build tension. Make your readers want to keep reading. Don’t give everything away upfront.
+            → Build tension. Make your readers want to keep reading. Do not give everything away upfront.
   
   
         3. Emotion Drives Action:
@@ -36,7 +36,7 @@ function getTwitterPrompt(postCount, contentType) {
               → Tap into common struggles
               → And connect on an emotional level
   
-          If your posts are all facts and figures with no emotional hook, they might feel safe but forgettable.
+          If posts are all facts and figures with no emotional hook, they might feel safe but forgettable.
   
           → Tap into emotions. Whether it is joy, frustration, or inspiration, make your audience feel something.
   

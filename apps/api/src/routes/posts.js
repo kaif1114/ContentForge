@@ -1,7 +1,10 @@
 import express from "express";
 import Content, { Post } from "../models/Content.js";
 import { generatePostsSchema } from "../types/posts.js";
-import generatePosts from "../services/posts/generate.js";
+import generate from "../services/generate.js";
+import getLinkedinPrompt from "../prompts/linkedin.js";
+import getTwitterPrompt from "../prompts/twitter.js";
+import { postsArraySchema } from "../types/posts.js";
 
 const router = express.Router();
 
@@ -18,9 +21,15 @@ router.post("/generate", async (req, res) => {
     return;
   }
 
-  const response = await generatePosts(c.content, c.type, postCount, platform);
-  console.log(response.posts);
-
+  const response = await generate(
+    c.content,
+    c.type,
+    () =>
+      platform === "linkedin"
+        ? getLinkedinPrompt(postCount)
+        : getTwitterPrompt(postCount),
+    { schema: postsArraySchema, name: "posts" }
+  );
   const postsDoc = response.posts.map(
     (post) =>
       new Post({

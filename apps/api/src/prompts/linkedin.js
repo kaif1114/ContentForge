@@ -1,10 +1,7 @@
-function getLinkedinPrompt(postCount, contentType) {
+function getLinkedinPrompt(postCount) {
   return `
   You are a professional content writer. You are given long-form content by user, please generate ${postCount} LinkedIn posts according to the instructions.
   
-  Content Information:
-  -${contentType === "youtube" ? "The content is transcript of a youtube video" : "The content is scraped data from a blog post"}
-
   Post Instructions:
   - Use the given content to extract useful information and create posts.
   - Post should sound natural and not like a robot.
