@@ -3,17 +3,25 @@ import { zodResponseFormat } from "openai/helpers/zod.mjs";
 
 const openai = new OpenAI();
 
-async function generate(content, contentType, promptFn, responseFormat) {
+async function generate(
+  content,
+  contentType,
+  systemPromptFn,
+  responseFormat,
+  userPromptFn
+) {
   const completion = await openai.beta.chat.completions.parse({
     model: "gpt-4o-2024-08-06",
     messages: [
       {
         role: "system",
-        content: promptFn(),
+        content: systemPromptFn(),
       },
       {
         role: "user",
-        content: `
+        content: userPromptFn
+          ? userPromptFn()
+          : `
         Content Type: ${contentType}
         Content: 
         ${content}`,

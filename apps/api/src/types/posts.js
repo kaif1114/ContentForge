@@ -1,8 +1,19 @@
 import { z } from "zod";
 
-export const generatePostsSchema = z.object({
+export const generatePostsReqSchema = z.object({
   contentId: z.string(),
   postCount: z.number(),
+  platform: z.enum(["linkedin", "twitter"]),
+});
+
+export const ideaSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+});
+
+export const generateFromIdeaReqSchema = z.object({
+  idea: ideaSchema,
+  count: z.number(),
   platform: z.enum(["linkedin", "twitter"]),
 });
 

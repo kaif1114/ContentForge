@@ -1,4 +1,4 @@
-function getIdeasPrompt(ideasCount) {
+function getGenerateIdeasPrompt(ideasCount) {
   return `
   You are an expert content researcher. You need to analyize the content given by user, extract useful information from the content and generate unique content ideas for twitter and linkedin posts.
   Instructions:
@@ -20,4 +20,4 @@ function getIdeasPrompt(ideasCount) {
   `;
 }
 
-export default getIdeasPrompt;
+export default getGenerateIdeasPrompt;

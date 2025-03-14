@@ -2,7 +2,7 @@ import express from "express";
 import Content, { Idea } from "../models/Content.js";
 import { generateIdeasRequestSchema } from "../types/ideas.js";
 import generate from "../services/generate.js";
-import getIdeasPrompt from "../prompts/ideas.js";
+import getGenerateIdeasPrompt from "../prompts/ideas.js";
 import { ideasArraySchema } from "../types/ideas.js";
 
 const router = express.Router();
@@ -23,7 +23,7 @@ router.post("/generate", async (req, res) => {
   const response = await generate(
     c.content,
     c.type,
-    () => getIdeasPrompt(count),
+    () => getGenerateIdeasPrompt(count),
     { schema: ideasArraySchema, name: "ideas" }
   );
   const ideasDoc = response.ideas.map(
