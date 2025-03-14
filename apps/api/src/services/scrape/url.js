@@ -1,3 +1,4 @@
+// firecrawler intialization
 import FirecrawlApp from "@mendable/firecrawl-js";
 
 async function scrapeUrl(url) {
@@ -5,6 +6,7 @@ async function scrapeUrl(url) {
   const scrapeResult = await firecrawl.scrapeUrl(url, {
     formats: ["markdown"],
     excludeTags: ["script", "style", "a", "img", "iframe"],
+
   });
   if (!scrapeResult.success) {
     throw new Error("Failed to scrape");

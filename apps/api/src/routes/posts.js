@@ -17,7 +17,7 @@ router.post("/generate", async (req, res) => {
     res.status(404).json({ error: "Content not found" });
     return;
   }
-
+ 
   const response = await generatePosts(c.content, c.type, postCount, platform);
   console.log(response.posts);
 
