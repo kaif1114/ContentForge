@@ -12,7 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as SidebarLayoutRouteImport } from './routes/_sidebarLayout/route'
-import { Route as SidebarLayoutHomeImport } from './routes/_sidebarLayout/home'
+import { Route as IndexImport } from './routes/index'
 import { Route as SidebarLayoutAboutImport } from './routes/_sidebarLayout/about'
 
 // Create/Update Routes
@@ -22,10 +22,10 @@ const SidebarLayoutRouteRoute = SidebarLayoutRouteImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const SidebarLayoutHomeRoute = SidebarLayoutHomeImport.update({
-  id: '/home',
-  path: '/home',
-  getParentRoute: () => SidebarLayoutRouteRoute,
+const IndexRoute = IndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const SidebarLayoutAboutRoute = SidebarLayoutAboutImport.update({
@@ -38,6 +38,13 @@ const SidebarLayoutAboutRoute = SidebarLayoutAboutImport.update({
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
     '/_sidebarLayout': {
       id: '/_sidebarLayout'
       path: ''
@@ -52,13 +59,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SidebarLayoutAboutImport
       parentRoute: typeof SidebarLayoutRouteImport
     }
-    '/_sidebarLayout/home': {
-      id: '/_sidebarLayout/home'
-      path: '/home'
-      fullPath: '/home'
-      preLoaderRoute: typeof SidebarLayoutHomeImport
-      parentRoute: typeof SidebarLayoutRouteImport
-    }
   }
 }
 
@@ -66,54 +66,50 @@ declare module '@tanstack/react-router' {
 
 interface SidebarLayoutRouteRouteChildren {
   SidebarLayoutAboutRoute: typeof SidebarLayoutAboutRoute
-  SidebarLayoutHomeRoute: typeof SidebarLayoutHomeRoute
 }
 
 const SidebarLayoutRouteRouteChildren: SidebarLayoutRouteRouteChildren = {
   SidebarLayoutAboutRoute: SidebarLayoutAboutRoute,
-  SidebarLayoutHomeRoute: SidebarLayoutHomeRoute,
 }
 
 const SidebarLayoutRouteRouteWithChildren =
   SidebarLayoutRouteRoute._addFileChildren(SidebarLayoutRouteRouteChildren)
 
 export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
   '': typeof SidebarLayoutRouteRouteWithChildren
   '/about': typeof SidebarLayoutAboutRoute
-  '/home': typeof SidebarLayoutHomeRoute
 }
 
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
   '': typeof SidebarLayoutRouteRouteWithChildren
   '/about': typeof SidebarLayoutAboutRoute
-  '/home': typeof SidebarLayoutHomeRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
+  '/': typeof IndexRoute
   '/_sidebarLayout': typeof SidebarLayoutRouteRouteWithChildren
   '/_sidebarLayout/about': typeof SidebarLayoutAboutRoute
-  '/_sidebarLayout/home': typeof SidebarLayoutHomeRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/about' | '/home'
+  fullPaths: '/' | '' | '/about'
   fileRoutesByTo: FileRoutesByTo
-  to: '' | '/about' | '/home'
-  id:
-    | '__root__'
-    | '/_sidebarLayout'
-    | '/_sidebarLayout/about'
-    | '/_sidebarLayout/home'
+  to: '/' | '' | '/about'
+  id: '__root__' | '/' | '/_sidebarLayout' | '/_sidebarLayout/about'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   SidebarLayoutRouteRoute: typeof SidebarLayoutRouteRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   SidebarLayoutRouteRoute: SidebarLayoutRouteRouteWithChildren,
 }
 
@@ -127,22 +123,21 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
+        "/",
         "/_sidebarLayout"
       ]
+    },
+    "/": {
+      "filePath": "index.tsx"
     },
     "/_sidebarLayout": {
       "filePath": "_sidebarLayout/route.tsx",
       "children": [
-        "/_sidebarLayout/about",
-        "/_sidebarLayout/home"
+        "/_sidebarLayout/about"
       ]
     },
     "/_sidebarLayout/about": {
       "filePath": "_sidebarLayout/about.tsx",
-      "parent": "/_sidebarLayout"
-    },
-    "/_sidebarLayout/home": {
-      "filePath": "_sidebarLayout/home.tsx",
       "parent": "/_sidebarLayout"
     }
   }

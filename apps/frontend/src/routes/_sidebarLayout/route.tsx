@@ -1,5 +1,7 @@
+import { Sidebar } from '@/components/sidebar'
+import { TopBar } from '@/components/Topbar'
 import { createFileRoute, Outlet } from '@tanstack/react-router'
-import { Sidebar } from "@/components/sidebar"
+
 
 export const Route = createFileRoute('/_sidebarLayout')({
   component: SidebarLayout,
@@ -7,12 +9,17 @@ export const Route = createFileRoute('/_sidebarLayout')({
 
 export default function SidebarLayout() {
   return (
-          <div className="flex min-h-screen bg-[#e8f0f0]">
-            <Sidebar />
-            <Outlet/>
-          </div>
+     
+      <div className="min-h-screen wayflyer-gradient font-inter  p-4">
+        <TopBar />
+        <div className="flex gap-4 mt-4">
+          <Sidebar />
+          <main className="flex-1 px-6 py-4"><Outlet/></main>
+        </div>
+      </div>
+    )
 
-  )
+  
 }
 
 

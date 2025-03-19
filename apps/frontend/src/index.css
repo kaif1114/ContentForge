@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 @plugin "tailwindcss-animate";
 
 @custom-variant dark (&:is(.dark *));
@@ -119,3 +120,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+.wayflyer-gradient {
+  background: linear-gradient(to bottom, rgba(220, 242, 237, 0.4) 0%, 
+                                         rgba(212, 238, 232, 0.8) 5%, 
+                                         rgba(212, 238, 232, 0.8) 10%, 
+                                         rgba(220, 242, 237, 0.4) 20%);
+}
+.font-inter{
+  font-family: 'Inter', sans-serif;
+}
+
