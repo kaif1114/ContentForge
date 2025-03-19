@@ -13,7 +13,9 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as SidebarLayoutRouteImport } from './routes/_sidebarLayout/route'
 import { Route as IndexImport } from './routes/index'
-import { Route as SidebarLayoutAboutImport } from './routes/_sidebarLayout/about'
+import { Route as SidebarLayoutTopicsImport } from './routes/_sidebarLayout/topics'
+import { Route as SidebarLayoutSourcesImport } from './routes/_sidebarLayout/sources'
+import { Route as SidebarLayoutPostsImport } from './routes/_sidebarLayout/posts'
 
 // Create/Update Routes
 
@@ -28,9 +30,21 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const SidebarLayoutAboutRoute = SidebarLayoutAboutImport.update({
-  id: '/about',
-  path: '/about',
+const SidebarLayoutTopicsRoute = SidebarLayoutTopicsImport.update({
+  id: '/topics',
+  path: '/topics',
+  getParentRoute: () => SidebarLayoutRouteRoute,
+} as any)
+
+const SidebarLayoutSourcesRoute = SidebarLayoutSourcesImport.update({
+  id: '/sources',
+  path: '/sources',
+  getParentRoute: () => SidebarLayoutRouteRoute,
+} as any)
+
+const SidebarLayoutPostsRoute = SidebarLayoutPostsImport.update({
+  id: '/posts',
+  path: '/posts',
   getParentRoute: () => SidebarLayoutRouteRoute,
 } as any)
 
@@ -52,11 +66,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SidebarLayoutRouteImport
       parentRoute: typeof rootRoute
     }
-    '/_sidebarLayout/about': {
-      id: '/_sidebarLayout/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof SidebarLayoutAboutImport
+    '/_sidebarLayout/posts': {
+      id: '/_sidebarLayout/posts'
+      path: '/posts'
+      fullPath: '/posts'
+      preLoaderRoute: typeof SidebarLayoutPostsImport
+      parentRoute: typeof SidebarLayoutRouteImport
+    }
+    '/_sidebarLayout/sources': {
+      id: '/_sidebarLayout/sources'
+      path: '/sources'
+      fullPath: '/sources'
+      preLoaderRoute: typeof SidebarLayoutSourcesImport
+      parentRoute: typeof SidebarLayoutRouteImport
+    }
+    '/_sidebarLayout/topics': {
+      id: '/_sidebarLayout/topics'
+      path: '/topics'
+      fullPath: '/topics'
+      preLoaderRoute: typeof SidebarLayoutTopicsImport
       parentRoute: typeof SidebarLayoutRouteImport
     }
   }
@@ -65,11 +93,15 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface SidebarLayoutRouteRouteChildren {
-  SidebarLayoutAboutRoute: typeof SidebarLayoutAboutRoute
+  SidebarLayoutPostsRoute: typeof SidebarLayoutPostsRoute
+  SidebarLayoutSourcesRoute: typeof SidebarLayoutSourcesRoute
+  SidebarLayoutTopicsRoute: typeof SidebarLayoutTopicsRoute
 }
 
 const SidebarLayoutRouteRouteChildren: SidebarLayoutRouteRouteChildren = {
-  SidebarLayoutAboutRoute: SidebarLayoutAboutRoute,
+  SidebarLayoutPostsRoute: SidebarLayoutPostsRoute,
+  SidebarLayoutSourcesRoute: SidebarLayoutSourcesRoute,
+  SidebarLayoutTopicsRoute: SidebarLayoutTopicsRoute,
 }
 
 const SidebarLayoutRouteRouteWithChildren =
@@ -78,28 +110,40 @@ const SidebarLayoutRouteRouteWithChildren =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof SidebarLayoutRouteRouteWithChildren
-  '/about': typeof SidebarLayoutAboutRoute
+  '/posts': typeof SidebarLayoutPostsRoute
+  '/sources': typeof SidebarLayoutSourcesRoute
+  '/topics': typeof SidebarLayoutTopicsRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof SidebarLayoutRouteRouteWithChildren
-  '/about': typeof SidebarLayoutAboutRoute
+  '/posts': typeof SidebarLayoutPostsRoute
+  '/sources': typeof SidebarLayoutSourcesRoute
+  '/topics': typeof SidebarLayoutTopicsRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/_sidebarLayout': typeof SidebarLayoutRouteRouteWithChildren
-  '/_sidebarLayout/about': typeof SidebarLayoutAboutRoute
+  '/_sidebarLayout/posts': typeof SidebarLayoutPostsRoute
+  '/_sidebarLayout/sources': typeof SidebarLayoutSourcesRoute
+  '/_sidebarLayout/topics': typeof SidebarLayoutTopicsRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/about'
+  fullPaths: '/' | '' | '/posts' | '/sources' | '/topics'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/about'
-  id: '__root__' | '/' | '/_sidebarLayout' | '/_sidebarLayout/about'
+  to: '/' | '' | '/posts' | '/sources' | '/topics'
+  id:
+    | '__root__'
+    | '/'
+    | '/_sidebarLayout'
+    | '/_sidebarLayout/posts'
+    | '/_sidebarLayout/sources'
+    | '/_sidebarLayout/topics'
   fileRoutesById: FileRoutesById
 }
 
@@ -133,11 +177,21 @@ export const routeTree = rootRoute
     "/_sidebarLayout": {
       "filePath": "_sidebarLayout/route.tsx",
       "children": [
-        "/_sidebarLayout/about"
+        "/_sidebarLayout/posts",
+        "/_sidebarLayout/sources",
+        "/_sidebarLayout/topics"
       ]
     },
-    "/_sidebarLayout/about": {
-      "filePath": "_sidebarLayout/about.tsx",
+    "/_sidebarLayout/posts": {
+      "filePath": "_sidebarLayout/posts.tsx",
+      "parent": "/_sidebarLayout"
+    },
+    "/_sidebarLayout/sources": {
+      "filePath": "_sidebarLayout/sources.tsx",
+      "parent": "/_sidebarLayout"
+    },
+    "/_sidebarLayout/topics": {
+      "filePath": "_sidebarLayout/topics.tsx",
       "parent": "/_sidebarLayout"
     }
   }

@@ -1,4 +1,4 @@
-import { Sidebar } from '@/components/sidebar'
+import { Sidebar } from '@/components/Sidebar'
 import { TopBar } from '@/components/Topbar'
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 
@@ -14,7 +14,9 @@ export default function SidebarLayout() {
         <TopBar />
         <div className="flex gap-4 mt-4">
           <Sidebar />
-          <main className="flex-1 px-6 py-4"><Outlet/></main>
+          <main className="flex-1 px-6 py-4">
+            <Outlet/>
+          </main>
         </div>
       </div>
     )
