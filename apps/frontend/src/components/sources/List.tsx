@@ -5,6 +5,11 @@ import { Eye, Youtube, Globe, Calendar } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 // import { formatDistanceToNow } from "date-fns"
 
+// Function to truncate URL to 30 characters
+const truncateUrl = (url: string, maxLength: number = 30) => {
+  return url.length > maxLength ? url.substring(0, maxLength) + '...' : url
+}
+
 interface ContentSourcesListProps {
   sources: ContentSource[]
   isLoading: boolean
@@ -44,38 +49,23 @@ export function ContentSourcesList({ sources, isLoading, onViewContent }: Conten
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 ">
       {sources.map((source) => (
-        <div key={source.id} className="overflow-hidden bg-[#ECEEF2] border-none rounded-lg ">
-          <div className="p-0">
-            <div className="relative px-3 py-2">
-              <div className="absolute top-2 right-3 text-xs font-medium bg-gray-700 text-white px-2 py-0.5 rounded">
-                {source.type.toUpperCase()}
-              </div>
-            </div>
-            <div className="p-5 grid grid-cols-4 gap-4">
-              <div className="text-center">
-                <p className="text-lg font-semibold">{source.label}</p>
-                <p className="text-xs text-muted-foreground mt-1">Source Name</p>
-              </div>
-              <div className="text-center">
-                <p className="text-lg font-semibold truncate max-w-[150px] mx-auto">{source.url.split('/').pop() || source.url}</p>
-                <p className="text-xs text-muted-foreground mt-1">Content ID</p>
-              </div>
-              <div className="text-center">
-                <p className="text-lg font-semibold">
-                  {source.type === "youtube" ? "YouTube" : "Website"}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">Source Type</p>
-              </div>
-              <div className="text-center flex items-center justify-center">
-                <Button variant="outline" onClick={() => onViewContent(source)} className="flex items-center gap-2">
-                  <Eye className="h-4 w-4" />
-                  View Content
-                </Button>
-              </div>
-            </div>
+        <div key={source.id} className="bg-gray-50 border-0 rounded-lg shadow-sm flex items-center py-5 blue">
+          <div className="flex flex-col justify-center items-center  px-8">
+            <p className="font-semibold">Type</p>
+            {source.type === "youtube" ? <Youtube width={40} height={40}/> : <Globe width={40} height={40}/>}
           </div>
+          <div className="h-18 w-px bg-gray-300 mx-2"></div>
+          <div className="flex flex-col gap-2 px-8 min-w-xs">
+            <p className="w-max font-semibold">{source.label}</p>
+            <p title={source.url}>{truncateUrl(source.url)}</p>
+          </div>
+          <div className="flex flex-col gap-2 px-8">
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi, numquam?</p>
+            <p>October 31st</p>
+          </div>
+          <div className="flex-col"></div>
         </div>
       ))}
     </div>

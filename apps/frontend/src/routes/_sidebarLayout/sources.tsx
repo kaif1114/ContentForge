@@ -157,7 +157,7 @@ export default function RouteComponent() {
 
   return (
     <>
-      <div className="space-y-6">
+      <div className="space-y-6 px-8">
         {/* Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-4xl font-bold pt-4 pb-8">Content Sources</h1>
