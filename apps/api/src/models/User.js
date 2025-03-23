@@ -1,21 +1,44 @@
 import mongoose from "mongoose"
+import z from "zod";
 
-const userSchema = new mongoose.Schema({
+const schema = new mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        minlength: 3,
+        maxlength: 30
     },
     email: {
         type: String,
+        unique: true,
+        minlength: 5,
+        maxlength: 255,
+        match: [
+            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+            "Please enter a valid email address"
+        ],
         required: true
     },
-    profilePicture: {
+    password: {
         type: String,
-        required: true
+        required: true,
+        minlength: 8,
+        maxlength: 1024
     },
-       
 })
 
-const User = mongoose.model("User", userSchema)
+schema.methods.generateAuthToken = function() {
+    const token = jwt.sign({ id: this._id }, process.env.JWT_SECRET);
+    return token;
+}
+
+export const userSchema = z.object({
+    name: z.string().min(3),
+    email: z.string().email(),
+    password: z.string().min(8),
+});
+
+
+const User = mongoose.model("User", schema)
 
 export default User
