@@ -20,6 +20,6 @@ export default async function register(req, res)  {
     const token = generateAuthToken(user._id);
     res.header("Authorization", `Bearer ${token}`)
     res.cookie("x-rf-token", generateRefreshToken(user._id, "3d"), { httpOnly: true, secure: process.env.NODE_ENV === "production", maxAge: 3 * 24 * 60 * 60 * 1000 });
-    res.json({id: user._id, name: user.name, email: user.email});
+    res.json({ name: user.name, email: user.email});
 };
 

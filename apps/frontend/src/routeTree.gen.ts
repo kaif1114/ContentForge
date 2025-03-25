@@ -12,6 +12,8 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as RegisterImport } from './routes/register'
+import { Route as NotificationsDemoImport } from './routes/notifications-demo'
+import { Route as LoginImport } from './routes/login'
 import { Route as SidebarLayoutRouteImport } from './routes/_sidebarLayout/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as SidebarLayoutTopicsImport } from './routes/_sidebarLayout/topics'
@@ -23,6 +25,18 @@ import { Route as SidebarLayoutPostsImport } from './routes/_sidebarLayout/posts
 const RegisterRoute = RegisterImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const NotificationsDemoRoute = NotificationsDemoImport.update({
+  id: '/notifications-demo',
+  path: '/notifications-demo',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LoginRoute = LoginImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -71,6 +85,20 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof SidebarLayoutRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginImport
+      parentRoute: typeof rootRoute
+    }
+    '/notifications-demo': {
+      id: '/notifications-demo'
+      path: '/notifications-demo'
+      fullPath: '/notifications-demo'
+      preLoaderRoute: typeof NotificationsDemoImport
       parentRoute: typeof rootRoute
     }
     '/register': {
@@ -124,6 +152,8 @@ const SidebarLayoutRouteRouteWithChildren =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof SidebarLayoutRouteRouteWithChildren
+  '/login': typeof LoginRoute
+  '/notifications-demo': typeof NotificationsDemoRoute
   '/register': typeof RegisterRoute
   '/posts': typeof SidebarLayoutPostsRoute
   '/sources': typeof SidebarLayoutSourcesRoute
@@ -133,6 +163,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof SidebarLayoutRouteRouteWithChildren
+  '/login': typeof LoginRoute
+  '/notifications-demo': typeof NotificationsDemoRoute
   '/register': typeof RegisterRoute
   '/posts': typeof SidebarLayoutPostsRoute
   '/sources': typeof SidebarLayoutSourcesRoute
@@ -143,6 +175,8 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/_sidebarLayout': typeof SidebarLayoutRouteRouteWithChildren
+  '/login': typeof LoginRoute
+  '/notifications-demo': typeof NotificationsDemoRoute
   '/register': typeof RegisterRoute
   '/_sidebarLayout/posts': typeof SidebarLayoutPostsRoute
   '/_sidebarLayout/sources': typeof SidebarLayoutSourcesRoute
@@ -151,13 +185,31 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/register' | '/posts' | '/sources' | '/topics'
+  fullPaths:
+    | '/'
+    | ''
+    | '/login'
+    | '/notifications-demo'
+    | '/register'
+    | '/posts'
+    | '/sources'
+    | '/topics'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/register' | '/posts' | '/sources' | '/topics'
+  to:
+    | '/'
+    | ''
+    | '/login'
+    | '/notifications-demo'
+    | '/register'
+    | '/posts'
+    | '/sources'
+    | '/topics'
   id:
     | '__root__'
     | '/'
     | '/_sidebarLayout'
+    | '/login'
+    | '/notifications-demo'
     | '/register'
     | '/_sidebarLayout/posts'
     | '/_sidebarLayout/sources'
@@ -168,12 +220,16 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SidebarLayoutRouteRoute: typeof SidebarLayoutRouteRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  NotificationsDemoRoute: typeof NotificationsDemoRoute
   RegisterRoute: typeof RegisterRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SidebarLayoutRouteRoute: SidebarLayoutRouteRouteWithChildren,
+  LoginRoute: LoginRoute,
+  NotificationsDemoRoute: NotificationsDemoRoute,
   RegisterRoute: RegisterRoute,
 }
 
@@ -189,6 +245,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/_sidebarLayout",
+        "/login",
+        "/notifications-demo",
         "/register"
       ]
     },
@@ -202,6 +260,12 @@ export const routeTree = rootRoute
         "/_sidebarLayout/sources",
         "/_sidebarLayout/topics"
       ]
+    },
+    "/login": {
+      "filePath": "login.tsx"
+    },
+    "/notifications-demo": {
+      "filePath": "notifications-demo.tsx"
     },
     "/register": {
       "filePath": "register.tsx"

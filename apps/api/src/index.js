@@ -4,8 +4,13 @@ import { routes } from "./startup/routes.js";
 import "dotenv/config";
 import "express-async-errors";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 const app = express();
 
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true,
+}));
 app.use(cookieParser());
 database();
 routes(app);

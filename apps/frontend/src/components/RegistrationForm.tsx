@@ -1,15 +1,15 @@
-import type React from "react"
-
 import { useState } from "react"
-import { Link }  from "@tanstack/react-router"
-import { Eye, EyeOff, Apple, X } from "lucide-react"
+import { Link, useNavigate }  from "@tanstack/react-router"
+import { Eye, EyeOff, Apple } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Alert, AlertDescription } from "@/components/ui/alert"
 import { z } from 'zod'
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
+import axios from "axios"
+import { Notification } from "@/components/ui/notification"
 
 const schema = z.object({
     name: z.string().min(1, {message: "Name is required"}).max(50, {message: "Name must be less than 50 characters"}),
@@ -21,7 +21,7 @@ type FormData = z.infer<typeof schema>
 
 export default function RegistrationForm() {
 
-    const {register, handleSubmit, formState: {errors}} = useForm<FormData>({
+   const {register, handleSubmit, formState: {errors}} = useForm<FormData>({
         resolver: zodResolver(schema),
         defaultValues: {
             name: "",
@@ -29,16 +29,62 @@ export default function RegistrationForm() {
             password: "",
         },
     })
-  const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  
-  const onSubmit = (data: FormData) => {
-    console.log(data)
-  }
+  const navigate = useNavigate()
+  const [notification, setNotification] = useState<{
+    title: string;
+    message: string;
+    variant: "success" | "error" | "warning" | "info" | "question";
+  } | null>(null)
 
+  const {mutateAsync: registerUser, isPending, isError, error: errorResponse, isSuccess} = useMutation({
+    mutationFn: (data: FormData) => {
+      return axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/register`, data)
+    },
+    onError: (error) => {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 400 && 
+          error.response?.data?.error === "User already exists") {
+          setNotification({
+            variant: "error",
+            title: "Registration Failed",
+            message: "An account with this email already exists. Please use a different email or sign in."
+          })
+        } else {
+          setNotification({
+            variant: "error",
+            title: "Registration Failed",
+            message: error.response?.data?.message || "Unable to register. Please try again later."
+          })
+        }
+      } else {
+        setNotification({
+          variant: "error",
+          title: "Registration Failed",
+          message: "Unable to register. Please try again later."
+        })
+      }
+    },
+    onSuccess: () => {
+      setNotification({
+        variant: "success",
+        title: "Success!",
+        message: "Your account has been created successfully. Redirecting you..."
+      })
+      setTimeout(() => {
+        navigate({ to: "/" })
+      }, 2500)
+    }
+  })
+
+  const onSubmit = async (data: FormData) => {
+    setNotification(null)
+    await registerUser(data)
+  }
+  
 
   return (
-    <div className="w-full h-full flex flex-col md:flex-row bg-gradient-to-br from-[#b5ecda] to-[#f8f7ed]">
+    <div className="w-full h-full flex flex-col md:flex-row bg-gradient-to-tr from-[#b5ecda] to-[#f8f7ed]">
       {/* Left side - Form */}
       <div className="w-full md:w-1/2 p-6 sm:p-8 md:p-12 flex flex-col  h-screen overflow-y-auto">
         <div className="mb-8">
@@ -56,8 +102,18 @@ export default function RegistrationForm() {
           <h1 className="text-3xl font-medium text-gray-800 mb-2">Create an account</h1>
           <p className="text-gray-600 mb-8">Sing up and get 30 day free trial</p>
 
+          {/* Notification */}
+          {notification && (
+            <div className="mb-6">
+              <Notification
+                variant={notification.variant}
+                title={notification.title}
+                message={notification.message}
+                onClose={() => setNotification(null)}
+              />
+            </div>
+          )}
           
-
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="fullName" className="text-gray-600 font-normal">
@@ -70,7 +126,7 @@ export default function RegistrationForm() {
                 {...register("name")}
                 placeholder="Enter your full name"
                 className="rounded-full  bg-white h-12 px-5 focus:border-[#3bc5a5] focus:border-2 "
-                disabled={loading}
+                disabled={isPending}
               />
             </div>
 
@@ -85,7 +141,7 @@ export default function RegistrationForm() {
                 {...register("email")}
                 placeholder="Enter your email"
                 className="rounded-full border-gray-200 bg-white h-12 px-5 focus:border-[#3bc5a5] focus:border-2"
-                disabled={loading}
+                disabled={isPending}
               />
             </div>
 
@@ -103,7 +159,7 @@ export default function RegistrationForm() {
                   {...register("password")}
                   placeholder="Enter your password"
                   className="rounded-full border-gray-200 bg-white h-12 px-5 pr-12 focus:border-[#3bc5a5] focus:border-2"
-                  disabled={loading}
+                  disabled={isPending}
                 />
                 <button
                   type="button"
@@ -118,10 +174,15 @@ export default function RegistrationForm() {
 
             <Button
               type="submit"
-              disabled={loading}
+              disabled={isPending}
               className="w-full rounded-full h-12 bg-[#1bd78c] hover:bg-[#7add9d] text-black font-medium border-none shadow-sm"
             >
-              {loading ? "Processing..." : "Submit"}
+              {isPending ? (
+                <>
+                  <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></span>
+                  Creating Account...
+                </>
+              ) : "Submit"}
             </Button>
 
             <div className="flex gap-4 mt-4">
@@ -129,7 +190,7 @@ export default function RegistrationForm() {
                 type="button"
                 variant="outline"
                 className="flex-1 rounded-full h-12 border-gray-300 bg-transparent hover:bg-gray-100/50 text-black font-medium"
-                disabled={loading}
+                disabled={isPending || isSuccess}
               >
                 <Apple className="mr-2 h-5 w-5" />
                 Apple
@@ -138,7 +199,7 @@ export default function RegistrationForm() {
                 type="button"
                 variant="outline"
                 className="flex-1 rounded-full h-12 border-gray-300 bg-transparent hover:bg-gray-100/50 text-black font-medium"
-                disabled={loading}
+                disabled={isPending || isSuccess}
               >
                 <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -188,11 +249,6 @@ export default function RegistrationForm() {
           className=" h-full w-full object-cover  border rounded-3xl "
         />
         
-        <div className="absolute top-6 right-6 z-20">
-          <button className="text-gray-700 hover:text-gray-900 bg-white/80 rounded-full p-2">
-            <X size={20} />
-          </button>
-        </div>
 
         {/* Calendar UI elements overlay - updated positioning and styling */}
         <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-20">
