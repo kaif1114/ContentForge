@@ -8,7 +8,7 @@ export const Route = createRootRoute({
     return (
       <div>
         <p>This is the notFoundComponent configured on root route</p>
-        <Link to="/home">Start Over</Link>
+        <Link to="/">Start Over</Link>
       </div>
     )
   },

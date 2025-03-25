@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as RegisterImport } from './routes/register'
 import { Route as SidebarLayoutRouteImport } from './routes/_sidebarLayout/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as SidebarLayoutTopicsImport } from './routes/_sidebarLayout/topics'
@@ -18,6 +19,12 @@ import { Route as SidebarLayoutSourcesImport } from './routes/_sidebarLayout/sou
 import { Route as SidebarLayoutPostsImport } from './routes/_sidebarLayout/posts'
 
 // Create/Update Routes
+
+const RegisterRoute = RegisterImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const SidebarLayoutRouteRoute = SidebarLayoutRouteImport.update({
   id: '/_sidebarLayout',
@@ -66,6 +73,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SidebarLayoutRouteImport
       parentRoute: typeof rootRoute
     }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterImport
+      parentRoute: typeof rootRoute
+    }
     '/_sidebarLayout/posts': {
       id: '/_sidebarLayout/posts'
       path: '/posts'
@@ -110,6 +124,7 @@ const SidebarLayoutRouteRouteWithChildren =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof SidebarLayoutRouteRouteWithChildren
+  '/register': typeof RegisterRoute
   '/posts': typeof SidebarLayoutPostsRoute
   '/sources': typeof SidebarLayoutSourcesRoute
   '/topics': typeof SidebarLayoutTopicsRoute
@@ -118,6 +133,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof SidebarLayoutRouteRouteWithChildren
+  '/register': typeof RegisterRoute
   '/posts': typeof SidebarLayoutPostsRoute
   '/sources': typeof SidebarLayoutSourcesRoute
   '/topics': typeof SidebarLayoutTopicsRoute
@@ -127,6 +143,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/_sidebarLayout': typeof SidebarLayoutRouteRouteWithChildren
+  '/register': typeof RegisterRoute
   '/_sidebarLayout/posts': typeof SidebarLayoutPostsRoute
   '/_sidebarLayout/sources': typeof SidebarLayoutSourcesRoute
   '/_sidebarLayout/topics': typeof SidebarLayoutTopicsRoute
@@ -134,13 +151,14 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/posts' | '/sources' | '/topics'
+  fullPaths: '/' | '' | '/register' | '/posts' | '/sources' | '/topics'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/posts' | '/sources' | '/topics'
+  to: '/' | '' | '/register' | '/posts' | '/sources' | '/topics'
   id:
     | '__root__'
     | '/'
     | '/_sidebarLayout'
+    | '/register'
     | '/_sidebarLayout/posts'
     | '/_sidebarLayout/sources'
     | '/_sidebarLayout/topics'
@@ -150,11 +168,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SidebarLayoutRouteRoute: typeof SidebarLayoutRouteRouteWithChildren
+  RegisterRoute: typeof RegisterRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SidebarLayoutRouteRoute: SidebarLayoutRouteRouteWithChildren,
+  RegisterRoute: RegisterRoute,
 }
 
 export const routeTree = rootRoute
@@ -168,7 +188,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/_sidebarLayout"
+        "/_sidebarLayout",
+        "/register"
       ]
     },
     "/": {
@@ -181,6 +202,9 @@ export const routeTree = rootRoute
         "/_sidebarLayout/sources",
         "/_sidebarLayout/topics"
       ]
+    },
+    "/register": {
+      "filePath": "register.tsx"
     },
     "/_sidebarLayout/posts": {
       "filePath": "_sidebarLayout/posts.tsx",
