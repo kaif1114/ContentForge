@@ -37,9 +37,13 @@ export default function RegistrationForm() {
     variant: "success" | "error" | "warning" | "info" | "question";
   } | null>(null)
 
-  const {mutateAsync: registerUser, isPending, isError, error: errorResponse, isSuccess} = useMutation({
+  const {mutateAsync: registerUser, isPending,  isSuccess} = useMutation({
     mutationFn: (data: FormData) => {
-      return axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/register`, data)
+      return axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/register`, data, {
+        headers: {
+          credentials: 'include',
+        },
+      })
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {

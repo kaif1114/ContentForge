@@ -36,7 +36,7 @@ export default function LoginPage() {
   })
   const {mutateAsync: login, isPending} = useMutation({
     mutationFn: (data: FormData) => {
-      return axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth`, data)
+      return axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth`, data, {withCredentials: true})
     },
     onError: (error: unknown) => {
       console.log("error", error)
