@@ -3,16 +3,18 @@ import { scrapeSchema } from "../types/scrape.js";
 import getYoutubeTranscript from "../services/scrape/youtube.js";
 import scrapeUrl from "../services/scrape/url.js";
 import Content from "../models/Content.js";
+import { auth } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
+  const userId = req.user.id;
   const validation = scrapeSchema.safeParse(req.body);
   if (!validation.success) {
     res.status(400).json({ error: validation.error.message });
     return;
   }
-  const { url, type, userId } = validation.data;
+  const { url, type } = validation.data;
   const newContent = new Content({
     url,
     type,

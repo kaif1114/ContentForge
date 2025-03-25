@@ -27,10 +27,7 @@ const schema = new mongoose.Schema({
     },
 })
 
-schema.methods.generateAuthToken = function() {
-    const token = jwt.sign({ id: this._id }, process.env.JWT_SECRET);
-    return token;
-}
+
 
 export const userSchema = z.object({
     name: z.string().min(3),

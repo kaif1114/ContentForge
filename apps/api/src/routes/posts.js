@@ -13,10 +13,24 @@ import {
   getLinkedinSysPrompt,
   getTwitterSysPrompt,
 } from "../prompts/posts.js";
-
+import { auth } from "../middleware/auth.js";
 const router = express.Router();
 
-router.post("/generate", async (req, res) => {
+router.get("/", auth, async (req, res) => {
+  const content = await Content.find({ user: req.user.id });
+  if (!content) {
+    res.status(404).json({ error: "No content found" });
+    return;
+  }
+  const posts = content.flatMap((c) => c.posts);
+  if (!posts) {
+    res.status(404).json({ error: "No posts found" });
+    return;
+  }
+  res.json(posts);
+});
+
+router.post("/generate", auth, async (req, res) => {
   const validation = generatePostsReqSchema.safeParse(req.body);
   if (!validation.success) {
     res.status(400).json({ error: validation.error.message });

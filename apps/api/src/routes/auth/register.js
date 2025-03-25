@@ -1,11 +1,11 @@
-import express from "express";
-import User, {userSchema} from "../models/User.js";
+import router from "./auth.js";
+import User, {userSchema} from "../../models/User.js";
 import bcrypt from "bcrypt";
+import { generateAuthToken, generateRefreshToken } from "../../services/tokens.js";
 
-const router = express.Router();
 const saltRounds = 10;
 
-router.post("/", async (req, res) => {
+export default async function register(req, res)  {
     const validation = userSchema.safeParse(req.body);
     if (!validation.success) {
         return res.status(400).json({ error: validation.error.message });
@@ -18,8 +18,8 @@ router.post("/", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const user = await User.create({ name, email, password: hashedPassword });
 
-    res.header("x-auth-token", user.generateAuthToken())
+    res.header("x-auth-token", generateAuthToken(user._id))
+    res.cookie("x-rf-token", generateRefreshToken(user._id, "3d"), { httpOnly: true, secure: process.env.NODE_ENV === "production", maxAge: 3 * 24 * 60 * 60 * 1000 });
     res.json({id: user._id, name: user.name, email: user.email});
-});
+};
 
-export default router;

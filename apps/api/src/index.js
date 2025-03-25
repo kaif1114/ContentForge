@@ -3,9 +3,10 @@ import { database } from "./startup/database.js";
 import { routes } from "./startup/routes.js";
 import "dotenv/config";
 import "express-async-errors";
-
+import cookieParser from "cookie-parser";
 const app = express();
 
+app.use(cookieParser());
 database();
 routes(app);
 
