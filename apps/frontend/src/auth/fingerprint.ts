@@ -33,64 +33,80 @@ interface FingerprintComponents {
 
 // Configuration
 const RATE_LIMIT_MS = 0; // seconds
-const ROTATION_HOURS = Number(import.meta.env.VITE_FINGERPRINT_ROTATION_HOURS) || 168;
 let lastFingerprintTime = 0;
+const VISITOR_ID_STORAGE_KEY = 'SECUREFP_SEED';
+
+// Flag to prevent concurrent fingerprinting
+let isGeneratingFingerprint = false;
+let pendingPromiseResolvers: Array<{resolve: (value: string) => void, reject: (reason: any) => void}> = [];
 
 /**
- * Generates a rotation key for fingerprint freshness based on configured duration
+ * Gets a consistent visitorId from localStorage or generates a new one
  */
-function generateRotationKey(): string {
-    const date = new Date();
-    const hours = Math.floor(date.getTime() / (1000 * 60 * 60));
-    // Generate a key that changes every ROTATION_HOURS
-    const rotationNumber = Math.floor(hours / ROTATION_HOURS);
-    return `${rotationNumber}`;
+async function getConsistentVisitorId(): Promise<string> {
+    try {
+        // Check if we have a stored visitorId
+        const storedVisitorId = localStorage.getItem(VISITOR_ID_STORAGE_KEY);
+        
+        if (storedVisitorId) {
+            return storedVisitorId;
+        }
+        
+        // If no stored visitorId, generate a new one
+        const fp = await FingerprintJS.load();
+        const result = await fp.get();
+        const visitorId = result.visitorId;
+        
+        // Store for future use
+        localStorage.setItem(VISITOR_ID_STORAGE_KEY, visitorId);
+        
+        return visitorId;
+    } catch (error) {
+        console.error('Failed to get consistent visitorId:', error);
+        // Fallback to generating a more stable UUID-like identifier
+        const fallbackId = generateFallbackId();
+        try {
+            localStorage.setItem(VISITOR_ID_STORAGE_KEY, fallbackId);
+        } catch {
+            // Ignore storage errors
+        }
+        return fallbackId;
+    }
 }
 
 /**
- * Generates a unique fingerprint for the user while respecting privacy and handling browser restrictions
- * @returns Promise<string> - A unique fingerprint string
+ * Generates a fallback ID if FingerprintJS fails
  */
-export async function getFingerprint(): Promise<string> {
-    try {
-        // Rate limiting
-        const now = Date.now();
-        if (now - lastFingerprintTime < RATE_LIMIT_MS) {
-            throw new Error('Rate limit exceeded');
-        }
-        lastFingerprintTime = now;
-
-        // Initialize FingerprintJS
-        const fp = await FingerprintJS.load();
-        
-        // Get basic visitor ID
-        const result = await fp.get();
-        
-        // Collect additional components with fallbacks
-        const components = await collectFingerprintComponents();
-        
-        // Use rotation key timestamp instead of current timestamp
-        const rotationKey = generateRotationKey();
-        const fingerprintData = {
-            visitorId: result.visitorId,
-            components: components,
-            rotationKey: rotationKey
-        };
-        
-        // Convert to string and hash
-        const fingerprintString = JSON.stringify(fingerprintData);
-        return await hashFingerprint(fingerprintString);
-    } catch (error) {
-        console.error('Fingerprint generation failed:', error);
-        // Fallback to basic fingerprinting
-        return await generateBasicFingerprint();
+function generateFallbackId(): string {
+    // Generate a UUID-like identifier from stable browser properties
+    const baseStr = 
+        navigator.userAgent + 
+        navigator.language + 
+        screen.width + 
+        screen.height + 
+        navigator.hardwareConcurrency + 
+        ((navigator as any).userAgentData?.platform || 'unknown');
+    
+    // Create a hash of the base string
+    let hash = 0;
+    for (let i = 0; i < baseStr.length; i++) {
+        const char = baseStr.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32bit integer
     }
+    
+    // Convert to hex string with padding
+    const hashHex = (hash >>> 0).toString(16).padStart(8, '0');
+    
+    // Construct a UUID-like string
+    return `${hashHex.slice(0, 8)}-${hashHex.slice(0, 4)}-4${hashHex.slice(1, 4)}-${'89ab'[Math.abs(hash) % 4]}${hashHex.slice(1, 3)}-${hashHex.slice(0, 12)}`;
 }
 
 /**
  * Collects fingerprint components with privacy considerations
  */
 async function collectFingerprintComponents(): Promise<FingerprintComponents> {
+    // Create components with deterministic ordering
     const components: FingerprintComponents = {
         userAgent: navigator.userAgent,
         language: navigator.language,
@@ -100,7 +116,7 @@ async function collectFingerprintComponents(): Promise<FingerprintComponents> {
         screenResolution: `${window.screen.width}x${window.screen.height}`,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         timezoneOffset: new Date().getTimezoneOffset(),
-        platform: (navigator as any).userAgentData?.platform || navigator.userAgent.split('(')[1]?.split(')')[0] || 'unknown',
+        platform: (navigator as any).userAgentData?.platform || 'unknown',
         webglVendor: null,
         webglRenderer: null,
         webglVersion: null,
@@ -109,23 +125,23 @@ async function collectFingerprintComponents(): Promise<FingerprintComponents> {
     };
 
     try {
-        // WebGL fingerprinting
+        // Collect WebGL info first (synchronous)
         const webglInfo = getWebGLInfo();
         if (webglInfo) {
             components.webglVendor = webglInfo.vendor;
             components.webglRenderer = webglInfo.renderer;
             components.webglVersion = webglInfo.webglVersion;
         }
-
-        // Enhanced canvas fingerprinting
+        
+        // Then collect canvas fingerprint (asynchronous)
         components.canvasHash = await getCanvasFingerprint();
-
-        // Audio context fingerprinting
+        
+        // Finally collect audio fingerprint (asynchronous)
         components.audioContext = await getAudioFingerprint();
     } catch (error) {
         console.warn('Advanced fingerprinting failed:', error);
     }
-
+    console.log("components", components);
     return components;
 }
 
@@ -135,6 +151,8 @@ async function collectFingerprintComponents(): Promise<FingerprintComponents> {
 function getWebGLInfo() {
     try {
         const canvas = document.createElement('canvas');
+        canvas.width = 200;
+        canvas.height = 50;
         const gl = canvas.getContext('webgl');
         
         if (!gl) return null;
@@ -150,16 +168,18 @@ function getWebGLInfo() {
 }
 
 /**
- * Generates enhanced canvas fingerprint
+ * Generates canvas fingerprint with fixed values for consistency
  */
 async function getCanvasFingerprint(): Promise<string | null> {
     try {
         const canvas = document.createElement('canvas');
+        canvas.width = 200;
+        canvas.height = 50;
         const ctx = canvas.getContext('2d');
         
         if (!ctx) return null;
 
-        // Use fixed values for consistent fingerprinting
+        // Always use fixed values and operations for consistency
         ctx.textBaseline = 'top';
         ctx.font = '14px Arial';
         ctx.fillStyle = '#f60';
@@ -167,12 +187,13 @@ async function getCanvasFingerprint(): Promise<string | null> {
         ctx.fillStyle = '#069';
         ctx.fillText('ContentForge', 2, 15);
         
-        // Add fixed pattern
+        // Add fixed pattern with precise coordinates
         ctx.beginPath();
-        ctx.arc(50, 50, 20, 0, Math.PI * 2);
+        ctx.arc(50, 25, 10, 0, Math.PI * 2);
         ctx.stroke();
         
-        return canvas.toDataURL();
+        // Use a fixed format for the data URL
+        return canvas.toDataURL('image/jpeg', 0.5);
     } catch {
         return null;
     }
@@ -184,6 +205,8 @@ async function getCanvasFingerprint(): Promise<string | null> {
 async function getAudioFingerprint(): Promise<string | null> {
     try {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Just use the sample rate as is - this should be stable per device
         return audioContext.sampleRate.toString();
     } catch {
         return null;
@@ -194,16 +217,26 @@ async function getAudioFingerprint(): Promise<string | null> {
  * Generates a basic fingerprint as fallback
  */
 async function generateBasicFingerprint(): Promise<string> {
-    const basicComponents = {
-        userAgent: navigator.userAgent,
-        language: navigator.language,
-        platform: (navigator as any).userAgentData?.platform || navigator.userAgent.split('(')[1]?.split(')')[0] || 'unknown',
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        timestamp: Date.now(),
-        rotationKey: generateRotationKey()
-    };
+    try {
+        // Get a consistent visitorId
+        const visitorId = await getConsistentVisitorId();
+        
+        const basicComponents = {
+            visitorId: visitorId,
+            userAgent: navigator.userAgent,
+            language: navigator.language,
+            platform: (navigator as any).userAgentData?.platform || 'unknown',
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+        };
 
-    return await hashFingerprint(JSON.stringify(basicComponents));
+        // Create a deterministic JSON string (sort keys alphabetically)
+        const basicComponentsString = JSON.stringify(basicComponents, Object.keys(basicComponents).sort());
+        return await hashFingerprint(basicComponentsString);
+    } catch (error) {
+        // Ultimate fallback - just hash the user agent
+        console.error('Basic fingerprint generation failed:', error);
+        return await hashFingerprint(navigator.userAgent);
+    }
 }
 
 /**
@@ -214,4 +247,77 @@ export async function hashFingerprint(fingerprintString: string): Promise<string
     const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Generates a unique fingerprint for the user
+ * @returns Promise<string> - A unique fingerprint string
+ */
+export async function getFingerprint(): Promise<string> {
+    // If already generating a fingerprint, wait for it to complete
+    if (isGeneratingFingerprint) {
+        return new Promise<string>((resolve, reject) => {
+            pendingPromiseResolvers.push({ resolve, reject });
+        });
+    }
+    
+    // Set flag to prevent concurrent generation
+    isGeneratingFingerprint = true;
+    
+    try {
+        const now = Date.now();
+        
+        // Rate limiting
+        if (now - lastFingerprintTime < RATE_LIMIT_MS) {
+            throw new Error('Rate limit exceeded');
+        }
+        lastFingerprintTime = now;
+
+        // Get a consistent visitorId
+        const visitorId = await getConsistentVisitorId();
+        
+        // Collect additional components with fallbacks
+        const components = await collectFingerprintComponents();
+        
+        // Create a deterministic fingerprint object
+        const fingerprintData = {
+            visitorId: visitorId,
+            components: components
+        };
+        
+        console.log("fingerprintData", fingerprintData);
+        // Create a deterministic JSON string (sort keys alphabetically)
+        const fingerprintString = JSON.stringify(fingerprintData, Object.keys(fingerprintData).sort());
+        
+        // Hash the fingerprint
+        const fingerprint = await hashFingerprint(fingerprintString);
+        
+        // Resolve any pending promises
+        pendingPromiseResolvers.forEach(({ resolve }) => resolve(fingerprint));
+        pendingPromiseResolvers = [];
+        
+        return fingerprint;
+    } catch (error) {
+        console.error('Fingerprint generation failed:', error);
+        
+        // Generate basic fingerprint as fallback
+        try {
+            const basicFingerprint = await generateBasicFingerprint();
+            
+            // Resolve any pending promises
+            pendingPromiseResolvers.forEach(({ resolve }) => resolve(basicFingerprint));
+            pendingPromiseResolvers = [];
+            
+            return basicFingerprint;
+        } catch (fallbackError) {
+            // Reject any pending promises
+            pendingPromiseResolvers.forEach(({ reject }) => reject(fallbackError));
+            pendingPromiseResolvers = [];
+            
+            throw fallbackError;
+        }
+    } finally {
+        // Reset flag
+        isGeneratingFingerprint = false;
+    }
 }
