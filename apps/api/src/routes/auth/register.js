@@ -19,7 +19,7 @@ export default async function register(req, res)  {
     const user = await User.create({ name, email, password: hashedPassword });
     const token = generateAuthToken(user._id);
     res.header("Authorization", `Bearer ${token}`)
-    res.cookie("x-rf-token", generateRefreshToken(user._id, "3d"), { httpOnly: true, secure: process.env.NODE_ENV === "production", maxAge: 3 * 24 * 60 * 60 * 1000, sameSite: "none" });
+    res.cookie("x-rf-token", generateRefreshToken(user._id, "3d"), { httpOnly: true, secure: process.env.NODE_ENV === "production", maxAge: 3 * 24 * 60 * 60 * 1000, sameSite: "lax" });
     res.json({ name: user.name, email: user.email});
 };
 

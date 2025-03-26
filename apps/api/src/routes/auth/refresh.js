@@ -9,7 +9,7 @@ import { generateAuthToken } from "../../services/tokens.js";
     jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, async(err, decoded)=>{
         if (err) return res.status(401).send("Access denied. Invalid refresh token.");
         const token = generateAuthToken(decoded.id);
-        res.cookie("x-at-token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production", maxAge: 30 * 60 * 1000, sameSite: process.env.NODE_ENV === "production" ? "none" : "lax" });
+        res.cookie("x-at-token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production", maxAge: 30 * 60 * 1000, sameSite: "lax"});
         res.header("Authorization", `Bearer ${token}`)
         res.json({ message: "Tokens refreshed successfully" });
     });
