@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
 import { Notification } from "@/components/ui/notification"
-
+import { getFingerprint } from "@/utils/fingerprint"
 const schema = z.object({
     name: z.string().min(1, {message: "Name is required"}).max(50, {message: "Name must be less than 50 characters"}),
     email: z.string().email({message: "Invalid email address"}),
@@ -38,10 +38,11 @@ export default function RegistrationForm() {
   } | null>(null)
 
   const {mutateAsync: registerUser, isPending,  isSuccess} = useMutation({
-    mutationFn: (data: FormData) => {
+    mutationFn: ({data, fingerprint}: {data: FormData, fingerprint: string}) => {
       return axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/register`, data, {
         headers: {
           credentials: 'include',
+          "x-fp": fingerprint
         },
       })
     },
@@ -83,7 +84,8 @@ export default function RegistrationForm() {
 
   const onSubmit = async (data: FormData) => {
     setNotification(null)
-    await registerUser(data)
+    const fingerprint = await getFingerprint()
+    await registerUser({data, fingerprint})
   }
   
 

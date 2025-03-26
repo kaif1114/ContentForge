@@ -4,9 +4,10 @@ import { EyeIcon, EyeOffIcon } from "lucide-react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import axios from 'axios'
+import axios, { AxiosHeaders, AxiosResponse } from 'axios'
 import { useMutation } from '@tanstack/react-query'
 import { Notification } from '../components/ui/notification'
+import { getFingerprint } from '@/utils/fingerprint'
 
 const schema = z.object({
   email: z.string().email({message: "Please enter a valid email"}),
@@ -35,8 +36,10 @@ export default function LoginPage() {
     },
   })
   const {mutateAsync: login, isPending} = useMutation({
-    mutationFn: (data: FormData) => {
-      return axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth`, data, {withCredentials: true})
+    mutationFn: ({data, fingerprint}: {data: FormData, fingerprint: string}) => {
+      return axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth`, data, {withCredentials: true, headers: {
+        "x-fp": fingerprint
+      }})
     },
     onError: (error: unknown) => {
       console.log("error", error)
@@ -62,7 +65,19 @@ export default function LoginPage() {
         })
       }
     },
-    onSuccess: () => {
+    onSuccess: (response: AxiosResponse) => {
+      // Extract token from authorization header
+      console.log("response", response)
+      const authHeader = response.headers.authorization || response.headers.Authorization
+      console.log("authHeader", authHeader)
+      if (authHeader) {
+        // The Authorization header contains "Bearer [token]"
+        // Extract the token part after "Bearer "
+        const token = authHeader.startsWith("Bearer ") ? 
+          authHeader.substring(7) : authHeader;
+        localStorage.setItem('access', token);
+      }
+      
       setNotification({
         variant: "success",
         title: "Welcome Back!",
@@ -76,7 +91,8 @@ export default function LoginPage() {
 
   async function onSubmit(data: FormData) {
     setNotification(null)
-    await login(data)
+    const fingerprint = await getFingerprint()
+    await login({data, fingerprint})
   }
 
   return (
