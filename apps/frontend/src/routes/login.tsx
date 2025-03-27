@@ -4,7 +4,8 @@ import { EyeIcon, EyeOffIcon } from "lucide-react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import axios, { AxiosHeaders, AxiosResponse } from 'axios'
+import {  AxiosResponse, AxiosError } from 'axios'
+import api from '@/utils/axios'
 import { useMutation } from '@tanstack/react-query'
 import { Notification } from '../components/ui/notification'
 import { getFingerprint } from '@/utils/fingerprint'
@@ -37,13 +38,13 @@ export default function LoginPage() {
   })
   const {mutateAsync: login, isPending} = useMutation({
     mutationFn: ({data, fingerprint}: {data: FormData, fingerprint: string}) => {
-      return axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth`, data, {withCredentials: true, headers: {
+      return api.post(`/auth`, data, {headers: {
         "x-fp": fingerprint
       }})
     },
     onError: (error: unknown) => {
       console.log("error", error)
-      if (axios.isAxiosError(error)) {
+      if (error instanceof AxiosError) {
         if (error.response?.status === 401) {
           setNotification({
             variant: "error",
@@ -66,18 +67,6 @@ export default function LoginPage() {
       }
     },
     onSuccess: (response: AxiosResponse) => {
-      // Extract token from authorization header
-      console.log("response", response)
-      const authHeader = response.headers.authorization || response.headers.Authorization
-      console.log("authHeader", authHeader)
-      if (authHeader) {
-        // The Authorization header contains "Bearer [token]"
-        // Extract the token part after "Bearer "
-        const token = authHeader.startsWith("Bearer ") ? 
-          authHeader.substring(7) : authHeader;
-        localStorage.setItem('access', token);
-      }
-      
       setNotification({
         variant: "success",
         title: "Welcome Back!",
