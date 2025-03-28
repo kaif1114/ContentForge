@@ -12,7 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as RegisterImport } from './routes/register'
-import { Route as NotificationsDemoImport } from './routes/notifications-demo'
+import { Route as OauthCallbackImport } from './routes/oauth-callback'
 import { Route as LoginImport } from './routes/login'
 import { Route as SidebarLayoutRouteImport } from './routes/_sidebarLayout/route'
 import { Route as IndexImport } from './routes/index'
@@ -28,9 +28,9 @@ const RegisterRoute = RegisterImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const NotificationsDemoRoute = NotificationsDemoImport.update({
-  id: '/notifications-demo',
-  path: '/notifications-demo',
+const OauthCallbackRoute = OauthCallbackImport.update({
+  id: '/oauth-callback',
+  path: '/oauth-callback',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -94,11 +94,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
-    '/notifications-demo': {
-      id: '/notifications-demo'
-      path: '/notifications-demo'
-      fullPath: '/notifications-demo'
-      preLoaderRoute: typeof NotificationsDemoImport
+    '/oauth-callback': {
+      id: '/oauth-callback'
+      path: '/oauth-callback'
+      fullPath: '/oauth-callback'
+      preLoaderRoute: typeof OauthCallbackImport
       parentRoute: typeof rootRoute
     }
     '/register': {
@@ -153,7 +153,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof SidebarLayoutRouteRouteWithChildren
   '/login': typeof LoginRoute
-  '/notifications-demo': typeof NotificationsDemoRoute
+  '/oauth-callback': typeof OauthCallbackRoute
   '/register': typeof RegisterRoute
   '/posts': typeof SidebarLayoutPostsRoute
   '/sources': typeof SidebarLayoutSourcesRoute
@@ -164,7 +164,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof SidebarLayoutRouteRouteWithChildren
   '/login': typeof LoginRoute
-  '/notifications-demo': typeof NotificationsDemoRoute
+  '/oauth-callback': typeof OauthCallbackRoute
   '/register': typeof RegisterRoute
   '/posts': typeof SidebarLayoutPostsRoute
   '/sources': typeof SidebarLayoutSourcesRoute
@@ -176,7 +176,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_sidebarLayout': typeof SidebarLayoutRouteRouteWithChildren
   '/login': typeof LoginRoute
-  '/notifications-demo': typeof NotificationsDemoRoute
+  '/oauth-callback': typeof OauthCallbackRoute
   '/register': typeof RegisterRoute
   '/_sidebarLayout/posts': typeof SidebarLayoutPostsRoute
   '/_sidebarLayout/sources': typeof SidebarLayoutSourcesRoute
@@ -189,7 +189,7 @@ export interface FileRouteTypes {
     | '/'
     | ''
     | '/login'
-    | '/notifications-demo'
+    | '/oauth-callback'
     | '/register'
     | '/posts'
     | '/sources'
@@ -199,7 +199,7 @@ export interface FileRouteTypes {
     | '/'
     | ''
     | '/login'
-    | '/notifications-demo'
+    | '/oauth-callback'
     | '/register'
     | '/posts'
     | '/sources'
@@ -209,7 +209,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_sidebarLayout'
     | '/login'
-    | '/notifications-demo'
+    | '/oauth-callback'
     | '/register'
     | '/_sidebarLayout/posts'
     | '/_sidebarLayout/sources'
@@ -221,7 +221,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SidebarLayoutRouteRoute: typeof SidebarLayoutRouteRouteWithChildren
   LoginRoute: typeof LoginRoute
-  NotificationsDemoRoute: typeof NotificationsDemoRoute
+  OauthCallbackRoute: typeof OauthCallbackRoute
   RegisterRoute: typeof RegisterRoute
 }
 
@@ -229,7 +229,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SidebarLayoutRouteRoute: SidebarLayoutRouteRouteWithChildren,
   LoginRoute: LoginRoute,
-  NotificationsDemoRoute: NotificationsDemoRoute,
+  OauthCallbackRoute: OauthCallbackRoute,
   RegisterRoute: RegisterRoute,
 }
 
@@ -246,7 +246,7 @@ export const routeTree = rootRoute
         "/",
         "/_sidebarLayout",
         "/login",
-        "/notifications-demo",
+        "/oauth-callback",
         "/register"
       ]
     },
@@ -264,8 +264,8 @@ export const routeTree = rootRoute
     "/login": {
       "filePath": "login.tsx"
     },
-    "/notifications-demo": {
-      "filePath": "notifications-demo.tsx"
+    "/oauth-callback": {
+      "filePath": "oauth-callback.tsx"
     },
     "/register": {
       "filePath": "register.tsx"

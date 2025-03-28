@@ -21,6 +21,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => {
     const authHeader = response.headers.authorization || response.headers.Authorization 
+    console.log("authHeader", authHeader)
     if (authHeader) {
       const token = authHeader.startsWith("Bearer ") ? 
         authHeader.substring(7) : authHeader;

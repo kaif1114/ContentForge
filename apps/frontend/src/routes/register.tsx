@@ -212,6 +212,9 @@ export default function RegistrationPage() {
                 variant="outline"
                 className="flex-1 rounded-full h-12 border-gray-300 bg-transparent hover:bg-gray-100/50 text-black font-medium"
                 disabled={isPending || isSuccess}
+                onClick={() => {
+                  window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`
+                }}
               >
                 <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path

@@ -163,7 +163,9 @@ export default function LoginPage() {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <button className="flex items-center justify-center rounded-full border border-gray-200 py-3 text-sm">
+          <button onClick={()=>{
+            window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`
+          }} className="flex items-center justify-center rounded-full border border-gray-200 py-3 text-sm">
             <svg
               className="mr-2"
               width="20"
@@ -219,11 +221,7 @@ export default function LoginPage() {
               Sign up
             </a>
           </p>
-          <p className="mt-2 text-xs text-gray-400">
-            <Link to="/notifications-demo" className="text-[#45c19a] hover:underline">
-              View Notification Components
-            </Link>
-          </p>
+         
         </div>
       </div>
     </div>

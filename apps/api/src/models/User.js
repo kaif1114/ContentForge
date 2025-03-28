@@ -1,7 +1,11 @@
-import mongoose from "mongoose"
+import mongoose, { mongo } from "mongoose"
 import z from "zod";
 
 const schema = new mongoose.Schema({
+    googleId: {
+        type: String,
+        unique: true
+    },
     name: {
         type: String,
         required: true,
@@ -21,10 +25,12 @@ const schema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
-        minlength: 8,
         maxlength: 1024
     },
+    isGoogleUser: {
+        type: Boolean,
+        default: false
+    }
 })
 
 
