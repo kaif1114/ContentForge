@@ -2,7 +2,7 @@ import User, {userSchema} from "../../models/User.js";
 import bcrypt from "bcrypt";
 import { generateAuthToken, generateRefreshToken } from "../../services/tokens.js";
 
-const saltRounds = 30;
+const saltRounds = 10;
 
 export default async function register(req, res)  {
     const validation = userSchema.safeParse(req.body);

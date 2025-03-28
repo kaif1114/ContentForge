@@ -4,7 +4,7 @@ import { EyeIcon, EyeOffIcon } from "lucide-react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import {  AxiosResponse, AxiosError } from 'axios'
+import {  AxiosError } from 'axios'
 import api from '@/utils/axios'
 import { useMutation } from '@tanstack/react-query'
 import { Notification } from '../components/ui/notification'
@@ -66,7 +66,7 @@ export default function LoginPage() {
         })
       }
     },
-    onSuccess: (response: AxiosResponse) => {
+    onSuccess: () => {
       setNotification({
         variant: "success",
         title: "Welcome Back!",
@@ -212,14 +212,14 @@ export default function LoginPage() {
         </div>
 
         <div className="mt-6 text-center">
-          <a href="#" className="text-sm text-[#45c19a]">
+          {/* <Link to="/forgot-password" className="text-sm text-[#45c19a]">
             Forgot password?
-          </a>
+          </Link> */}
           <p className="mt-4 text-sm text-gray-600">
             Don't have an account?{" "}
-            <a href="#" className="text-[#45c19a]">
+            <Link to="/register" className="text-[#45c19a]">
               Sign up
-            </a>
+            </Link>
           </p>
          
         </div>
