@@ -2,10 +2,6 @@ import mongoose, { mongo } from "mongoose"
 import z from "zod";
 
 const schema = new mongoose.Schema({
-    googleId: {
-        type: String,
-        unique: true
-    },
     name: {
         type: String,
         required: true,
@@ -30,7 +26,14 @@ const schema = new mongoose.Schema({
     isGoogleUser: {
         type: Boolean,
         default: false
-    }
+    },
+    googleId: {
+        type: String,
+        unique: (props) => props.isGoogleUser,
+        sparse: true,
+        required: (props) => props.isGoogleUser,
+        maxlength: 255
+    },
 })
 
 

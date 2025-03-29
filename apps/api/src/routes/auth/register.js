@@ -19,7 +19,7 @@ export default async function register(req, res)  {
         return res.status(400).json({ error: "Fingerprint is required" });
     }
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const user = await User.create({ name, email, password: hashedPassword, fingerprint });
+    const user = await User.create({ name, email, password: hashedPassword, fingerprint, isGoogleUser: false });
 
     const token = generateAuthToken(user._id, fingerprint, `${process.env.ACCESS_TOKEN_EXPIRATION_MINUTES || 15}m`);
     const refreshToken = generateRefreshToken(user._id, fingerprint, `${process.env.REFRESH_TOKEN_EXPIRATION_DAYS || 7}d`)

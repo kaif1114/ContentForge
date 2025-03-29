@@ -6,6 +6,7 @@ import { auth } from "../../middleware/auth.js";
 import passport from "passport";
 import login from "./login.js";
 import { completeOAuth, startOAuth, googleStrategy } from "./google.js";
+import me from "./me.js";
 
 const router = express.Router();
 passport.use(googleStrategy);
@@ -14,7 +15,7 @@ router.post("/", login);
 router.get("/refresh", refresh);
 router.post("/register", register);
 router.get("/google", startOAuth);
-
+router.get("/me", auth, me);
 router.get("/google/callback", 
     passport.authenticate('google', { 
         session: false,

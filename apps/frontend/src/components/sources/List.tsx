@@ -1,8 +1,9 @@
 import type { ContentSource } from "@/types/content-sources"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Eye, Youtube, Globe, Calendar } from "lucide-react"
+import { Eye, Youtube, Globe } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
+import { motion } from "framer-motion"
 // import { formatDistanceToNow } from "date-fns"
 
 // Function to truncate URL to 30 characters
@@ -21,17 +22,15 @@ export function ContentSourcesList({ sources, isLoading, onViewContent }: Conten
     return (
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
-          <Card key={i} className="overflow-hidden bg-gray-50 border-0 rounded-lg shadow-sm">
-            <CardContent className="p-0">
-              <div className="p-6 flex items-center justify-between">
-                <div className="space-y-2">
-                  <Skeleton className="h-5 w-40" />
-                  <Skeleton className="h-4 w-60" />
-                  <Skeleton className="h-4 w-32" />
-                </div>
-                <Skeleton className="h-9 w-28" />
+          <Card key={i} className="overflow-hidden bg-white border border-gray-100 rounded-2xl shadow-sm">
+            <div className="p-6 flex items-center justify-between">
+              <div className="space-y-2">
+                <Skeleton className="h-5 w-40" />
+                <Skeleton className="h-4 w-60" />
+                <Skeleton className="h-4 w-32" />
               </div>
-            </CardContent>
+              <Skeleton className="h-9 w-28" />
+            </div>
           </Card>
         ))}
       </div>
@@ -40,33 +39,64 @@ export function ContentSourcesList({ sources, isLoading, onViewContent }: Conten
 
   if (sources.length === 0) {
     return (
-      <Card className="bg-gray-50 border-0 rounded-lg shadow-sm">
-        <CardContent className="p-6 text-center">
+      <Card className="bg-white border border-gray-100 rounded-2xl shadow-sm">
+        <div className="p-6 text-center">
           <p className="text-muted-foreground">No content sources found. Add your first source to get started.</p>
-        </CardContent>
+        </div>
       </Card>
     )
   }
 
   return (
-    <div className="space-y-4 ">
+    <div className="space-y-4">
       {sources.map((source) => (
-        <div key={source.id} className="bg-gray-50 border-0 rounded-lg shadow-sm flex items-center py-5 blue">
-          <div className="flex flex-col justify-center items-center  px-8">
-            <p className="font-semibold">Type</p>
-            {source.type === "youtube" ? <Youtube width={40} height={40}/> : <Globe width={40} height={40}/>}
+        <motion.div
+          key={source.id}
+          initial={{ scale: 1 }}
+          whileHover={{ 
+            scale: 1.01,
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+            transition: { duration: 0.2 }
+          }}
+          className="bg-white border border-gray-100 rounded-2xl overflow-hidden"
+        >
+          <div className="p-6">
+            <div className="flex items-center gap-3 mb-4">
+              {source.type === "youtube" ? (
+                <Youtube className="w-6 h-6 text-gray-600" />
+              ) : (
+                <Globe className="w-6 h-6 text-gray-600" />
+              )}
+              <h3 className="font-semibold text-lg">{source.label}</h3>
+            </div>
+            
+            <a 
+              href={source.url}
+              target="_blank"
+              rel="noopener noreferrer" 
+              className="text-blue-600 hover:underline text-sm mb-4 block"
+            >
+              {truncateUrl(source.url)}
+            </a>
+
+            <p className="text-gray-600 text-sm mb-4">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi, numquam?
+            </p>
+
+            <div className="flex items-center justify-between">
+              <span className="text-gray-500 text-sm">Added October 31st</span>
+              <Button
+                onClick={() => onViewContent(source)}
+                variant="ghost"
+                size="sm"
+                className="text-gray-600 hover:text-gray-900"
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                View Content
+              </Button>
+            </div>
           </div>
-          <div className="h-18 w-px bg-gray-300 mx-2"></div>
-          <div className="flex flex-col gap-2 px-8 min-w-xs">
-            <p className="w-max font-semibold">{source.label}</p>
-            <p title={source.url}>{truncateUrl(source.url)}</p>
-          </div>
-          <div className="flex flex-col gap-2 px-8">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi, numquam?</p>
-            <p>October 31st</p>
-          </div>
-          <div className="flex-col"></div>
-        </div>
+        </motion.div>
       ))}
     </div>
   )

@@ -16,6 +16,11 @@ export const postSchema = new mongoose.Schema({
 });
 
 const contentSchema = new mongoose.Schema({
+  label: {
+    type: String,
+    required: true,
+    maxLength: 255,
+  },
   url: {
     type: String,
     required: true,
@@ -36,9 +41,13 @@ const contentSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-export const Content = mongoose.model("Content", contentSchema);
+const Content = mongoose.model("Content", contentSchema);
 export const Post = mongoose.model("Post", postSchema);
 
 export default Content;

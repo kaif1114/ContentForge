@@ -1,88 +1,92 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog"
+import { Badge } from "@/components/ui/badge"
+import { Calendar, ExternalLink, X, Youtube } from "lucide-react"
+import type { ContentSource } from "@/types/content-sources"
+import { Separator } from "@/components/ui/separator"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
-import { Loader2, X } from "lucide-react"
-import type { ContentSource, ScrapedContent } from "@/types/content-sources"
-
 
 interface ContentViewModalProps {
   source: ContentSource
-  content: ScrapedContent | null
-  isLoading: boolean
   onClose: () => void
+  open: boolean
 }
 
-export function ContentViewModal({ source, content, isLoading, onClose }: ContentViewModalProps) {
+export function ContentViewModal({
+  source,
+  onClose,
+  open,
+}: ContentViewModalProps) {
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
   return (
-    <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader className="flex flex-row items-center justify-between">
-          <DialogTitle>{source.label}</DialogTitle>
-          <DialogClose asChild>
-            <Button variant="ghost" size="icon" onClick={onClose}>
-              <X className="h-4 w-4" />
-            </Button>
-          </DialogClose>
-        </DialogHeader>
-
-        <div className="mt-4">
-          <div className="text-sm text-muted-foreground mb-4">
-            Source:{" "}
-            <a
-              href={source.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-wayflyer-green hover:underline"
-            >
-              {source.url}
-            </a>
+    <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-3xl max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden">
+        <DialogHeader className="p-4 pb-2 shrink-0">
+          <div className="flex items-start justify-between">
+            <DialogTitle className="text-xl font-bold pr-8">
+              {source.label}
+            </DialogTitle>
+            <DialogClose asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                <X className="h-4 w-4" />
+                <span className="sr-only">Close</span>
+              </Button>
+            </DialogClose>
           </div>
-
-          {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-wayflyer-green mb-4" />
-              <p className="text-muted-foreground">Fetching content...</p>
+          
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            <Badge variant={source.type === "youtube" ? "destructive" : "secondary"} className="flex items-center gap-1">
+              {source.type === "youtube" ? (
+                <>
+                  <Youtube className="h-3 w-3" />
+                  YouTube
+                </>
+              ) : (
+                <>
+                  <ExternalLink className="h-3 w-3" />
+                  URL
+                </>
+              )}
+            </Badge>
+            <div className="text-sm text-muted-foreground flex items-center gap-1">
+              <Calendar className="h-3 w-3" />
+              Added on {formatDate(source.createdAt)}
             </div>
-          ) : content ? (
-            <div className="space-y-6">
-              <h2 className="text-xl font-semibold">{content.title}</h2>
-
-              <div className="space-y-4">
-                {content.content.map((item, index) => (
-                  <div key={index}>
-                    {item.type === "text" ? (
-                      <p className="text-sm leading-relaxed">{item.content}</p>
-                    ) : item.type === "video" ? (
-                      <div className="aspect-video relative rounded-md overflow-hidden">
-                        <div className="bg-black/5 flex items-center justify-center">
-                          <img
-                            src={item.thumbnail || "/placeholder.svg?height=180&width=320"}
-                            alt="Video thumbnail"
-                            width={640}
-                            height={360}
-                            className="object-cover"
-                          />
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <Button className="bg-wayflyer-green hover:bg-wayflyer-green/90">Play Video</Button>
-                          </div>
-                        </div>
-                      </div>
-                    ) : null}
-                  </div>
-                ))}
+          </div>
+          
+          <a 
+            href={source.url} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-sm text-blue-500 hover:underline flex items-center gap-1 mt-2 max-w-full"
+          >
+            <ExternalLink className="h-3 w-3 flex-shrink-0" />
+            <span className="truncate">{source.url}</span>
+          </a>
+        </DialogHeader>
+        
+        <Separator className="shrink-0" />
+        
+        <div className="flex-1 min-h-0 overflow-hidden">
+          <ScrollArea className="h-full w-full">
+            <div className="p-4">
+              <div className="prose prose-sm dark:prose-invert max-w-none">
+                <div 
+                  dangerouslySetInnerHTML={{ __html: source.content }} 
+                  className="break-words [&_img]:max-w-full [&_pre]:overflow-x-auto [&_table]:w-full [&_table]:table-fixed"
+                />
               </div>
-
-              <div className="text-xs text-muted-foreground pt-4 border-t">
-                Last updated: {new Date(content.lastUpdated).toLocaleString()}
-              </div>
             </div>
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">No content available for this source.</p>
-            </div>
-          )}
+          </ScrollArea>
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
-
