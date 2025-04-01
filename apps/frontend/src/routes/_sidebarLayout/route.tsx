@@ -1,10 +1,14 @@
 import { Sidebar } from '@/components/Sidebar'
 import { TopBar } from '@/components/Topbar'
+import { checkAuth } from '@/utils/auth'
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 
 
 export const Route = createFileRoute('/_sidebarLayout')({
   component: SidebarLayout,
+  beforeLoad: async ({ location }) => {
+    await checkAuth(location.href)
+  }
 })
 
 export default function SidebarLayout() {

@@ -28,7 +28,6 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => {
     const authHeader = response.headers.authorization || response.headers.Authorization 
-    console.log("authHeader", authHeader)
     if (authHeader) {
       const token = authHeader.startsWith("Bearer ") ? 
         authHeader.substring(7) : authHeader;
@@ -36,7 +35,26 @@ api.interceptors.response.use(
     }
     return response;
   },
-  (error) => {
+  async (error) => {
+    if(error.response?.status === 403){
+      try {
+        const refreshResponse = await api.get("/auth/refresh", {
+          skipAuthRefresh: true
+        });
+        
+        if (refreshResponse.status === 200) {
+          const originalRequest = error.config;
+          originalRequest.skipAuthRefresh = true;
+          return api(originalRequest);
+        }
+      } catch (refreshError) {
+        localStorage.removeItem("access");
+        if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {
+          window.location.href = "/login";
+        }
+        return Promise.reject(refreshError);
+      }
+    }
     if (error.response?.status === 401 && !error.config.skipAuthRefresh) {
       localStorage.removeItem("access");
       if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {

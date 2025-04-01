@@ -71,14 +71,14 @@ export function Sidebar() {
 
       <div className="mt-2 space-y-1">
        {topNavigation.map((item) => (
-        <Link to={item.href}><SidebarItem key={item.label} {...item} /></Link>
+        <Link to={item.href} key={item.label}><SidebarItem  {...item}  /></Link>
        ))}
 
 
         <div className="border-t my-2 border-gray-100" />
         {
           bottomNavigation.map((item) => (
-            <Link to={item.href}><SidebarItem key={item.label} {...item} /></Link>
+            <Link to={item.href} key={item.label} ><SidebarItem {...item}  /></Link>
           ))
         }
 

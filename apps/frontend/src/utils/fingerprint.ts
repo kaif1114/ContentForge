@@ -141,7 +141,6 @@ async function collectFingerprintComponents(): Promise<FingerprintComponents> {
     } catch (error) {
         console.warn('Advanced fingerprinting failed:', error);
     }
-    console.log("components", components);
     return components;
 }
 
@@ -285,7 +284,6 @@ export async function getFingerprint(): Promise<string> {
             components: components
         };
         
-        console.log("fingerprintData", fingerprintData);
         // Create a deterministic JSON string (sort keys alphabetically)
         const fingerprintString = JSON.stringify(fingerprintData, Object.keys(fingerprintData).sort());
         
