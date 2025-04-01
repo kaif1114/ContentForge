@@ -42,10 +42,13 @@ export default function RouteComponent() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-4xl font-bold pt-4 pb-8">Content Sources</h1>
-          <Button onClick={() => setShowAddModal(true)} className="bg-wayflyer-green hover:bg-wayflyer-green/90">
-            <Plus className="w-4 h-4 mr-2" />
-            Add Source
-          </Button>
+          <button 
+            onClick={() => setShowAddModal(true)} 
+            className="flex items-center justify-center gap-1 bg-gradient-to-b from-[#b3dcc7] to-[#a0d2ba] text-white font-medium py-3 px-6 rounded-2xl hover:opacity-90 transition-all"
+          >
+            <Plus className="w-4 h-4 text-white" />
+            <span>Add Source</span>
+          </button>
         </div>
 
         {/* Content Sources List */}

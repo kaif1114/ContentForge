@@ -20,7 +20,7 @@ export function TopBar() {
   }
 
   return (
-    <div className="bg-white rounded-full shadow-sm h-13 px-6 flex items-center justify-between">
+    <div className="rounded-full h-13 px-6 flex items-center justify-between">
       {/* Logo section */}
       <div className="flex items-center gap-2">
         <div className="w-10 h-10 rounded-full bg-wayflyer-green flex items-center justify-center">
@@ -32,12 +32,12 @@ export function TopBar() {
       </div>
 
       {/* Search bar centered */}
-      <div className="relative max-w-md w-full mx-4">
+      {/* <div className="relative max-w-md w-full mx-4">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <Search className="h-4 w-4 text-gray-400" />
         </div>
         <Input className="pl-10 bg-gray-100 border-0 rounded-full h-8" placeholder="What are you looking for?" />
-      </div>
+      </div> */}
 
       {/* User profile section */}
       <div className="flex items-center gap-3">

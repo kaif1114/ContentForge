@@ -22,7 +22,7 @@ export function ContentSourcesList({ sources, isLoading, onViewContent }: Conten
     return (
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
-          <Card key={i} className="overflow-hidden bg-white border border-gray-100 rounded-2xl shadow-sm">
+          <Card key={i} className="overflow-hidden bg-[#DEF0EA] border border-gray-100 rounded-2xl shadow-sm">
             <div className="p-6 flex items-center justify-between">
               <div className="space-y-2">
                 <Skeleton className="h-5 w-40" />
@@ -39,7 +39,7 @@ export function ContentSourcesList({ sources, isLoading, onViewContent }: Conten
 
   if (sources.length === 0) {
     return (
-      <Card className="bg-white border border-gray-100 rounded-2xl shadow-sm">
+      <Card className="bg-[#DEF0EA] border border-gray-100 rounded-2xl shadow-sm">
         <div className="p-6 text-center">
           <p className="text-muted-foreground">No content sources found. Add your first source to get started.</p>
         </div>
@@ -58,7 +58,7 @@ export function ContentSourcesList({ sources, isLoading, onViewContent }: Conten
             boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
             transition: { duration: 0.2 }
           }}
-          className="bg-white border border-gray-100 rounded-2xl overflow-hidden"
+          className="bg-[#DEF0EA] border border-gray-100 rounded-2xl overflow-hidden"
         >
           <div className="p-6">
             <div className="flex items-center gap-3 mb-4">

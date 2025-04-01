@@ -14,7 +14,7 @@ export const Route = createFileRoute('/_sidebarLayout')({
 export default function SidebarLayout() {
   return (
      
-      <div className="min-h-screen wayflyer-gradient font-inter  p-4">
+      <div className="min-h-screen font-inter p-4" style={{ background: 'linear-gradient(to bottom, #E1F2EC, #F7FEFC)' }}>
         <TopBar />
         <div className="flex gap-4 mt-4">
           <Sidebar />
