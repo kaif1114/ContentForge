@@ -38,9 +38,12 @@ export default function LoginPage() {
   })
   const {mutateAsync: login, isPending} = useMutation({
     mutationFn: ({data, fingerprint}: {data: FormData, fingerprint: string}) => {
-      return api.post(`/auth`, data, {headers: {
-        "x-fp": fingerprint
-      }})
+      return api.post(`/auth`, data, {
+        headers: {
+          "x-fp": fingerprint
+        },
+        skipAuthRefresh: true
+      })
     },
     onError: (error: unknown) => {
       console.log("error", error)
