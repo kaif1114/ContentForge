@@ -7,6 +7,7 @@ import passport from "passport";
 import login from "./login.js";
 import { completeOAuth, startOAuth, googleStrategy } from "./google.js";
 import me from "./me.js";
+import logout from "./logout.js";
 
 const router = express.Router();
 passport.use(googleStrategy);
@@ -16,6 +17,10 @@ router.get("/refresh", refresh);
 router.post("/register", register);
 router.get("/google", startOAuth);
 router.get("/me", auth, me);
+router.get("/verify", auth, verify);
+router.get("/logout", auth, logout);
+
+
 router.get("/google/callback", 
     passport.authenticate('google', { 
         session: false,
@@ -28,5 +33,5 @@ router.get("/google/callback",
 
 router.post("/complete-oauth", completeOAuth);
 
-router.get("/verify", auth, verify);
+
 export default router;

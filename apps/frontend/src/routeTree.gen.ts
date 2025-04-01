@@ -18,6 +18,7 @@ import { Route as SidebarLayoutRouteImport } from './routes/_sidebarLayout/route
 import { Route as IndexImport } from './routes/index'
 import { Route as SidebarLayoutTopicsImport } from './routes/_sidebarLayout/topics'
 import { Route as SidebarLayoutSourcesImport } from './routes/_sidebarLayout/sources'
+import { Route as SidebarLayoutSettingsImport } from './routes/_sidebarLayout/settings'
 import { Route as SidebarLayoutPostsImport } from './routes/_sidebarLayout/posts'
 
 // Create/Update Routes
@@ -60,6 +61,12 @@ const SidebarLayoutTopicsRoute = SidebarLayoutTopicsImport.update({
 const SidebarLayoutSourcesRoute = SidebarLayoutSourcesImport.update({
   id: '/sources',
   path: '/sources',
+  getParentRoute: () => SidebarLayoutRouteRoute,
+} as any)
+
+const SidebarLayoutSettingsRoute = SidebarLayoutSettingsImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => SidebarLayoutRouteRoute,
 } as any)
 
@@ -115,6 +122,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SidebarLayoutPostsImport
       parentRoute: typeof SidebarLayoutRouteImport
     }
+    '/_sidebarLayout/settings': {
+      id: '/_sidebarLayout/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SidebarLayoutSettingsImport
+      parentRoute: typeof SidebarLayoutRouteImport
+    }
     '/_sidebarLayout/sources': {
       id: '/_sidebarLayout/sources'
       path: '/sources'
@@ -136,12 +150,14 @@ declare module '@tanstack/react-router' {
 
 interface SidebarLayoutRouteRouteChildren {
   SidebarLayoutPostsRoute: typeof SidebarLayoutPostsRoute
+  SidebarLayoutSettingsRoute: typeof SidebarLayoutSettingsRoute
   SidebarLayoutSourcesRoute: typeof SidebarLayoutSourcesRoute
   SidebarLayoutTopicsRoute: typeof SidebarLayoutTopicsRoute
 }
 
 const SidebarLayoutRouteRouteChildren: SidebarLayoutRouteRouteChildren = {
   SidebarLayoutPostsRoute: SidebarLayoutPostsRoute,
+  SidebarLayoutSettingsRoute: SidebarLayoutSettingsRoute,
   SidebarLayoutSourcesRoute: SidebarLayoutSourcesRoute,
   SidebarLayoutTopicsRoute: SidebarLayoutTopicsRoute,
 }
@@ -156,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/oauth-callback': typeof OauthCallbackRoute
   '/register': typeof RegisterRoute
   '/posts': typeof SidebarLayoutPostsRoute
+  '/settings': typeof SidebarLayoutSettingsRoute
   '/sources': typeof SidebarLayoutSourcesRoute
   '/topics': typeof SidebarLayoutTopicsRoute
 }
@@ -167,6 +184,7 @@ export interface FileRoutesByTo {
   '/oauth-callback': typeof OauthCallbackRoute
   '/register': typeof RegisterRoute
   '/posts': typeof SidebarLayoutPostsRoute
+  '/settings': typeof SidebarLayoutSettingsRoute
   '/sources': typeof SidebarLayoutSourcesRoute
   '/topics': typeof SidebarLayoutTopicsRoute
 }
@@ -179,6 +197,7 @@ export interface FileRoutesById {
   '/oauth-callback': typeof OauthCallbackRoute
   '/register': typeof RegisterRoute
   '/_sidebarLayout/posts': typeof SidebarLayoutPostsRoute
+  '/_sidebarLayout/settings': typeof SidebarLayoutSettingsRoute
   '/_sidebarLayout/sources': typeof SidebarLayoutSourcesRoute
   '/_sidebarLayout/topics': typeof SidebarLayoutTopicsRoute
 }
@@ -192,6 +211,7 @@ export interface FileRouteTypes {
     | '/oauth-callback'
     | '/register'
     | '/posts'
+    | '/settings'
     | '/sources'
     | '/topics'
   fileRoutesByTo: FileRoutesByTo
@@ -202,6 +222,7 @@ export interface FileRouteTypes {
     | '/oauth-callback'
     | '/register'
     | '/posts'
+    | '/settings'
     | '/sources'
     | '/topics'
   id:
@@ -212,6 +233,7 @@ export interface FileRouteTypes {
     | '/oauth-callback'
     | '/register'
     | '/_sidebarLayout/posts'
+    | '/_sidebarLayout/settings'
     | '/_sidebarLayout/sources'
     | '/_sidebarLayout/topics'
   fileRoutesById: FileRoutesById
@@ -257,6 +279,7 @@ export const routeTree = rootRoute
       "filePath": "_sidebarLayout/route.tsx",
       "children": [
         "/_sidebarLayout/posts",
+        "/_sidebarLayout/settings",
         "/_sidebarLayout/sources",
         "/_sidebarLayout/topics"
       ]
@@ -272,6 +295,10 @@ export const routeTree = rootRoute
     },
     "/_sidebarLayout/posts": {
       "filePath": "_sidebarLayout/posts.tsx",
+      "parent": "/_sidebarLayout"
+    },
+    "/_sidebarLayout/settings": {
+      "filePath": "_sidebarLayout/settings.tsx",
       "parent": "/_sidebarLayout"
     },
     "/_sidebarLayout/sources": {

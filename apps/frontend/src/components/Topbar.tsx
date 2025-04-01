@@ -1,7 +1,24 @@
-import { Bell, Search, User, Squirrel } from "lucide-react"
+import { Bell, Search, User, Squirrel, Settings, LogOut } from "lucide-react"
 import { Input } from "@/components/ui/input"
-
+import { Link } from "@tanstack/react-router"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import  api  from "@/utils/axios"
 export function TopBar() {
+  const handleLogout = async () => {
+    localStorage.removeItem("access")
+    try {
+      await api.get("/auth/logout")
+      window.location.href = "/login"
+    } catch (error) {
+      console.error("Logout failed:", error)
+    }
+  }
+
   return (
     <div className="bg-white rounded-full shadow-sm h-13 px-6 flex items-center justify-between">
       {/* Logo section */}
@@ -30,16 +47,30 @@ export function TopBar() {
             <span className="text-white text-xs font-bold">1</span>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center text-white">
-            <User className="w-4 h-4" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-bold">Kaif</span>
-            <span className="text-xs text-gray-500">Muhammad Kaif</span>
-          </div>
-          <div className="text-gray-400 ml-1">▼</div>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
+            <div className="bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center text-white">
+              <User className="w-4 h-4" />
+            </div>
+            <div className="flex flex-col items-start">
+              <span className="text-sm font-bold">Kaif</span>
+              <span className="text-xs text-gray-500">Muhammad Kaif</span>
+            </div>
+            <div className="text-gray-400 ml-1">▼</div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem asChild>
+              <Link to="/settings" className="flex items-center gap-2">
+                <Settings className="w-4 h-4" />
+                <span>Settings</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-red-600">
+              <LogOut className="w-4 h-4" />
+              <span>Logout</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   )
