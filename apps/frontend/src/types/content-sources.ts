@@ -1,5 +1,5 @@
 export interface ContentSource {
-    id: string
+    _id: string
     label: string
     url: string
     type: "url" | "youtube"

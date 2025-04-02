@@ -17,28 +17,22 @@ export const Route = createFileRoute('/_sidebarLayout/sources')({
 
 export default function RouteComponent() {
 
-  const { data: sources, isLoading, isError, error } = useContentSources();
+  const { data: sources, isLoading, isError, error, refetch } = useContentSources();
   const [showAddModal, setShowAddModal] = useState(false)
   const [selectedSource, setSelectedSource] = useState<ContentSource | null>(null)
-  const [isViewLoading, setIsViewLoading] = useState(false)
 
 
   const handleViewContent = (source: ContentSource) => {
     setSelectedSource(source)
   }
 
-  const handleAddSource = async () => {
+  const handleRetry = () => {
+    refetch();
   }
-  if(isError){
-    return <div>Error: {error?.message}</div>
-  }
-  if(isLoading){
-    return <div>Loading...</div>
-  }
-  if(sources)
+
   return (
     <>
-      <div className="space-y-6 px-8">
+      <div className="space-y-6 px-2">
         {/* Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-4xl font-bold pt-4 pb-8">Content Sources</h1>
@@ -52,10 +46,17 @@ export default function RouteComponent() {
         </div>
 
         {/* Content Sources List */}
-        <ContentSourcesList sources={sources.data} isLoading={isLoading} onViewContent={handleViewContent} />
+        <ContentSourcesList 
+          sources={sources?.data || []} 
+          onViewContent={handleViewContent}
+          isLoading={isLoading}
+          isError={isError}
+          errorMessage="Failed to load content sources. Please try again."
+          onRetry={handleRetry}
+        />
 
         {/* Add Content Source Modal */}
-        <AddSourceModal open={showAddModal} onOpenChange={setShowAddModal} onSubmit={handleAddSource} />
+        <AddSourceModal open={showAddModal} onOpenChange={setShowAddModal} onAdd={async ()=> await refetch()} />
 
         
         {selectedSource && (

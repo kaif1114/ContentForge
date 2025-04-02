@@ -4,13 +4,15 @@ import { useQuery } from "@tanstack/react-query";
 function useUser() {
     return useQuery({
         queryKey: ["user"],
-        queryFn: () => {
+        queryFn: async () => {
             const user = localStorage.getItem("user");
             if (user) {
                 return JSON.parse(user);
             }
-            else{
-                return api.get("/user");
+            else {
+                const response = await api.get("/auth/me");
+                localStorage.setItem("user", JSON.stringify(response.data))
+                return response.data;
             }
         },
         staleTime: 1000 * 60 * 5,

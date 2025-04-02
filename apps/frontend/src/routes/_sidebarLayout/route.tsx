@@ -14,11 +14,11 @@ export const Route = createFileRoute('/_sidebarLayout')({
 export default function SidebarLayout() {
   return (
      
-      <div className="min-h-screen font-inter p-4" style={{ background: 'linear-gradient(to bottom, #E1F2EC, #F7FEFC)' }}>
+      <div className="min-h-screen font-inter py-2 px-8" style={{ background: 'linear-gradient(to bottom, #E1F2EC, #F7FEFC)' }}>
         <TopBar />
         <div className="flex gap-4 mt-4">
           <Sidebar />
-          <main className="flex-1 px-6 py-4">
+          <main className="flex-1 px-5 py-4">
             <Outlet/>
           </main>
         </div>

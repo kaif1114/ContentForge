@@ -1,4 +1,4 @@
-import { Bell, Search, User, Squirrel, Settings, LogOut } from "lucide-react"
+import { Bell, Search, User, Squirrel, Settings, LogOut, Loader2, AlertCircle } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Link } from "@tanstack/react-router"
 import {
@@ -8,9 +8,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import  api  from "@/utils/axios"
+import useUser from "@/hooks/useUser"
+
+
 export function TopBar() {
+
+  const {data: user, isError, error, isLoading} = useUser()
+
   const handleLogout = async () => {
     localStorage.removeItem("access")
+    localStorage.removeItem("user")
     try {
       await api.get("/auth/logout")
       window.location.href = "/login"
@@ -31,14 +38,6 @@ export function TopBar() {
         <span className="text-md font-bold">Content Creation Made Easier</span>
       </div>
 
-      {/* Search bar centered */}
-      {/* <div className="relative max-w-md w-full mx-4">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <Search className="h-4 w-4 text-gray-400" />
-        </div>
-        <Input className="pl-10 bg-gray-100 border-0 rounded-full h-8" placeholder="What are you looking for?" />
-      </div> */}
-
       {/* User profile section */}
       <div className="flex items-center gap-3">
         <div className="relative">
@@ -50,25 +49,49 @@ export function TopBar() {
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
             <div className="bg-slate-800 w-8 h-8 rounded-full flex items-center justify-center text-white">
-              <User className="w-4 h-4" />
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : isError ? (
+                <AlertCircle className="w-4 h-4 text-red-500" />
+              ) : (
+                <User className="w-4 h-4" />
+              )}
             </div>
             <div className="flex flex-col items-start">
-              <span className="text-sm font-bold">Kaif</span>
-              <span className="text-xs text-gray-500">Muhammad Kaif</span>
+              {isLoading ? (
+                <span className="text-sm font-bold">Loading...</span>
+              ) : isError ? (
+                <span className="text-sm font-bold text-red-500">Error loading user</span>
+              ) : (
+                <>
+                  <span className="text-sm font-bold">{user?.name ?? "N/A"}</span>
+                  <span className="text-xs text-gray-500">{user?.email ?? "N/A"}</span>
+                </>
+              )}
             </div>
             <div className="text-gray-400 ml-1">▼</div>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem asChild>
-              <Link to="/settings" className="flex items-center gap-2">
-                <Settings className="w-4 h-4" />
-                <span>Settings</span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-red-600">
-              <LogOut className="w-4 h-4" />
-              <span>Logout</span>
-            </DropdownMenuItem>
+            {!isLoading && !isError && (
+              <>
+                <DropdownMenuItem asChild>
+                  <Link to="/settings" className="flex items-center gap-2">
+                    <Settings className="w-4 h-4" />
+                    <span>Settings</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-red-600">
+                  <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
+                </DropdownMenuItem>
+              </>
+            )}
+            {isError && (
+              <DropdownMenuItem className="flex items-center gap-2 text-red-600">
+                <AlertCircle className="w-4 h-4" />
+                <span>Failed to load user data</span>
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

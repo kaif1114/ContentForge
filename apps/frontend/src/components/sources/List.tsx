@@ -1,9 +1,10 @@
 import type { ContentSource } from "@/types/content-sources"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Eye, Youtube, Globe } from "lucide-react"
+import { Eye, Youtube, Globe, AlertCircle, RefreshCw } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { motion } from "framer-motion"
+import { format } from "date-fns"
 // import { formatDistanceToNow } from "date-fns"
 
 // Function to truncate URL to 30 characters
@@ -13,30 +14,79 @@ const truncateUrl = (url: string, maxLength: number = 30) => {
 
 interface ContentSourcesListProps {
   sources: ContentSource[]
-  isLoading: boolean
   onViewContent: (source: ContentSource) => void
+  isLoading?: boolean
+  isError?: boolean
+  errorMessage?: string
+  onRetry?: () => void
 }
 
-export function ContentSourcesList({ sources, isLoading, onViewContent }: ContentSourcesListProps) {
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        {[1, 2, 3].map((i) => (
-          <Card key={i} className="overflow-hidden bg-[#DEF0EA] border border-gray-100 rounded-2xl shadow-sm">
-            <div className="p-6 flex items-center justify-between">
-              <div className="space-y-2">
-                <Skeleton className="h-5 w-40" />
-                <Skeleton className="h-4 w-60" />
-                <Skeleton className="h-4 w-32" />
-              </div>
-              <Skeleton className="h-9 w-28" />
+export function ContentSourcesListSkeleton() {
+  return (
+    <div className="space-y-4">
+      {[1, 2, 3].map((index) => (
+        <div 
+          key={index}
+          className="bg-[#DEF0EA] border border-gray-100 rounded-2xl overflow-hidden"
+        >
+          <div className="p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <Skeleton className="w-6 h-6 rounded-full" />
+              <Skeleton className="h-6 w-40" />
             </div>
-          </Card>
-        ))}
-      </div>
-    )
-  }
+            
+            <Skeleton className="h-4 w-60 mb-4" />
 
+            <Skeleton className="h-16 w-full mb-4" />
+
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-8 w-28" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export function ContentSourcesErrorState({ errorMessage, onRetry }: { errorMessage?: string, onRetry?: () => void }) {
+  return (
+    <Card className="bg-[#DEF0EA] border border-gray-100 rounded-2xl shadow-sm">
+      <div className="p-6 text-center flex flex-col items-center">
+        <AlertCircle className="w-10 h-10 text-red-500 mb-4" />
+        <p className="text-red-600 font-medium mb-2">Failed to load content sources</p>
+        <p className="text-muted-foreground mb-4">{errorMessage || "An error occurred while fetching content sources."}</p>
+        {onRetry && (
+          <Button 
+            onClick={onRetry}
+            className="flex items-center gap-2 bg-green-600 text-white hover:bg-green-700"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Retry
+          </Button>
+        )}
+      </div>
+    </Card>
+  )
+}
+
+export function ContentSourcesList({ 
+  sources, 
+  onViewContent, 
+  isLoading = false, 
+  isError = false,
+  errorMessage,
+  onRetry 
+}: ContentSourcesListProps) {
+  if (isLoading) {
+    return <ContentSourcesListSkeleton />
+  }
+  
+  if (isError) {
+    return <ContentSourcesErrorState errorMessage={errorMessage} onRetry={onRetry} />
+  }
+  
   if (sources.length === 0) {
     return (
       <Card className="bg-[#DEF0EA] border border-gray-100 rounded-2xl shadow-sm">
@@ -51,7 +101,7 @@ export function ContentSourcesList({ sources, isLoading, onViewContent }: Conten
     <div className="space-y-4">
       {sources.map((source) => (
         <motion.div
-          key={source.id}
+          key={source._id}
           initial={{ scale: 1 }}
           whileHover={{ 
             scale: 1.01,
@@ -74,17 +124,19 @@ export function ContentSourcesList({ sources, isLoading, onViewContent }: Conten
               href={source.url}
               target="_blank"
               rel="noopener noreferrer" 
-              className="text-blue-600 hover:underline text-sm mb-4 block"
+              className="text-green-600 hover:underline text-sm mb-4 block"
             >
               {truncateUrl(source.url)}
             </a>
 
             <p className="text-gray-600 text-sm mb-4">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi, numquam?
+              {source.content ? truncateUrl(source.content, 100) : "No content available."}
             </p>
 
             <div className="flex items-center justify-between">
-              <span className="text-gray-500 text-sm">Added October 31st</span>
+              <span className="text-gray-500 text-sm">
+                Added {source.createdAt ? format(new Date(source.createdAt), "MMMM do, yyyy") : "recently"}
+              </span>
               <Button
                 onClick={() => onViewContent(source)}
                 variant="ghost"
