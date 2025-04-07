@@ -12,4 +12,13 @@ export interface ContentSource {
       platform: "twitter" | "linkedin"
     }[]
 }
+
+export interface Post{
+  _id: string
+  title: string
+  description: string
+  platform: "twitter" | "linkedin"
+  createdAt: string
+  tags: string[]
+}
   

@@ -1,4 +1,4 @@
-import type { ContentSource } from "@/types/content-sources"
+import type { ContentSource } from "@/types/content"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Eye, Youtube, Globe, AlertCircle, RefreshCw } from "lucide-react"

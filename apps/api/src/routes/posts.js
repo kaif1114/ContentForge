@@ -14,20 +14,60 @@ import {
   getTwitterSysPrompt,
 } from "../prompts/posts.js";
 import { auth } from "../middleware/auth.js";
+import mongoose from "mongoose";
 const router = express.Router();
 
 router.get("/", auth, async (req, res) => {
-  const content = await Content.find({ user: req.user.id });
-  if (!content) {
-    res.status(404).json({ error: "No content found" });
-    return;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+  
+  try {
+    const countPipeline = [
+      { $match: { user: mongoose.Types.ObjectId.createFromHexString(req.user) } },
+      { $unwind: "$posts" },
+      { $count: "total" }
+    ];
+    
+    const countResult = await Content.aggregate(countPipeline);
+    const total = countResult.length > 0 ? countResult[0].total : 0;
+    
+    if (total === 0) {
+      return res.status(404).json({ error: "No posts found" });
+    }
+    
+    const pipeline = [
+      { $match: { user: mongoose.Types.ObjectId.createFromHexString(req.user) } },
+      { $unwind: "$posts" },
+      { $sort: { "posts.createdAt": -1 } },
+      { $skip: skip },
+      { $limit: limit },
+      { 
+        $project: { 
+          "_id": "$posts._id",
+          "title": "$posts.title", 
+          "description": "$posts.description", 
+          "platform": "$posts.platform",
+          "tags": "$posts.tags",
+          "createdAt": "$posts.createdAt" 
+        } 
+      }
+    ];
+    
+    const paginatedPosts = await Content.aggregate(pipeline);
+    res.json({
+      data: paginatedPosts,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    res.status(500).json({ error: "Failed to fetch posts" });
   }
-  const posts = content.flatMap((c) => c.posts);
-  if (!posts) {
-    res.status(404).json({ error: "No posts found" });
-    return;
-  }
-  res.json(posts);
 });
 
 router.post("/generate", auth, async (req, res) => {

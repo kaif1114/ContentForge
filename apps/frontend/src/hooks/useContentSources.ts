@@ -1,6 +1,6 @@
 import api from "@/utils/axios";
 import { useQuery } from "@tanstack/react-query";
-import { ContentSource } from "@/types/content-sources";
+import { ContentSource } from "@/types/content";
 export const useContentSources = () => {
     return useQuery({
         queryKey: ["content-sources"],

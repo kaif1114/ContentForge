@@ -9,9 +9,16 @@ export const postSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  tags: {
+    type: [String],
+  },
   platform: {
     type: String,
     enum: ["linkedin", "twitter"],
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 

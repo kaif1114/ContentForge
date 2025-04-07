@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { ExternalLink } from "lucide-react"
-import type { ContentSource } from "@/types/content-sources"
+import type { ContentSource } from "@/types/content"
 import { Separator } from "@/components/ui/separator"
 import ReactMarkdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'

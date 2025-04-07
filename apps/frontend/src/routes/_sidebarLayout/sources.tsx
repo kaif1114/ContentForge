@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { ContentSource } from '@/types/content-sources'
+import { ContentSource } from '@/types/content'
 import { createFileRoute } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
