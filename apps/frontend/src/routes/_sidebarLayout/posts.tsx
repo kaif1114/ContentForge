@@ -16,13 +16,11 @@ function RouteComponent() {
   const [filterBy, setFilterBy] = useState('all');
   const [postsPerPage] = useState(8);
   
-  // Use server-side pagination
   const { data: response, isLoading, error, isError } = usePosts({
     page: currentPage,
     limit: postsPerPage
   });
-  
-  // Loading state with animation
+
   if (isLoading) return (
     <div className="flex flex-col items-center justify-center min-h-[70vh]">
       <motion.div 
@@ -37,7 +35,6 @@ function RouteComponent() {
     </div>
   );
 
-  // Error state with animation
   if (isError) return (
     <div className="flex flex-col items-center justify-center min-h-[70vh]">
       <motion.div 
@@ -58,11 +55,9 @@ function RouteComponent() {
     </div>
   );
   
-  // Extract posts and pagination from response
   const posts = response?.data?.data || [];
   const pagination = response?.data?.pagination || { total: 0, page: 1, limit: postsPerPage, totalPages: 0 };
   
-  // Empty state with guidance
   if(posts.length === 0) return (
     <div className="flex flex-col items-center justify-center min-h-[70vh]">
       <motion.div 
@@ -93,10 +88,8 @@ function RouteComponent() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Search, Sort and Filter Section */}
       <div className="mb-8 p-4 bg-white rounded-lg shadow-sm">
         <div className="flex flex-col md:flex-row gap-4">
-          {/* Search */}
           <div className="flex-1">
             <input
               type="text"
@@ -107,7 +100,6 @@ function RouteComponent() {
             />
           </div>
           
-          {/* Filter and Sort */}
           <div className="flex gap-4">
             <select 
               className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -132,7 +124,6 @@ function RouteComponent() {
         </div>
       </div>
       
-      {/* Posts Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {posts.map((post, index) => (
           <motion.div
@@ -154,7 +145,6 @@ function RouteComponent() {
         ))}
       </div>
       
-      {/* Pagination - Using server-side pagination data */}
       {pagination.totalPages > 1 && (
         <div className="flex justify-center mt-8">
           <div className="flex gap-2">
