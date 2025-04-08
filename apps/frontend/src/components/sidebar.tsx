@@ -12,17 +12,17 @@ interface SidebarItemProps {
 
 const topNavigation = [
   {
-    icon: <Lightbulb className="w-5 h-5 text-green-600" />,
+    icon: <Lightbulb className="w-5 h-5 text-cf-primary-green" />,
     label: "Sources",
     href: "/sources",
   },
   {
-    icon: <CreditCard className="w-5 h-5 text-green-600" />,
+    icon: <CreditCard className="w-5 h-5 text-cf-primary-green" />,
     label: "Posts",
     href: "/Posts",
   },
   {
-    icon: <BookOpen className="w-5 h-5 text-green-600" />,
+    icon: <BookOpen className="w-5 h-5 text-cf-primary-green" />,
     label: "Topics",
     href: "/topics",
   },
@@ -50,21 +50,15 @@ const bottomNavigation = [
 ]
 
 function SidebarItem({ icon, label, active = false }: SidebarItemProps) {
-  const activeStyle = {
-    background: '#DEF0EA'
-  };
-
   return (
     <div
       className={cn(
         "flex items-center gap-3 px-4 py-3 rounded-md cursor-pointer transition-all duration-200",
+        active ? "bg-cf-mint-medium" : "hover:bg-cf-mint-medium active:bg-cf-mint-light"
       )}
-      style={active ? activeStyle : undefined}
-      onMouseOver={(e) => !active && (e.currentTarget.style.background = '#DEF0EA')}
-      onMouseOut={(e) => !active && (e.currentTarget.style.background = '')}
     >
       <div className="w-6 h-6 flex items-center justify-center">{icon}</div>
-      <span className="text-sm font-medium">{label}</span>
+      <span className={cn("text-sm font-medium", active ? "text-cf-primary-green" : "")}>{label}</span>
     </div>
   )
 }
@@ -82,7 +76,7 @@ export function Sidebar() {
   };
 
   return (
-    <div className="w-[240px] h-fit rounded-3xl shadow-sm p-4 flex flex-col" style={{ backgroundColor: '#EEF8F5' }}>
+    <div className="w-[240px] h-fit rounded-3xl shadow-sm p-4 hidden sm:flex flex-col bg-cf-mint-light" >
       <div className="px-4 py-2 text-xs font-semibold text-gray-500">APPS</div>
 
       <div className="mt-2 space-y-1">

@@ -4,7 +4,7 @@ import { usePosts } from '@/hooks/usePosts'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
-
+import AddButton from '@/components/ui/add-button'
 export const Route = createFileRoute('/_sidebarLayout/posts')({
   component: RouteComponent,
 })
@@ -87,99 +87,106 @@ function RouteComponent() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8 p-4 bg-white rounded-lg shadow-sm">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1">
-            <input
-              type="text"
-              placeholder="Search posts..."
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          
-          <div className="flex gap-4">
-            <select 
-              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={filterBy}
-              onChange={(e) => setFilterBy(e.target.value)}
-            >
-              <option value="all">All Platforms</option>
-              <option value="linkedin">LinkedIn</option>
-              <option value="twitter">Twitter</option>
-            </select>
-            
-            <select 
-              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-            >
-              <option value="date">Newest First</option>
-              <option value="date-asc">Oldest First</option>
-              <option value="title">Title (A-Z)</option>
-            </select>
-          </div>
-        </div>
+    <div className="flex flex-col min-h-[calc(100vh-80px)] px-4 py-8">
+      <div className="flex justify-between items-start md:items-center gap-4 mb-8">
+        <h2 className="text-3xl md:text-4xl font-bold">Posts</h2>
+        <AddButton onClick={() => console.log("add post")} text="Add Post" />
       </div>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {posts.map((post, index) => (
-          <motion.div
-            key={post._id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.1 }}
-            whileHover={{ scale: 1.03 }}
-            className="cursor-pointer"
+
+      <div className="flex justify-between items-start md:items-center mb-8">
+        <div className="">
+          <input
+            type="text"
+            placeholder="Search posts..."
+            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cf-primary-green text-sm md:text-base bg-cf-mint-light"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="flex justify-between gap-3 sm:gap-4">
+          <select 
+            className="  px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cf-primary-green text-sm md:text-base bg-cf-mint-light"
+            value={filterBy}
+            onChange={(e) => setFilterBy(e.target.value)}
           >
-            <PostCard
-              logo={post.platform === 'linkedin' ? '/linkedin.png' : '/twitter.png'}
-              title={post.title}
-              description={post.description}
-              tags={post.tags || [post.platform]}
-              time={new Date(post.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
-            />
-          </motion.div>
-        ))}
+            <option value="all">All Platforms</option>
+            <option value="linkedin">LinkedIn</option>
+            <option value="twitter">Twitter</option>
+          </select>
+          
+          <select 
+            className="  px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cf-primary-green text-sm md:text-base bg-cf-mint-light"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="date">Newest First</option>
+            <option value="date-asc">Oldest First</option>
+            <option value="title">Title (A-Z)</option>
+          </select>
+        </div>
       </div>
       
-      {pagination.totalPages > 1 && (
-        <div className="flex justify-center mt-8">
-          <div className="flex gap-2">
-            <button
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-4 py-2 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+      <div className="flex-grow flex flex-col">
+        <div className="grid grid-cols-1 min-[450px]:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+          {posts.map((post, index) => (
+            <motion.div
+              key={post._id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+              whileHover={{ scale: 1.03 }}
+              className="w-full flex justify-center"
             >
-              Previous
-            </button>
-            
-            {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(page => (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`px-4 py-2 rounded-md ${
-                  currentPage === page
-                    ? 'bg-blue-500 text-white'
-                    : 'border hover:bg-gray-100'
-                }`}
-              >
-                {page}
-              </button>
-            ))}
-            
-            <button
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.totalPages))}
-              disabled={currentPage === pagination.totalPages}
-              className="px-4 py-2 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-            </button>
-          </div>
+              <PostCard
+                logo={post.platform === 'linkedin' ? '/linkedin.png' : '/twitter.png'}
+                title={post.title}
+                source={post.sourceTitle}
+                tags={["testtag1", "testtag2"]}
+                // tags={ post.tags || [post.platform]}
+                time={new Date(post.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
+              />
+            </motion.div>
+          ))}
         </div>
-      )}
+        
+        <div className="mt-auto">
+          {pagination.totalPages > 1 && (
+            <div className="flex justify-center mt-8 py-6">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-cf-mint-light"
+                >
+                  Previous
+                </button>
+                
+                {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`px-4 py-2 rounded-md ${
+                      currentPage === page
+                        ? 'bg-cf-secondary-green text-white'
+                        : 'border hover:bg-cf-mint-light'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+                
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.totalPages))}
+                  disabled={currentPage === pagination.totalPages}
+                  className="px-4 py-2 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-cf-mint-light"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

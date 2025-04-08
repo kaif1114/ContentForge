@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-
 @plugin "tailwindcss-animate";
 
 @custom-variant dark (&:is(.dark *));
@@ -38,6 +37,20 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  
+  /* Custom ContentForge Color System */
+  --cf-mint-light: #EEF8F5;
+  --cf-mint-medium: #DEF0EA;
+  --cf-primary-green: #45c19a;
+  --cf-primary-green-hover: #3bb389;
+  --cf-secondary-green: #6DC7A9;
+  --cf-secondary-green-hover: #5DB999;
+  --cf-purple: #6c5ce7;
+  --cf-purple-light: #e2e0f5;
+  --cf-beige-light: #f0e9e0;
+  --cf-text-dark: #1a1a2e;
+  --cf-card-gradient-start: rgba(69,193,154,1);
+  --cf-card-gradient-end: rgba(161,208,193,1);
 }
 
 .dark {
@@ -110,6 +123,17 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  
+  --color-cf-mint-light: var(--cf-mint-light);
+  --color-cf-mint-medium: var(--cf-mint-medium);
+  --color-cf-primary-green: var(--cf-primary-green);
+  --color-cf-primary-green-hover: var(--cf-primary-green-hover);
+  --color-cf-secondary-green: var(--cf-secondary-green);
+  --color-cf-secondary-green-hover: var(--cf-secondary-green-hover);
+  --color-cf-purple: var(--cf-purple);
+  --color-cf-purple-light: var(--cf-purple-light);
+  --color-cf-beige-light: var(--cf-beige-light);
+  --color-cf-text-dark: var(--cf-text-dark);
 }
 
 @layer base {
@@ -121,6 +145,107 @@
   }
 }
 
+@layer utilities {
+  /* Background Colors */
+  .bg-cf-mint-light {
+    @apply bg-[var(--cf-mint-light)];
+  }
+
+  .bg-cf-mint-medium {
+    @apply bg-[var(--cf-mint-medium)];
+  }
+
+  .bg-cf-primary-green {
+    @apply bg-[var(--cf-primary-green)];
+  }
+
+  .bg-cf-secondary-green {
+    @apply bg-[var(--cf-secondary-green)];
+  }
+
+  /* Text Colors */
+  .text-cf-purple {
+    @apply text-[var(--cf-purple)];
+  }
+
+  .text-cf-primary-green {
+    @apply text-[var(--cf-primary-green)];
+  }
+
+  .text-cf-dark {
+    @apply text-[var(--cf-text-dark)];
+  }
+
+  /* Border Colors */
+  .border-cf-purple-light {
+    @apply border-[var(--cf-purple-light)];
+  }
+
+  .border-cf-beige-light {
+    @apply border-[var(--cf-beige-light)];
+  }
+
+  .border-cf-primary-green {
+    @apply border-[var(--cf-primary-green)];
+  }
+
+  /* Gradients */
+  .cf-card-gradient {
+    @apply bg-gradient-to-b from-[var(--cf-card-gradient-start)] to-[var(--cf-card-gradient-end)];
+  }
+
+  /* Hover States */
+  .hover\:bg-cf-mint-light:hover {
+    @apply bg-[var(--cf-mint-light)];
+  }
+
+  .hover\:bg-cf-mint-medium:hover {
+    @apply bg-[var(--cf-mint-medium)];
+  }
+
+  .hover\:bg-cf-primary-green:hover {
+    @apply bg-[var(--cf-primary-green)];
+  }
+
+  .hover\:bg-cf-primary-green-hover:hover {
+    @apply bg-[var(--cf-primary-green-hover)];
+  }
+
+  .hover\:bg-cf-secondary-green:hover {
+    @apply bg-[var(--cf-secondary-green)];
+  }
+
+  .hover\:bg-cf-secondary-green-hover:hover {
+    @apply bg-[var(--cf-secondary-green-hover)];
+  }
+
+  .hover\:border-cf-primary-green:hover {
+    @apply border-[var(--cf-primary-green)];
+  }
+
+  /* Focus States */
+  .focus\:ring-cf-primary-green:focus {
+    @apply ring-[var(--cf-primary-green)];
+  }
+
+  .focus\:border-cf-primary-green:focus {
+    @apply border-[var(--cf-primary-green)];
+  }
+
+  /* Active States */
+  .active\:bg-cf-primary-green:active {
+    @apply bg-[var(--cf-primary-green)];
+  }
+
+  .active\:bg-cf-secondary-green:active {
+    @apply bg-[var(--cf-secondary-green)];
+  }
+
+  .active\:text-white:active {
+    @apply text-white;
+  }
+}
+
 .wayflyer-gradient {
   background: linear-gradient(to bottom, rgba(243, 245, 247, 1) 0%, 
                                          rgba(171, 215, 205, 0.6) 8%, 
@@ -129,7 +254,10 @@
                                          rgba(220, 242, 237, 0.1) 40%,
                                          rgba(243, 245, 247, 1) 100%);
 }
-.font-inter{
+
+.font-inter {
   font-family: 'Inter', sans-serif;
 }
+
+
 

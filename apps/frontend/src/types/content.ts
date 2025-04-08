@@ -19,6 +19,8 @@ export interface Post{
   description: string
   platform: "twitter" | "linkedin"
   createdAt: string
+  sourceTitle: string
+  sourceId: string
   tags: string[]
 }
   

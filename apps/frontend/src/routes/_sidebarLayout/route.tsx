@@ -18,7 +18,7 @@ export default function SidebarLayout() {
         <TopBar />
         <div className="flex gap-4 mt-4">
           <Sidebar />
-          <main className="flex-1 px-5 py-4">
+          <main className="flex-1 flex sm:px-5 py-4">
             <Outlet/>
           </main>
         </div>

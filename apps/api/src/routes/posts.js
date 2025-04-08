@@ -49,7 +49,9 @@ router.get("/", auth, async (req, res) => {
           "description": "$posts.description", 
           "platform": "$posts.platform",
           "tags": "$posts.tags",
-          "createdAt": "$posts.createdAt" 
+          "createdAt": "$posts.createdAt",
+          "sourceTitle": "$label",
+          "sourceId": "$_id"
         } 
       }
     ];
