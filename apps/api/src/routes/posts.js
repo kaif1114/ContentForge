@@ -105,7 +105,19 @@ router.post("/generate", auth, async (req, res) => {
   c.posts.push(...postsDoc);
   await c.save();
 
-  res.json(response.posts);
+  const apiResponseData = postsDoc.map((doc) => 
+    {return {
+      sourceTitle: c.label,
+      sourceId: c._id,
+      _id: doc._id,
+      title: doc.title,
+      description: doc.description,
+      platform,
+      tags: doc.tags,
+      createdAt: doc.createdAt,
+    
+  }})
+  res.json(apiResponseData);
 });
 
 router.post("/generate-from-idea", async (req, res) => {

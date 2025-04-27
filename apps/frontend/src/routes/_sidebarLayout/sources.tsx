@@ -16,9 +16,9 @@ export const Route = createFileRoute('/_sidebarLayout/sources')({
 export default function RouteComponent() {
 
   const { data: sources, isLoading, isError, error, refetch } = useContentSources();
-  const [showAddModal, setShowAddModal] = useState(false)
+  
   const [selectedSource, setSelectedSource] = useState<ContentSource | null>(null)
-
+  const [showAddModal, setShowAddModal] = useState(false)
 
   const handleViewContent = (source: ContentSource) => {
     setSelectedSource(source)

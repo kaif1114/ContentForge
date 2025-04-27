@@ -18,7 +18,7 @@ export default async function login(req, res) {
     if (!user || user.isGoogleUser) {
         return res.status(401).json({ error: "Invalid Credentials" });
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
         return res.status(401).json({ error: "Invalid email or password" });
     }

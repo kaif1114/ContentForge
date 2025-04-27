@@ -14,6 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as RegisterImport } from './routes/register'
 import { Route as OauthCallbackImport } from './routes/oauth-callback'
 import { Route as LoginImport } from './routes/login'
+import { Route as CreateImport } from './routes/create'
 import { Route as SidebarLayoutRouteImport } from './routes/_sidebarLayout/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as SidebarLayoutTopicsImport } from './routes/_sidebarLayout/topics'
@@ -38,6 +39,12 @@ const OauthCallbackRoute = OauthCallbackImport.update({
 const LoginRoute = LoginImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CreateRoute = CreateImport.update({
+  id: '/create',
+  path: '/create',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -92,6 +99,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof SidebarLayoutRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/create': {
+      id: '/create'
+      path: '/create'
+      fullPath: '/create'
+      preLoaderRoute: typeof CreateImport
       parentRoute: typeof rootRoute
     }
     '/login': {
@@ -168,6 +182,7 @@ const SidebarLayoutRouteRouteWithChildren =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof SidebarLayoutRouteRouteWithChildren
+  '/create': typeof CreateRoute
   '/login': typeof LoginRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/register': typeof RegisterRoute
@@ -180,6 +195,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof SidebarLayoutRouteRouteWithChildren
+  '/create': typeof CreateRoute
   '/login': typeof LoginRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/register': typeof RegisterRoute
@@ -193,6 +209,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/_sidebarLayout': typeof SidebarLayoutRouteRouteWithChildren
+  '/create': typeof CreateRoute
   '/login': typeof LoginRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/register': typeof RegisterRoute
@@ -207,6 +224,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | ''
+    | '/create'
     | '/login'
     | '/oauth-callback'
     | '/register'
@@ -218,6 +236,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | ''
+    | '/create'
     | '/login'
     | '/oauth-callback'
     | '/register'
@@ -229,6 +248,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_sidebarLayout'
+    | '/create'
     | '/login'
     | '/oauth-callback'
     | '/register'
@@ -242,6 +262,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SidebarLayoutRouteRoute: typeof SidebarLayoutRouteRouteWithChildren
+  CreateRoute: typeof CreateRoute
   LoginRoute: typeof LoginRoute
   OauthCallbackRoute: typeof OauthCallbackRoute
   RegisterRoute: typeof RegisterRoute
@@ -250,6 +271,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SidebarLayoutRouteRoute: SidebarLayoutRouteRouteWithChildren,
+  CreateRoute: CreateRoute,
   LoginRoute: LoginRoute,
   OauthCallbackRoute: OauthCallbackRoute,
   RegisterRoute: RegisterRoute,
@@ -267,6 +289,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/_sidebarLayout",
+        "/create",
         "/login",
         "/oauth-callback",
         "/register"
@@ -283,6 +306,9 @@ export const routeTree = rootRoute
         "/_sidebarLayout/sources",
         "/_sidebarLayout/topics"
       ]
+    },
+    "/create": {
+      "filePath": "create.tsx"
     },
     "/login": {
       "filePath": "login.tsx"

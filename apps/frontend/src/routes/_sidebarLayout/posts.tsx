@@ -1,10 +1,11 @@
 import PostCard from '@/components/posts/card'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { usePosts } from '@/hooks/usePosts'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import AddButton from '@/components/ui/add-button'
+
 export const Route = createFileRoute('/_sidebarLayout/posts')({
   component: RouteComponent,
 })
@@ -15,6 +16,7 @@ function RouteComponent() {
   const [sortBy, setSortBy] = useState('date');
   const [filterBy, setFilterBy] = useState('all');
   const [postsPerPage] = useState(8);
+  const navigate = useNavigate()
   
   const { data: response, isLoading, error, isError } = usePosts({
     page: currentPage,
@@ -87,25 +89,25 @@ function RouteComponent() {
   );
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-80px)] px-4 py-8">
-      <div className="flex justify-between items-start md:items-center gap-4 mb-8">
+    <div className="flex flex-col min-h-[calc(100vh-130px)] px-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h2 className="text-3xl md:text-4xl font-bold">Posts</h2>
-        <AddButton onClick={() => console.log("add post")} text="Add Post" />
+        <AddButton onClick={() => navigate({to: "/create"})} text="Create Post" />
       </div>
 
-      <div className="flex justify-between items-start md:items-center mb-8">
-        <div className="">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div className="w-full md:w-auto mb-3 md:mb-0">
           <input
             type="text"
             placeholder="Search posts..."
-            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cf-primary-green text-sm md:text-base bg-cf-mint-light"
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cf-primary-green text-sm md:text-base bg-cf-mint-light"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="flex justify-between gap-3 sm:gap-4">
+        <div className="flex flex-wrap sm:flex-nowrap justify-between gap-3 sm:gap-4 w-full md:w-auto">
           <select 
-            className="  px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cf-primary-green text-sm md:text-base bg-cf-mint-light"
+            className="flex-1 sm:flex-none w-[calc(50%-6px)] sm:w-auto px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cf-primary-green text-sm md:text-base bg-cf-mint-light"
             value={filterBy}
             onChange={(e) => setFilterBy(e.target.value)}
           >
@@ -115,7 +117,7 @@ function RouteComponent() {
           </select>
           
           <select 
-            className="  px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cf-primary-green text-sm md:text-base bg-cf-mint-light"
+            className="flex-1 sm:flex-none w-[calc(50%-6px)] sm:w-auto px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cf-primary-green text-sm md:text-base bg-cf-mint-light"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
           >
