@@ -1,9 +1,8 @@
 import express from "express";
 import Content from "../models/Content.js";
-import { auth } from "../middleware/auth.js";
 const router = express.Router();
 
-router.get("/", auth, async (req, res) => {
+router.get("/", async (req, res) => {
   const userId = req.user;
   if (!userId) {
     res.status(400).json({ error: "User ID is required" });

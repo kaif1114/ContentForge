@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-export function auth(req, res, next) {
+function auth(req, res, next) {
     const authHeader = req.header("Authorization");
     const fingerprint = req.cookies["securefp"];
     if (!authHeader || !fingerprint) return res.status(401).send("Access denied. No token or fingerprint provided.");
@@ -16,3 +16,4 @@ export function auth(req, res, next) {
     } );
     
 }
+export default auth;

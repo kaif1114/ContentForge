@@ -2,7 +2,7 @@ import express from "express";
 import getYoutubeTranscript from "../services/scrape/youtube.js";
 import scrapeUrl from "../services/scrape/url.js";
 import Content from "../models/Content.js";
-import { auth } from "../middleware/auth.js";
+
 import z from "zod";
 
 const scrapeSchema = z.object({
@@ -14,7 +14,7 @@ const scrapeSchema = z.object({
 
 const router = express.Router();
 
-router.post("/", auth, async (req, res) => {
+router.post("/", async (req, res) => {
   const userId = req.user;
   if(!userId) {
     res.status(400).json({ error: "User ID is required" });

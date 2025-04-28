@@ -32,7 +32,7 @@ export type GeneratedPost = {
   title: string
   description: string
   content: string
-  platform: "linkedin" | "x"
+  platform: "linkedin" | "x" | "both"
   tags: string[]
   status: "draft" | "ready" | "modified"
 }

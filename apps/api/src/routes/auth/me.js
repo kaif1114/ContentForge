@@ -1,4 +1,3 @@
-import { auth } from "../../middleware/auth.js";
 import User from "../../models/User.js";
 
 async function me(req, res) {

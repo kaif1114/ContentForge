@@ -2,7 +2,7 @@ import express from "express";
 import refresh from "./refresh.js";
 import register from "./register.js";
 import verify from "./verify.js";
-import { auth } from "../../middleware/auth.js";
+import  auth  from "../../middleware/auth.js";
 import passport from "passport";
 import login from "./login.js";
 import { completeOAuth, startOAuth, googleStrategy } from "./google.js";

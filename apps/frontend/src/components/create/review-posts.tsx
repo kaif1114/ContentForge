@@ -194,11 +194,6 @@ export default function ReviewPosts({
                       </button>
                     </div>
                   </div>
-
-                  <div className="mb-4">
-                    <p className="text-gray-600 text-sm">{post.description}</p>
-                  </div>
-
                   <div className="mb-4 flex flex-wrap gap-2">
                     {post.tags.map((tag, index) => (
                       <span
@@ -239,11 +234,7 @@ export default function ReviewPosts({
                         </DialogTrigger>
                       </Dialog>
                     </div>
-                    <div className="flex space-x-2">
-                      <Button variant="outline" size="sm" className="text-green-600 border-green-100 hover:bg-green-50">
-                        <ThumbsUp className="h-4 w-4 mr-1" />
-                        Approve
-                      </Button>
+                    <div className="space-x-2">
                       <Button
                         variant="ghost"
                         size="sm"

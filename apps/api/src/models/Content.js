@@ -14,7 +14,7 @@ export const postSchema = new mongoose.Schema({
   },
   platform: {
     type: String,
-    enum: ["linkedin", "twitter"],
+    enum: ["linkedin", "twitter", "both"],
   },
   createdAt: {
     type: Date,

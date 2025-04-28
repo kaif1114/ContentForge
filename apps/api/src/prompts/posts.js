@@ -1,4 +1,5 @@
-function getLinkedinSysPrompt() {
+function getSysPrompt(platform) {
+  //add options to return different prompt engineerd for each platform: linkedin, x(twitter) or both
   return `
   You are an experienced LinkedIn content creator with a knack for writing engaging, actionable posts that are both conversational and insightful. Your posts share personal experiences, actionable tips, and behind-the-scenes strategies in a friendly yet professional tone.
 
@@ -57,11 +58,8 @@ function getLinkedinSysPrompt() {
         }
       ]
     `;
-}
 
-function getTwitterSysPrompt() {
-  return `
-  `;
+
 }
 
 function getUserPrompt(contentIdea, count) {
@@ -73,4 +71,4 @@ function getUserPrompt(contentIdea, count) {
   `;
 }
 
-export { getLinkedinSysPrompt, getTwitterSysPrompt, getUserPrompt };
+export { getSysPrompt, getUserPrompt };
