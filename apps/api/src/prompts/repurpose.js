@@ -2,7 +2,7 @@ function getRepurposePrompt(platform, postCount, contentType) {
   platform = platform.toLowerCase();
   if(platform === "linkedin"){
     return `
-    You are a professional content writer. You are given long-form content by user, please generate ${postCount} LinkedIn posts according to the instructions.
+    Act as a professional social media content writer. You are given long-form content by user, please generate ${postCount} LinkedIn posts according to the instructions.
     
     Post Instructions:
     - Use the given content to extract useful information and create posts.
@@ -62,7 +62,7 @@ function getRepurposePrompt(platform, postCount, contentType) {
 
 else if (platform === "x" || platform === "twitter"){
   return `
-      You are a professional content writer. You are given long-form content by user, You need to repurpose content and generate ${postCount} Twitter posts according to the instructions. 
+      Act as a professional social media content writer. You are given long-form content by user, You need to repurpose content and generate ${postCount} Twitter posts according to the instructions. 
       
       Content Information:
       -${contentType === "youtube" ? "The content is transcript of a youtube video" : "The content is scraped data from a blog post"}
@@ -110,13 +110,16 @@ else if (platform === "x" || platform === "twitter"){
               If your posts are trying too hard to sound professional, they may lack authenticity.
     
     
-      Output Instructions:
-      - Return the output in JSON format.
-      - Output should be an array of ${postCount} objects.
-      - Each object should have the following properties:
-        - title: string
-        - content: string
-        - id: string
+      utput Instructions:
+    - Return the output in JSON format.
+    - Output should be an array of ${postCount} objects.
+    - JSON schema:
+      posts : [
+        {
+          title: string,
+          description: string,
+        }
+      ]
       `;
   }
   else if(platform === "both"){
@@ -126,7 +129,16 @@ else if (platform === "x" || platform === "twitter"){
     Content Information:
     -${contentType === "youtube" ? "The content is transcript of a youtube video" : "The content is scraped data from a blog post"}
     
-    
+    utput Instructions:
+    - Return the output in JSON format.
+    - Output should be an array of ${postCount} objects.
+    - JSON schema:
+      posts : [
+        {
+          title: string,
+          description: string,
+        }
+      ]
     
     `
 }

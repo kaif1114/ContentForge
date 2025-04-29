@@ -1,12 +1,12 @@
-"use client"
-
 import { useState } from "react"
-import {  Calendar, FileText, ExternalLink, Zap, Bookmark, Search } from "lucide-react"
+import {  Calendar, FileText, ExternalLink, Zap, Bookmark, Search, AlertCircle, Loader2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useContentSources } from "@/hooks/useContentSources"
 import AddButton from "../ui/add-button"
 import { AddSourceModal } from "../sources/Modal"
 import { PostData } from "@/routes/create"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
 
 
 interface SelectContentSourceProps {
@@ -48,6 +48,36 @@ export default function SelectContentSource({ data, onUpdateData }: SelectConten
       default:
         return "from-[#45c19a] to-[#6DC7A9]"
     }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="max-w-5xl mx-auto flex flex-col items-center justify-center py-12">
+        <Loader2 className="h-12 w-12 text-[#45c19a] animate-spin mb-4" />
+        <p className="text-gray-600">Loading content sources...</p>
+      </div>
+    )
+  }
+
+  if (isError) {
+    return (
+      <div className="max-w-5xl mx-auto py-8">
+        <Alert variant="destructive" className="mb-6">
+          <AlertCircle className="h-4 w-4 mr-2" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>
+            {error?.message || "Failed to load content sources"}
+          </AlertDescription>
+        </Alert>
+        <Button 
+          onClick={() => refetch()} 
+          variant="outline" 
+          className="flex items-center gap-2"
+        >
+          <span>Try Again</span>
+        </Button>
+      </div>
+    )
   }
 
   return (
@@ -103,7 +133,7 @@ export default function SelectContentSource({ data, onUpdateData }: SelectConten
 
       {/* Content Sources Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-        {contentSources?.data.map((source) => (
+        {contentSources?.data && contentSources.data.length > 0 && contentSources?.data.map((source) => (
           <div
             key={source._id}
             className={`flex items-center p-4 rounded-lg cursor-pointer transition-all duration-300 hover:shadow-md ${

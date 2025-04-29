@@ -1,5 +1,3 @@
-"use client"
-
 interface FilterPillsProps {
   filters: { id: string; label: string }[]
   activeFilter: string

@@ -1,7 +1,3 @@
-"use client"
-
-import type React from "react"
-
 import { useState } from "react"
 import {
   Edit,
@@ -26,7 +22,6 @@ import TagInput from "../ui/tag-input"
 import { Post } from "@/types/content"
 import useDeletePost from "@/hooks/useDeletePost"
 import { useQueryClient } from "@tanstack/react-query"
-// No replacement needed - removing unused import
 
 interface ReviewPostsProps {
   // onUpdatePost: (postId: string, updatedContent: string) => void
