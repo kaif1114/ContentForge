@@ -7,7 +7,7 @@ import generate from "../../services/generate.js";
   const generatePostsReqSchema = z.object({
     contentId: z.string(),
     postCount: z.number(),
-    platform: z.enum(["linkedin", "twitter", "both"]),
+    platform: z.enum(["linkedin", "x", "both"]),
   });
 
 async function generatePosts(req, res) {

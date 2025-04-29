@@ -11,7 +11,7 @@ import { z } from "zod";
 const generateFromIdeaReqSchema = z.object({
   ideaId: z.string(),
   count: z.number(),
-  platform: z.enum(["linkedin", "twitter", "both"]),
+  platform: z.enum(["linkedin", "x", "both"]),
 });
 
 async function generateFromIdea(req, res) {

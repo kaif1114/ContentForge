@@ -9,7 +9,7 @@ export interface ContentSource {
       id: string
       title: string,
       description: string,
-      platform: "twitter" | "linkedin" | "both"
+      platform: "x" | "linkedin" | "both"
     }[]
 }
 
@@ -17,7 +17,7 @@ export interface Post{
   _id: string
   title: string
   description: string
-  platform: "twitter" | "linkedin" | "both"
+  platform: "x" | "linkedin" | "both"
   createdAt: string
   sourceTitle: string
   sourceId: string

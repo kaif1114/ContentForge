@@ -17,7 +17,15 @@ async function getPosts(req, res) {
       const total = countResult.length > 0 ? countResult[0].total : 0;
       
       if (total === 0) {
-        return res.status(404).json({ error: "No posts found" });
+        return res.json({
+          data: [],
+          pagination: {
+            total: 0,
+            page,
+            limit,
+            totalPages: 0
+          }
+        });
       }
       
       const pipeline = [

@@ -113,7 +113,7 @@ function RouteComponent() {
           >
             <option value="all">All Platforms</option>
             <option value="linkedin">LinkedIn</option>
-            <option value="twitter">Twitter</option>
+            <option value="x">X (FormerlyTwitter)</option>
           </select>
           
           <select 

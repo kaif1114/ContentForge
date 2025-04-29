@@ -27,19 +27,8 @@ export interface PostData{
 }
 
 
-export type GeneratedPost = {
-  id: string
-  title: string
-  description: string
-  content: string
-  platform: "linkedin" | "x" | "both"
-  tags: string[]
-  status: "draft" | "ready" | "modified"
-}
-
 export default function Create() {
   const [currentStep, setCurrentStep] = useState(1)
-
   const [data, setData] = useState<PostData>({
     contentId: "",
     templateId: "",
@@ -53,7 +42,9 @@ export default function Create() {
     setData((prevData) => ({ ...prevData, ...updatedFields }))
   }
 
-  const {mutateAsync: generatePosts, data: generatedPosts , isPending, isSuccess, isError, error} = useGeneratePosts()
+  const {mutateAsync: generatePosts , isPending, isSuccess, isError, error} = useGeneratePosts()
+
+  
 
   const handleNext = async () => {
     if (currentStep === 2) {
@@ -88,7 +79,7 @@ export default function Create() {
         </button>
         <Button
           onClick={handleNext}
-          disabled={currentStep === 3 || (currentStep === 1 && !data.contentId)}
+          disabled={currentStep === 3 || (currentStep === 1 && !data.contentId) || isPending}
           className="bg-gradient-to-r from-[#45c19a] to-[#6DC7A9] hover:from-[#3bb389] hover:to-[#5DB999] text-white shadow-md hover:shadow-lg transition-all duration-300"
         >
           {currentStep === 3 ? "Finish" : "Next Step"}
@@ -124,10 +115,7 @@ export default function Create() {
             )}
 
             {currentStep === 3 && isSuccess && (
-              <ReviewPosts
-              posts={generatedPosts?.data}
-               
-              />
+              <ReviewPosts/>
             )}
           </>
         
