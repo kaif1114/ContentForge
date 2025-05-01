@@ -5,6 +5,8 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import AddButton from '@/components/ui/add-button'
+import EditPostModal from '@/components/create/edit-post-modal'
+import { Post } from '@/types/content'
 
 export const Route = createFileRoute('/_sidebarLayout/posts')({
   component: RouteComponent,
@@ -16,6 +18,7 @@ function RouteComponent() {
   const [sortBy, setSortBy] = useState('date');
   const [filterBy, setFilterBy] = useState('all');
   const [postsPerPage] = useState(8);
+  const [postToEdit, setPostToEdit] = useState<Post | null>(null)
   const navigate = useNavigate()
   
   const { data: response, isLoading, error, isError } = usePosts({
@@ -140,10 +143,8 @@ function RouteComponent() {
               className="w-full flex justify-center"
             >
               <PostCard
-                logo={post.platform === 'linkedin' ? '/linkedin.png' : '/twitter.png'}
-                title={post.title}
-                source={post.sourceTitle}
-                tags={["testtag1", "testtag2"]}
+                post={post}
+                onEdit={() => setPostToEdit(post)}
                 // tags={ post.tags || [post.platform]}
                 time={new Date(post.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
               />
@@ -189,6 +190,13 @@ function RouteComponent() {
           )}
         </div>
       </div>
+        {
+              <EditPostModal
+              onClose={() => setPostToEdit(null)}
+              initialData={postToEdit}
+              onSave={() => {}}
+            />
+          }
     </div>
   );
 }
