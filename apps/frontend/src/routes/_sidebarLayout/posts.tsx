@@ -7,6 +7,8 @@ import { Link } from '@tanstack/react-router'
 import AddButton from '@/components/ui/add-button'
 import EditPostModal from '@/components/create/edit-post-modal'
 import { Post } from '@/types/content'
+import { useUpdatePost } from '@/hooks/useUpdatePost'
+import toast, { Toaster } from 'react-hot-toast'
 
 export const Route = createFileRoute('/_sidebarLayout/posts')({
   component: RouteComponent,
@@ -19,7 +21,19 @@ function RouteComponent() {
   const [filterBy, setFilterBy] = useState('all');
   const [postsPerPage] = useState(8);
   const [postToEdit, setPostToEdit] = useState<Post | null>(null)
+  const { mutateAsync: updatePost } = useUpdatePost()
   const navigate = useNavigate()
+
+  async function handleEditPost(post: Partial<Post>) {
+    toast.promise(
+      updatePost(post),
+      {
+        loading: 'Updating post...',
+        success: 'Post updated successfully!',
+        error: (err) => `Update failed: ${err instanceof Error ? err.message : 'Unknown error'}`
+      }
+    );
+  }
   
   const { data: response, isLoading, error, isError } = usePosts({
     page: currentPage,
@@ -93,6 +107,8 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-130px)] px-4">
+      <Toaster position="top-center" />
+      
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h2 className="text-3xl md:text-4xl font-bold">Posts</h2>
         <AddButton onClick={() => navigate({to: "/create"})} text="Create Post" />
@@ -194,7 +210,7 @@ function RouteComponent() {
               <EditPostModal
               onClose={() => setPostToEdit(null)}
               initialData={postToEdit}
-              onSave={() => {}}
+              onSave={handleEditPost}
             />
           }
     </div>

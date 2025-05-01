@@ -1,6 +1,7 @@
-import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import z from "zod"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
@@ -11,19 +12,37 @@ import { Post } from "@/types/content"
 interface EditPostModalProps {
   onClose: () => void
   initialData: Post | null
-  onSave: (data: Post) => void
+  onSave: (data: Partial<Post>) => Promise<void>
 }
+
+const postFormSchema = z.object({
+  title: z.string().min(3, "Title Must be at least 3 characters"),
+  description: z.string().min(10, "Description Must be at least 10 characters"),
+  platform: z.enum(["x", "linkedin", "both"], {
+    required_error: "Please select a platform",
+  }),
+})
+
+type PostFormValues = z.infer<typeof postFormSchema>
 
 export default function EditPostModal({  onClose, initialData, onSave }: EditPostModalProps) {
   if (initialData === null) return null
 
-  const [postData, setPostData] = useState(initialData)
-  const handlePlatformChange = (platform: "x" | "linkedin" | "both") => {
-    setPostData({ ...postData, platform })
-  }
+  
 
-  const handleSave = () => {
-    onSave(postData)
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<PostFormValues>({
+    resolver: zodResolver(postFormSchema),
+    defaultValues: {
+      title: initialData.title,
+      description: initialData.description,
+      platform: initialData.platform as "x" | "linkedin" | "both",
+    },
+  })
+
+  const handleSave = (data: PostFormValues) => {
+    
+    console.log({_id: initialData._id, ...data})
+    onSave({_id: initialData._id, ...data})
     onClose()
   }
 
@@ -68,10 +87,10 @@ export default function EditPostModal({  onClose, initialData, onSave }: EditPos
           </div>
         </div>
 
-        <div className="p-6 space-y-6 ">
+        <form onSubmit={handleSubmit(handleSave)} className="p-6 space-y-6">
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2 text-sm font-medium text-mint-800">
-              <span className="text-mint-500">{postData.sourceTitle}</span>
+              <span className="text-mint-500">{initialData.sourceTitle}</span>
             </div>
             <div className="ml-2 px-2 py-0.5 bg-mint-100/70 backdrop-blur-sm text-mint-700 text-xs font-medium rounded">
               Draft
@@ -80,18 +99,22 @@ export default function EditPostModal({  onClose, initialData, onSave }: EditPos
 
           <div className="flex items-center gap-4">
             <img
-              src={getPlatformIcon(postData.platform) || "/placeholder.svg"}
-              alt={postData.platform}
+              src={getPlatformIcon(watch("platform") || "x")}
+              alt={watch("platform")}
               width={24}
               height={24}
               className="object-contain"
             />
-            <Input
-              value={postData.title}
-              onChange={(e) => setPostData({ ...postData, title: e.target.value })}
-              className="text-xl font-semibold border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0 h-auto text-mint-900"
-              placeholder="Post Title"
-            />
+            <div className="flex-1 flex flex-col">
+              <Input
+                {...register("title")}
+                className="text-xl font-semibold border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0 h-auto text-mint-900"
+                placeholder="Post Title"
+              />
+              {errors.title && (
+                <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>
+              )}
+            </div>
           </div>
 
           <div className="space-y-2 relative">
@@ -99,30 +122,30 @@ export default function EditPostModal({  onClose, initialData, onSave }: EditPos
               <Label className="text-sm text-mint-700">Platform</Label>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-8 gap-2  border-mint-200 text-mint-800">
+                  <Button variant="outline" size="sm" className="h-8 gap-2 border-mint-200 text-mint-800">
                     <img
-                      src={getPlatformIcon(postData.platform) || "/placeholder.svg"}
-                      alt={postData.platform}
+                      src={getPlatformIcon(watch("platform") || "x")}
+                      alt={watch("platform")}
                       width={16}
                       height={16}
                     />
-                    {postData.platform === "x" ? "X" : postData.platform === "linkedin" ? "LinkedIn" : "X & LinkedIn"}
+                    {watch("platform") === "x" ? "X" : watch("platform") === "linkedin" ? "LinkedIn" : "X & LinkedIn"}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => handlePlatformChange("x")}>
+                  <DropdownMenuItem onClick={() => setValue("platform", "x", { shouldValidate: true })}>
                     <div className="flex items-center gap-2">
                       <img src="/x.png" alt="X" width={16} height={16} />
                       <span>X</span>
                     </div>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handlePlatformChange("linkedin")}>
+                  <DropdownMenuItem onClick={() => setValue("platform", "linkedin", { shouldValidate: true })}>
                     <div className="flex items-center gap-2">
                       <img src="/linkedin.png" alt="LinkedIn" width={16} height={16} />
                       <span>LinkedIn</span>
                     </div>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handlePlatformChange("both")}>
+                  <DropdownMenuItem onClick={() => setValue("platform", "both", { shouldValidate: true })}>
                     <div className="flex items-center gap-2">
                       <img src="/linkedin_and_x.png" alt="Both" width={16} height={16} />
                       <span>X & LinkedIn</span>
@@ -131,31 +154,38 @@ export default function EditPostModal({  onClose, initialData, onSave }: EditPos
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+            {errors.platform && (
+              <p className="text-red-500 text-xs">{errors.platform.message}</p>
+            )}
 
-            <div className="flex items-center gap-2 p-2  rounded border border-white/50">
-              <Button variant="ghost" size="icon" className="h-8 w-8 rounded">
+            <div className="flex items-center gap-2 p-2 rounded border border-white/50">
+              <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded">
                 <Bold className="h-4 w-4 text-mint-700" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8 rounded">
+              <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded">
                 <Italic className="h-4 w-4 text-mint-700" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8 rounded">
+              <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded">
                 <Underline className="h-4 w-4 text-mint-700" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8 rounded">
+              <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded">
                 <Link2 className="h-4 w-4 text-mint-700" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8 rounded">
+              <Button type="button" variant="ghost" size="icon" className="h-8 w-8 rounded">
                 <ImageIcon className="h-4 w-4 text-mint-700" />
               </Button>
             </div>
 
-            <Textarea
-              value={postData.description}
-              onChange={(e) => setPostData({ ...postData, description: e.target.value })}
-              className="min-h-[230px] focus-visible:ring-0 focus-visible:ring-offset-0 p-4 text-mint-800 "
-              placeholder="Write your post description here..."
-            />
+            <div className="flex flex-col">
+              <Textarea
+                {...register("description")}
+                className="min-h-[230px] focus-visible:ring-0 focus-visible:ring-offset-0 p-4 text-mint-800"
+                placeholder="Write your post description here..."
+              />
+              {errors.description && (
+                <p className="text-red-500 text-xs mt-1">{errors.description.message}</p>
+              )}
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -168,20 +198,25 @@ export default function EditPostModal({  onClose, initialData, onSave }: EditPos
               ))}
             </div>
           </div>
-        </div>
+        
 
-        <div className="flex justify-between p-4 border-t border-white/30 ">
+        <div className="flex justify-between pt-4 border-t border-white/30 ">
           <Button
+            type="button"
             variant="outline"
             onClick={onClose}
-            className="border-white/40  text-mint-700 hover:bg-white/50"
+            className="border-white/40  hover:bg-white/50"
           >
             Cancel
           </Button>
-          <Button onClick={handleSave} className="bg-mint-500/90 backdrop-blur-sm hover:bg-mint-600 text-white">
+          <Button 
+            type="submit" 
+            className="border-white/40 hover:bg-white/50"
+          >
             Save Changes
           </Button>
         </div>
+        </form>
       </div>
     </div>
   )
