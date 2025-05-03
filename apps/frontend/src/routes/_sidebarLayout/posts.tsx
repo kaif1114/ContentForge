@@ -9,6 +9,9 @@ import EditPostModal from '@/components/create/edit-post-modal'
 import { Post } from '@/types/content'
 import { useUpdatePost } from '@/hooks/useUpdatePost'
 import toast, { Toaster } from 'react-hot-toast'
+import { CheckSquare, Square, X, Trash2 } from 'lucide-react'
+import { useQueryClient } from '@tanstack/react-query'
+import useDeletePost from '@/hooks/useDeletePost'
 
 export const Route = createFileRoute('/_sidebarLayout/posts')({
   component: RouteComponent,
@@ -21,7 +24,11 @@ function RouteComponent() {
   const [filterBy, setFilterBy] = useState('all');
   const [postsPerPage] = useState(8);
   const [postToEdit, setPostToEdit] = useState<Post | null>(null)
+  const [selectedPostIds, setSelectedPostIds] = useState<string[]>([])
+  const [selectionMode, setSelectionMode] = useState(false)
   const { mutateAsync: updatePost } = useUpdatePost()
+  const { mutateAsync: deletePost, isPending: isDeletingPost } = useDeletePost()
+  const queryClient = useQueryClient()
   const navigate = useNavigate()
 
   async function handleEditPost(post: Partial<Post>) {
@@ -39,6 +46,47 @@ function RouteComponent() {
     page: currentPage,
     limit: postsPerPage
   });
+
+  const handleDiscardPost = async (postId: string) => {
+    setSelectionMode(true)
+    setSelectedPostIds(prev => [...prev, postId])
+  }
+  
+  const togglePostSelection = (postId: string) => {
+    setSelectedPostIds(prev => 
+      prev.includes(postId) 
+        ? prev.filter(id => id !== postId)
+        : [...prev, postId]
+    )
+  }
+  
+  const cancelSelection = () => {
+    setSelectionMode(false)
+    setSelectedPostIds([])
+  }
+  
+  const discardSelectedPosts = async () => {
+    try {
+      // Create a promise array for all deletion operations
+      const deletePromises = selectedPostIds.map(postId => 
+        deletePost(postId, {
+          onSuccess: () => {
+            // Update the query cache after successful deletion
+            queryClient.invalidateQueries({ queryKey: ['posts'] })
+          }
+        })
+      )
+      await Promise.all(deletePromises)
+      
+      toast.success(`${selectedPostIds.length} post${selectedPostIds.length > 1 ? 's' : ''} discarded successfully`)
+    } catch (error) {
+      console.error("Failed to delete posts:", error)
+      toast.error("Failed to discard posts")
+    } finally {
+      setSelectedPostIds([])
+      setSelectionMode(false)
+    }
+  }
 
   if (isLoading) return (
     <div className="flex flex-col items-center justify-center min-h-[70vh]">
@@ -114,6 +162,37 @@ function RouteComponent() {
         <AddButton onClick={() => navigate({to: "/create"})} text="Create Post" />
       </div>
 
+      {/* Selection Mode Controls */}
+      {selectionMode && (
+        <div className="bg-cf-mint-light p-4 rounded-xl mb-6 sticky top-0 z-10 shadow-md">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center">
+              <CheckSquare className="h-5 w-5 text-cf-primary-green mr-2" />
+              <span className="font-medium text-[#1a1a2e]">
+                {selectedPostIds.length} {selectedPostIds.length === 1 ? 'post' : 'posts'} selected
+              </span>
+            </div>
+            <div className="flex space-x-3">
+              <button
+                onClick={cancelSelection}
+                className="px-3 py-1.5 border border-cf-beige-light rounded-md hover:bg-white text-sm font-medium flex items-center"
+              >
+                <X className="h-4 w-4 mr-1" />
+                Cancel
+              </button>
+              <button
+                onClick={discardSelectedPosts}
+                disabled={selectedPostIds.length === 0 || isDeletingPost}
+                className="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-md text-sm font-medium flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Trash2 className="h-4 w-4 mr-1" />
+                Discard Selected
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div className="w-full md:w-auto mb-3 md:mb-0">
           <input
@@ -152,18 +231,36 @@ function RouteComponent() {
           {posts.map((post, index) => (
             <motion.div
               key={post._id}
-              // initial={{ opacity: 0, y: 20 }}
-              // animate={{ opacity: 1, y: 0 }}
-              // transition={{ duration: 0.3, delay: index * 0.1 }}
-              // whileHover={{ scale: 1.03 }}
-              className="w-full flex justify-center"
+              className={`w-full flex justify-center ${
+                isDeletingPost && selectedPostIds.includes(post._id) ? 'opacity-50' : ''
+              }`}
             >
-              <PostCard
-                post={post}
-                onEdit={() => setPostToEdit(post)}
-                // tags={ post.tags || [post.platform]}
-                time={new Date(post.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
-              />
+              {isDeletingPost && selectedPostIds.includes(post._id) ? (
+                <div className="w-full h-full flex items-center justify-center p-10">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cf-primary-green"></div>
+                </div>
+              ) : (
+                <div className="w-full relative">
+                  {selectionMode && (
+                    <button 
+                      onClick={() => togglePostSelection(post._id)}
+                      className="absolute top-2 left-2 z-10 focus:outline-none bg-white rounded-full p-1 shadow-md"
+                    >
+                      {selectedPostIds.includes(post._id) ? (
+                        <CheckSquare className="h-5 w-5 text-cf-primary-green" />
+                      ) : (
+                        <Square className="h-5 w-5 text-gray-300" />
+                      )}
+                    </button>
+                  )}
+                  <PostCard
+                    post={post}
+                    onEdit={() => setPostToEdit(post)}
+                    time={new Date(post.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
+                    onDiscard={handleDiscardPost}
+                  />
+                </div>
+              )}
             </motion.div>
           ))}
         </div>

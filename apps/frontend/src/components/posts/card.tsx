@@ -1,5 +1,4 @@
-import { Pencil, Sparkle } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Pencil, Sparkle, ThumbsDown } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
 import { Post } from "@/types/content"
@@ -9,13 +8,14 @@ import { EnhancePopup } from "./enhance-popup"
 interface PostCardProps {
     post: Post,
     time: string,
-    onEdit: () => void
+    onEdit: () => void,
+    onDiscard?: (postId: string) => void
   }
   
   export default function PostCard({
     post,
-    time,
     onEdit,
+    onDiscard
   }: PostCardProps) {
     
   const [showPopup, setShowPopup] = useState(false)
@@ -65,7 +65,14 @@ interface PostCardProps {
                 >
                   <Sparkle className="w-4 h-4" />  Enhance with AI
                 </button>
-             
+                {onDiscard && (
+                  <button
+                    onClick={() => onDiscard(post._id)}
+                    className="flex items-center gap-2 justify-center px-1.5 py-0.5 sm:px-2 md:px-3 md:py-1 border border-red-500 bg-white text-red-500 rounded-md text-[10px] sm:text-xs font-semibold truncate max-w-[90px] sm:max-w-[120px] md:max-w-[150px] hover:bg-red-50 hover:border-red-600"
+                  >
+                    <ThumbsDown className="w-4 h-4" />  Discard
+                  </button>
+                )}
             </div>
           </div>
           <button className=" text-sm text-white hover:text-[#cfe2dc] md:text-base font-bold py-2 md:py-3">Schedule</button>
