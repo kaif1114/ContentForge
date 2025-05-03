@@ -1,9 +1,8 @@
-
 import { Pencil, Sparkle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 import { Post } from "@/types/content"
-import { useRef, useState } from "react"
+import { useState, useRef } from "react"
 import { EnhancePopup } from "./enhance-popup"
 
 interface PostCardProps {
@@ -19,23 +18,20 @@ interface PostCardProps {
   }: PostCardProps) {
     
   const [showPopup, setShowPopup] = useState(false)
-  const [popupPosition, setPopupPosition] = useState<{ top: number; left: number } | null>(null)
-  const cardRef = useRef<HTMLDivElement>(null)
-    
-
+  const enhanceButtonRef = useRef<HTMLButtonElement>(null)
+  
   const handleEnhanceClick = () => {
-    if (cardRef.current) {
-      const rect = cardRef.current.getBoundingClientRect()
-      setPopupPosition({
-        top: rect.top + window.scrollY - 20, // Position slightly above the card
-        left: rect.left + rect.width / 2 + window.scrollX,
-      })
-    }
     setShowPopup(true)
   }
 
+  const handleEnhanceComplete = (options: any) => {
+    console.log("Enhance with options:", options);
+    setShowPopup(false);
+    // Add your enhance logic here
+  }
+
     return (
-        <div className="p-[4px] border rounded-[28px] w-full cf-card-gradient">
+        <div className="p-[4px] border rounded-[28px] w-full cf-card-gradient relative z-0">
           <div className="bg-white rounded-3xl p-4 md:p-6 md:pt-3 shadow-md border w-full border-cf-beige-light">
             <div className="mb-2 flex justify-between items-center">
               <div className="flex items-center">
@@ -53,12 +49,12 @@ interface PostCardProps {
                 <Pencil className="h-4 w-4 text-cf-purple" />
               </Button>
               <Button 
+                ref={enhanceButtonRef}
                 variant="ghost" 
                 size="icon" 
-                className="rounded-full h-8 w-8" 
+                className="rounded-full h-8 w-8 hover:bg-cf-mint-light" 
                 onClick={handleEnhanceClick}
               >
-                
                 <Sparkle className="h-4 w-4 text-cf-purple" />
               </Button>
               </div>
@@ -79,13 +75,15 @@ interface PostCardProps {
             </div>}
           </div>
           <p className="text-center text-sm md:text-base font-bold py-2 md:py-3">{time}</p>
-          <EnhancePopup
-        isOpen={showPopup}
-        onClose={() => setShowPopup(false)}
-        onEnhance={()=>{}}
-        position={popupPosition || undefined}
-      />
           
+          {showPopup && (
+            <EnhancePopup
+              isOpen={showPopup}
+              onClose={() => setShowPopup(false)}
+              onEnhance={handleEnhanceComplete}
+              buttonRef={enhanceButtonRef}
+            />
+          )}
         </div>
     )
   }

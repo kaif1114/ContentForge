@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react"
 import { X } from "lucide-react"
 import { CustomDropdown } from "../ui/custom-dropdown"
+import { createPortal } from "react-dom"
 
 interface EnhancePopupProps {
   isOpen: boolean
@@ -11,14 +12,15 @@ interface EnhancePopupProps {
     length: string
     advanced?: any
   }) => void
-  position?: { top: number; left: number }
+  buttonRef?: React.RefObject<HTMLButtonElement | null>
 }
 
-export function EnhancePopup({ isOpen, onClose, onEnhance, position }: EnhancePopupProps) {
+export function EnhancePopup({ isOpen, onClose, onEnhance, buttonRef }: EnhancePopupProps) {
   const [instructions, setInstructions] = useState("")
   const [tone, setTone] = useState<string>("professional")
   const [length, setLength] = useState<string>("medium")
   const [showAdvanced, setShowAdvanced] = useState(false)
+  const [position, setPosition] = useState({ top: 0, left: 0 })
   const popupRef = useRef<HTMLDivElement>(null)
 
   const toneOptions = [
@@ -32,6 +34,28 @@ export function EnhancePopup({ isOpen, onClose, onEnhance, position }: EnhancePo
     { value: "medium", label: "Medium" },
     { value: "long", label: "Long" },
   ]
+
+  // Calculate position based on button location
+  useEffect(() => {
+    if (isOpen && buttonRef?.current) {
+      const buttonRect = buttonRef.current.getBoundingClientRect();
+      const popupWidth = 400; // Approximate width of popup
+      
+      // Check if popup would go off the right edge of the screen
+      let left = buttonRect.left - popupWidth / 2 + buttonRect.width / 2;
+      if (left + popupWidth > window.innerWidth) {
+        left = window.innerWidth - popupWidth - 20;
+      }
+      if (left < 20) {
+        left = 20;
+      }
+      
+      // Position slightly below the button
+      const top = buttonRect.bottom + 10;
+      
+      setPosition({ top, left });
+    }
+  }, [isOpen, buttonRef]);
 
   // Close when clicking outside
   useEffect(() => {
@@ -58,27 +82,20 @@ export function EnhancePopup({ isOpen, onClose, onEnhance, position }: EnhancePo
       length,
       advanced: showAdvanced ? { custom: true } : undefined,
     })
+    onClose();
   }
 
-  // Default position if none provided
-  const defaultPosition = {
-    top: window.innerHeight / 2 - 150,
-    left: window.innerWidth / 2 - 300,
-  }
-
-  const popupPosition = position || defaultPosition
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-start justify-center pointer-events-none"
-      style={{ paddingTop: `${popupPosition.top}px` }}
+  const content = (
+    <div 
+      className="fixed z-50"
+      style={{
+        top: `${position.top}px`,
+        left: `${position.left}px`
+      }}
     >
       <div
         ref={popupRef}
-        className="w-full max-w-md bg-gradient-to-b from-white/90 to-white/80 backdrop-blur-md rounded-3xl shadow-xl pointer-events-auto"
-        style={{
-          transform: position ? `translateX(${position.left - 200}px)` : "none",
-        }}
+        className="w-full max-w-md bg-gradient-to-b from-white/90 to-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-gray-200"
       >
         <div className="p-4 relative">
           {/* Close button */}
@@ -144,5 +161,7 @@ export function EnhancePopup({ isOpen, onClose, onEnhance, position }: EnhancePo
         </div>
       </div>
     </div>
-  )
+  );
+
+  return createPortal(content, document.body);
 }
