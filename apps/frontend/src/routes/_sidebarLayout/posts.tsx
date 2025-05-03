@@ -256,7 +256,6 @@ function RouteComponent() {
                   <PostCard
                     post={post}
                     onEdit={() => setPostToEdit(post)}
-                    time={new Date(post.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
                     onDiscard={handleDiscardPost}
                   />
                 </div>
