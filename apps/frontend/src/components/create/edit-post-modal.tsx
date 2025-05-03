@@ -67,7 +67,7 @@ export default function EditPostModal({  onClose, initialData, onSave }: EditPos
       {/* <div className="absolute inset-0"
         onClick={onClose}
       /> */}
-      <div className=" w-full max-w-2xl  shadow-xl rounded-xl overflow-hidden bg-white/0 backdrop-blur-2xl border border-gray-100">
+      <div className=" w-full max-w-2xl  shadow-xl rounded-xl overflow-hidden bg-gradient-to-b from-white/90 to-white/80 backdrop-blur-md border border-gray-100">
         <div className="flex flex-row items-center justify-between p-4 border-b ">
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" className="rounded-full" onClick={onClose}>
@@ -92,7 +92,7 @@ export default function EditPostModal({  onClose, initialData, onSave }: EditPos
             <div className="flex items-center gap-2 text-sm font-medium text-mint-800">
               <span className="text-mint-500">{initialData.sourceTitle}</span>
             </div>
-            <div className="ml-2 px-2 py-0.5 bg-mint-100/70 backdrop-blur-sm text-mint-700 text-xs font-medium rounded">
+            <div className="ml-2 px-2 py-0.5 text-xs font-medium rounded">
               Draft
             </div>
           </div>
@@ -108,7 +108,7 @@ export default function EditPostModal({  onClose, initialData, onSave }: EditPos
             <div className="flex-1 flex flex-col">
               <Input
                 {...register("title")}
-                className="text-xl font-semibold border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0 h-auto text-mint-900"
+                className="text-xl font-semibold border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0 h-auto"
                 placeholder="Post Title"
               />
               {errors.title && (
@@ -119,10 +119,10 @@ export default function EditPostModal({  onClose, initialData, onSave }: EditPos
 
           <div className="space-y-2 relative">
             <div className="flex items-center gap-2 mb-2">
-              <Label className="text-sm text-mint-700">Platform</Label>
+              <Label className="text-sm ">Platform</Label>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-8 gap-2 border-mint-200 text-mint-800">
+                  <Button variant="outline" size="sm" className="h-8 gap-2">
                     <img
                       src={getPlatformIcon(watch("platform") || "x")}
                       alt={watch("platform")}
@@ -179,7 +179,7 @@ export default function EditPostModal({  onClose, initialData, onSave }: EditPos
             <div className="flex flex-col">
               <Textarea
                 {...register("description")}
-                className="min-h-[230px] focus-visible:ring-0 focus-visible:ring-offset-0 p-4 text-mint-800"
+                className="min-h-[230px] focus-visible:ring-0 focus-visible:ring-offset-0 p-4 "
                 placeholder="Write your post description here..."
               />
               {errors.description && (
@@ -189,7 +189,7 @@ export default function EditPostModal({  onClose, initialData, onSave }: EditPos
           </div>
 
           <div className="space-y-2">
-            <Label className="text-sm text-mint-700">Tags</Label>
+            <Label className="text-sm ">Tags</Label>
             <div className="flex flex-wrap gap-2 p-2 ">
               {["modify", "the", "modal", "component"].map((tag, index) => (
                 <div key={index} className="px-3 py-1  text-sm">
