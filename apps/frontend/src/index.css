@@ -248,6 +248,10 @@
   .active\:text-white:active {
     @apply text-white;
   }
+
+  .modal-bg{
+    @apply bg-gradient-to-b from-white/90 to-white/80 backdrop-blur-md border border-gray-200 rounded-3xl shadow-xl
+  }
 }
 
 .wayflyer-gradient {

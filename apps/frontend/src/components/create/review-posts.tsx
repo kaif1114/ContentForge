@@ -22,7 +22,7 @@ import TagInput from "../ui/tag-input"
 import { Post } from "@/types/content"
 import useDeletePost from "@/hooks/useDeletePost"
 import { useQueryClient } from "@tanstack/react-query"
-import EditPostModal from "./edit-post-modal"
+import EditPostModal from "../posts/edit-post-modal"
 
 interface ReviewPostsProps {
 }

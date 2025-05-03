@@ -16,10 +16,33 @@ export const postSchema = new mongoose.Schema({
     type: String,
     enum: ["linkedin", "x", "both"],
   },
+  length:{
+    type: String,
+    enum: ["short", "medium", "long"],
+  },
+  customLength:{
+    type: Number,
+    min: 100,
+    max: 1000,
+  },
+  tone:{
+    type: String,
+    enum: ["professional", "narrative" , "informative" , "persuasive" , "casual", "formal", "neutral"],
+  },
+  
   createdAt: {
     type: Date,
     default: Date.now,
   },
+}, {
+  validate: [
+    {
+      validator: function() {
+        return (this.length && !this.customLength) || (!this.length && this.customLength);
+      },
+      message: "Either length or customLength must be specified, but not both"
+    }
+  ]
 });
 
 const contentSchema = new mongoose.Schema({

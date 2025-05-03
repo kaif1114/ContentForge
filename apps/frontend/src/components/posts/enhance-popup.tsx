@@ -95,7 +95,7 @@ export function EnhancePopup({ isOpen, onClose, onEnhance, buttonRef }: EnhanceP
     >
       <div
         ref={popupRef}
-        className="w-full bg-gradient-to-b from-white/90 to-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-gray-200"
+        className="w-full modal-bg"
       >
         <div className="p-4 relative">
           {/* Close button */}

@@ -80,8 +80,8 @@ export function AddSourceModal({ open, onOpenChange, onAdd }: AddSourceModalProp
       }
       onOpenChange(isOpen);
     }}>
-      <DialogContent className="font-inter sm:max-w-[672px] p-0 gap-0 overflow-hidden bg-white rounded-2xl">
-        <form onSubmit={handleSubmit(submit)} className="flex flex-col h-full">
+      <DialogContent className="font-inter sm:max-w-[672px] p-0 gap-0 overflow-hidden modal-bg">
+        <form onSubmit={handleSubmit(submit)} className="flex flex-col h-full ">
           <div className="p-8 text-center">
             <div className="flex justify-center items-center gap-3 mb-6">
               <motion.div 

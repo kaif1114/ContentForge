@@ -67,7 +67,7 @@ export default function EditPostModal({  onClose, initialData, onSave }: EditPos
       {/* <div className="absolute inset-0"
         onClick={onClose}
       /> */}
-      <div className=" w-full max-w-2xl  shadow-xl rounded-xl overflow-hidden bg-gradient-to-b from-white/90 to-white/80 backdrop-blur-md border border-gray-100">
+      <div className=" w-full max-w-2xl overflow-hidden modal-bg">
         <div className="flex flex-row items-center justify-between p-4 border-b ">
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" className="rounded-full" onClick={onClose}>
