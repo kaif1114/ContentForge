@@ -95,7 +95,7 @@ interface PostCardProps {
           <button className="text-sm text-white hover:text-[#cfe2dc] md:text-base font-bold py-2 md:py-3">Schedule</button>
           
           {/* Markdown Tooltip using Portal */}
-          {showTooltip && post.description && typeof document !== 'undefined' && 
+          {showTooltip && !showPopup && post.description && typeof document !== 'undefined' && 
             createPortal(
               <TooltipContent cursorPosition={cursorPosition} content={post.description} />,
               document.body
