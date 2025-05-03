@@ -215,6 +215,10 @@
     @apply bg-[var(--cf-secondary-green)];
   }
 
+  .hover\:text-cf-secondary-green:hover {
+    @apply text-[var(--cf-secondary-green)];
+  }
+
   .hover\:bg-cf-secondary-green-hover:hover {
     @apply bg-[var(--cf-secondary-green-hover)];
   }

@@ -87,7 +87,7 @@ export function EnhancePopup({ isOpen, onClose, onEnhance, buttonRef }: EnhanceP
 
   const content = (
     <div 
-      className="fixed z-50"
+      className="fixed w-full max-w-md z-50"
       style={{
         top: `${position.top}px`,
         left: `${position.left}px`
@@ -95,7 +95,7 @@ export function EnhancePopup({ isOpen, onClose, onEnhance, buttonRef }: EnhanceP
     >
       <div
         ref={popupRef}
-        className="w-full max-w-md bg-gradient-to-b from-white/90 to-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-gray-200"
+        className="w-full bg-gradient-to-b from-white/90 to-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-gray-200"
       >
         <div className="p-4 relative">
           {/* Close button */}
