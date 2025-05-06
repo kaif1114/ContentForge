@@ -50,17 +50,22 @@ async function generatePosts(req, res) {
     () => getRepurposePrompt(platform, postCount),
     { schema: postsArraySchema, name: "posts" }
   );
-  const postsDoc = response.posts.map(
-    (post) =>
-      new Post({
-        title: post.title,
-        description: post.description,
-        platform,
-        length,
-        tone,
-        customLength,
-      })
-  );
+  const postsDoc = response.posts.map((post) => {
+    const postData = {
+      title: post.title,
+      description: post.description,
+      platform,
+      tone,
+    };
+
+    if (length !== undefined) {
+      postData.length = length;
+    } else if (customLength !== undefined) {
+      postData.customLength = customLength;
+    }
+
+    return new Post(postData);
+  });
   c.posts.push(...postsDoc);
   await c.save();
 
@@ -74,6 +79,9 @@ async function generatePosts(req, res) {
       platform,
       tags: doc.tags,
       createdAt: doc.createdAt,
+      tone,
+      length,
+      customLength,
     };
   });
   res.json(apiResponseData);
