@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from "react";
 import {
   Minus,
   Plus,
@@ -12,66 +12,121 @@ import {
   ChevronUp,
   Linkedin,
   Twitter,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Slider } from "@/components/ui/slider"
-import { PostData } from "@/routes/create"
-import GradientBadge from "../ui/gradient-badge"
-import AnimatedCounter from "../ui/animated-counter"
+  Briefcase,
+  TrendingUp,
+  Award,
+  Scale,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Slider } from "@/components/ui/slider";
+import { PostData } from "@/types/content";
+import GradientBadge from "../ui/gradient-badge";
+import AnimatedCounter from "../ui/animated-counter";
 
 interface GeneratePostsProps {
-  data: PostData
-  onUpdateData: (data: Partial<PostData>) => void
-  onGenerate: () => void
+  data: PostData;
+  onUpdateData: (data: Partial<PostData>) => void;
+  onGenerate: () => void;
 }
-
-
 
 export default function GeneratePosts({
   data,
   onUpdateData,
   onGenerate,
 }: GeneratePostsProps) {
-  const [promptFocus, setPromptFocus] = useState(false)
-  const [expandedTemplate, setExpandedTemplate] = useState<string | null>(null)
+  const [promptFocus, setPromptFocus] = useState(false);
+  const [expandedTemplate, setExpandedTemplate] = useState<string | null>(null);
 
-  // Sample tones
+  const postLengthOptions = [
+    {
+      id: "short",
+      label: "Short",
+      description: "Around 50-100 words",
+    },
+    {
+      id: "medium",
+      label: "Medium",
+      description: "Around 100-200 words",
+    },
+    {
+      id: "long",
+      label: "Long",
+      description: "Around 200-300 words",
+    },
+    {
+      id: "custom",
+      label: "Custom",
+      description: "Specify maximum word count",
+    },
+  ];
+
   const tones = [
     {
-      id: "1",
+      id: "professional",
       name: "Professional",
       description:
         "Formal and business-like tone suitable for corporate communications and industry thought leadership.",
       icon: "briefcase",
     },
     {
-      id: "2",
-      name: "Casual",
-      description: "Relaxed and conversational tone that builds rapport and feels more personal and approachable.",
-      icon: "message-square",
+      id: "narrative",
+      name: "Narrative",
+      description:
+        "Storytelling approach that engages readers through compelling narratives and personal experiences.",
+      icon: "book-open",
     },
     {
-      id: "3",
-      name: "Enthusiastic",
-      description: "Excited and energetic tone that conveys passion and creates engagement through dynamic language.",
-      icon: "zap",
-    },
-    {
-      id: "4",
+      id: "informative",
       name: "Informative",
       description:
         "Educational and detailed tone that focuses on delivering valuable insights and data-driven content.",
-      icon: "book-open",
+      icon: "file-text",
     },
-  ]
+    {
+      id: "persuasive",
+      name: "Persuasive",
+      description:
+        "Convincing tone designed to influence opinions and drive specific actions or decisions.",
+      icon: "trending-up",
+    },
+    {
+      id: "casual",
+      name: "Casual",
+      description:
+        "Relaxed and conversational tone that builds rapport and feels more personal and approachable.",
+      icon: "message-square",
+    },
+    {
+      id: "formal",
+      name: "Formal",
+      description:
+        "Structured and traditional tone appropriate for official communications and academic contexts.",
+      icon: "award",
+    },
+    {
+      id: "enthusiastic",
+      name: "Enthusiastic",
+      description:
+        "Excited and energetic tone that conveys passion and creates engagement through dynamic language.",
+      icon: "zap",
+    },
+    {
+      id: "neutral",
+      name: "Neutral",
+      description:
+        "Balanced and impartial tone that presents information objectively without emotional bias.",
+      icon: "scale",
+    },
+  ];
 
   // Sample templates with example posts
   const templates = [
     {
       id: "1",
       name: "Blog Post Promotion",
-      description: "Share your latest blog post with a compelling hook and call-to-action",
+      description:
+        "Share your latest blog post with a compelling hook and call-to-action",
       icon: "file-text",
       example:
         '📝 Just published: "10 Ways to Improve Your Marketing Strategy in 2023"\n\nIn this comprehensive guide, I break down the latest trends and actionable tactics that are driving results for top brands.\n\nKey highlights:\n• The shift from traditional to digital-first approaches\n• How AI is transforming customer engagement\n• Budget-friendly strategies for startups\n\nRead the full article at the link below! 👇\n#MarketingStrategy #DigitalMarketing',
@@ -79,7 +134,8 @@ export default function GeneratePosts({
     {
       id: "2",
       name: "Product Update",
-      description: "Announce new features or updates to your product with excitement and clear benefits",
+      description:
+        "Announce new features or updates to your product with excitement and clear benefits",
       icon: "zap",
       example:
         "🚀 Exciting news! We've just launched our newest feature: Advanced Analytics Dashboard\n\nNow you can:\n✅ Track performance in real-time\n✅ Customize reports with drag-and-drop\n✅ Share insights with your team instantly\n\nUpgrade today and transform how you make data-driven decisions!\n#ProductUpdate #Analytics",
@@ -87,7 +143,8 @@ export default function GeneratePosts({
     {
       id: "3",
       name: "How-to Guide",
-      description: "Step-by-step instructions for completing a task, positioned as valuable expertise",
+      description:
+        "Step-by-step instructions for completing a task, positioned as valuable expertise",
       icon: "book-open",
       example:
         "How to Create Engaging Social Media Content in 5 Steps:\n\n1️⃣ Know your audience - research demographics and interests\n2️⃣ Choose the right format - video, images, or text based on platform\n3️⃣ Create a content calendar - consistency is key\n4️⃣ Use storytelling techniques - connect emotionally\n5️⃣ Analyze performance - adjust based on engagement metrics\n\nWhat content strategy works best for you? Share below!\n#ContentStrategy #SocialMediaTips",
@@ -95,28 +152,37 @@ export default function GeneratePosts({
     {
       id: "4",
       name: "Case Study",
-      description: "Detailed analysis of a specific example or scenario that showcases results",
+      description:
+        "Detailed analysis of a specific example or scenario that showcases results",
       icon: "lightbulb",
       example:
         "📊 Case Study: How we helped @TechStartup increase conversion rates by 137% in just 60 days\n\nThe Challenge:\n• Low website conversion (1.2%)\n• High bounce rate on landing pages\n• Unclear value proposition\n\nOur Solution:\n• Redesigned customer journey\n• Implemented A/B testing\n• Refined messaging based on user feedback\n\nResults speak for themselves! Full case study in comments.\n#ConversionOptimization #GrowthStrategy",
     },
-  ]
+  ];
 
   // Platform options
-  const platforms: { id: "linkedin" | "x" | "both"; label: string; icon: React.ReactNode; color: string; description: string }[] = [
+  const platforms: {
+    id: "linkedin" | "x" | "both";
+    label: string;
+    icon: React.ReactNode;
+    color: string;
+    description: string;
+  }[] = [
     {
-     id: "linkedin",
+      id: "linkedin",
       label: "LinkedIn",
       icon: <Linkedin className="h-6 w-6" />,
       color: "bg-[#0077B5]",
-      description: "Professional network ideal for B2B content, industry insights, and career-related posts.",
+      description:
+        "Professional network ideal for B2B content, industry insights, and career-related posts.",
     },
     {
       id: "x",
       label: "X (Twitter)",
       icon: <Twitter className="h-6 w-6" />,
       color: "bg-black",
-      description: "Fast-paced platform for concise updates, trending topics, and real-time engagement.",
+      description:
+        "Fast-paced platform for concise updates, trending topics, and real-time engagement.",
     },
     {
       id: "both",
@@ -133,55 +199,68 @@ export default function GeneratePosts({
         </div>
       ),
       color: "bg-gradient-to-br from-[#0077B5] to-black",
-      description: "Generate content optimized for both LinkedIn and X, with platform-specific formatting.",
+      description:
+        "Generate content optimized for both LinkedIn and X, with platform-specific formatting.",
     },
-  ]
+  ];
 
   const decrementCount = () => {
     if (data.postCount > 1) {
-      onUpdateData({ postCount: data.postCount - 1 })
+      onUpdateData({ postCount: data.postCount - 1 });
     }
-  }
+  };
 
   const incrementCount = () => {
     if (data.postCount < 10) {
-      onUpdateData({ postCount: data.postCount + 1 })
+      onUpdateData({ postCount: data.postCount + 1 });
     }
-  }
+  };
 
   const toggleTemplateExpansion = (templateId: string) => {
     if (expandedTemplate === templateId) {
-      setExpandedTemplate(null)
+      setExpandedTemplate(null);
     } else {
-      setExpandedTemplate(templateId)
+      setExpandedTemplate(templateId);
     }
-  }
+  };
 
   const handlePlatformSelect = (platform: "linkedin" | "x" | "both") => {
-    onUpdateData({ platform })
-  }
+    onUpdateData({ platform });
+  };
 
   const getTemplateIcon = (iconName: string) => {
     switch (iconName) {
       case "file-text":
-        return <FileText className="h-6 w-6" />
+        return <FileText className="h-6 w-6" />;
       case "zap":
-        return <Zap className="h-6 w-6" />
+        return <Zap className="h-6 w-6" />;
       case "message-square":
-        return <MessageSquare className="h-6 w-6" />
+        return <MessageSquare className="h-6 w-6" />;
       case "book-open":
-        return <BookOpen className="h-6 w-6" />
+        return <BookOpen className="h-6 w-6" />;
       case "lightbulb":
-        return <Lightbulb className="h-6 w-6" />
+        return <Lightbulb className="h-6 w-6" />;
+      case "briefcase":
+        return <Briefcase className="h-6 w-6" />;
+      case "trending-up":
+        return <TrendingUp className="h-6 w-6" />;
+      case "award":
+        return <Award className="h-6 w-6" />;
+      case "scale":
+        return <Scale className="h-6 w-6" />;
       default:
-        return <FileText className="h-6 w-6" />
+        return <FileText className="h-6 w-6" />;
     }
-  }
+  };
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold text-[#1a1a2e] mb-4">Generate Posts</h2>
-      <p className="text-gray-600 mb-8">Configure your post generation settings</p>
+      <h2 className="text-2xl font-semibold text-[#1a1a2e] mb-4">
+        Generate Posts
+      </h2>
+      <p className="text-gray-600 mb-8">
+        Configure your post generation settings
+      </p>
 
       <div className="space-y-10">
         {/* Platform Selection */}
@@ -207,9 +286,13 @@ export default function GeneratePosts({
                   >
                     {platform.icon}
                   </div>
-                  <h4 className="font-medium text-[#1a1a2e] text-lg">{platform.label}</h4>
+                  <h4 className="font-medium text-[#1a1a2e] text-lg">
+                    {platform.label}
+                  </h4>
                 </div>
-                <p className="text-sm text-gray-500 ml-13">{platform.description}</p>
+                <p className="text-sm text-gray-500 ml-13">
+                  {platform.description}
+                </p>
               </div>
             ))}
           </div>
@@ -270,23 +353,25 @@ export default function GeneratePosts({
               <div
                 key={tone.id}
                 className={`p-4 rounded-lg cursor-pointer transition-all duration-300 hover:shadow-md ${
-                  data.toneId === tone.id
+                  data.tone === tone.id
                     ? "bg-gradient-to-r from-[#EEF8F5] to-white border-l-4 border-[#45c19a] shadow-md"
                     : "bg-white border border-gray-100 hover:border-[#DEF0EA]"
                 }`}
-                onClick={() => onUpdateData({ toneId: tone.id })}
+                onClick={() => onUpdateData({ tone: tone.id })}
               >
                 <div className="flex items-center mb-2">
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
-                      data.toneId === tone.id
+                      data.tone === tone.id
                         ? "bg-gradient-to-r from-[#45c19a] to-[#6DC7A9] text-white"
                         : "bg-[#EEF8F5] text-[#45c19a]"
                     }`}
                   >
                     {getTemplateIcon(tone.icon)}
                   </div>
-                  <h4 className="font-medium text-[#1a1a2e] text-lg">{tone.name}</h4>
+                  <h4 className="font-medium text-[#1a1a2e] text-lg">
+                    {tone.name}
+                  </h4>
                 </div>
                 <p className="text-sm text-gray-600">{tone.description}</p>
               </div>
@@ -294,10 +379,78 @@ export default function GeneratePosts({
           </div>
         </div>
 
+        {/* Post Length Selection */}
+        <div className="max-w-4xl mx-auto mt-10">
+          <h3 className="text-lg font-medium text-[#1a1a2e] mb-5 flex items-center">
+            <GradientBadge number={4} />
+            Post Length
+          </h3>
+          <div className="bg-gradient-to-r from-[#EEF8F5] to-white p-6 rounded-xl">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              {postLengthOptions.map((option) => (
+                <div
+                  key={option.id}
+                  className={`p-4 rounded-lg cursor-pointer transition-all duration-300 hover:shadow-md ${
+                    (option.id === "custom" &&
+                      data.customLength !== undefined) ||
+                    (option.id !== "custom" && data.length === option.id)
+                      ? "bg-white border-l-4 border-[#45c19a] shadow-md"
+                      : "bg-white border border-gray-100 hover:border-[#DEF0EA]"
+                  }`}
+                  onClick={() => {
+                    if (option.id === "custom") {
+                      onUpdateData({ customLength: data.customLength || 150 });
+                    } else {
+                      onUpdateData({
+                        length: option.id as "short" | "medium" | "long",
+                      });
+                    }
+                  }}
+                >
+                  <h4 className="font-medium text-[#1a1a2e] text-lg mb-1">
+                    {option.label}
+                  </h4>
+                  <p className="text-sm text-gray-600">{option.description}</p>
+                </div>
+              ))}
+            </div>
+
+            {data.customLength !== undefined && (
+              <div className="bg-white p-4 rounded-lg border border-[#DEF0EA]">
+                <div className="flex flex-col">
+                  <div className="flex justify-between mb-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Custom Word Count
+                    </label>
+                    <span className="text-sm font-medium text-[#45c19a]">
+                      {data.customLength} words
+                    </span>
+                  </div>
+                  <Slider
+                    value={[data.customLength]}
+                    min={50}
+                    max={500}
+                    step={10}
+                    onValueChange={(value) =>
+                      onUpdateData({ customLength: value[0] })
+                    }
+                    className="w-full"
+                  />
+                  <div className="flex justify-between mt-1 text-xs text-gray-500">
+                    <span>50</span>
+                    <span>250</span>
+                    <span>500</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Template Selection */}
         <div className="max-w-4xl mx-auto">
           <h3 className="text-lg font-medium text-[#1a1a2e] mb-5 flex items-center">
-            <GradientBadge number={4} />
+            <GradientBadge number={5} />
             Select Template
           </h3>
           <div className="space-y-4">
@@ -313,8 +466,8 @@ export default function GeneratePosts({
                 <div
                   className="p-4 cursor-pointer"
                   onClick={() => {
-                    onUpdateData({ templateId: template.id })
-                    toggleTemplateExpansion(template.id)
+                    onUpdateData({ templateId: template.id });
+                    toggleTemplateExpansion(template.id);
                   }}
                 >
                   <div className="flex items-center justify-between">
@@ -328,13 +481,15 @@ export default function GeneratePosts({
                       >
                         {getTemplateIcon(template.icon)}
                       </div>
-                      <h4 className="font-medium text-[#1a1a2e] text-lg">{template.name}</h4>
+                      <h4 className="font-medium text-[#1a1a2e] text-lg">
+                        {template.name}
+                      </h4>
                     </div>
                     <button
                       className="text-gray-400 hover:text-[#45c19a] transition-colors"
                       onClick={(e) => {
-                        e.stopPropagation()
-                        toggleTemplateExpansion(template.id)
+                        e.stopPropagation();
+                        toggleTemplateExpansion(template.id);
                       }}
                     >
                       {expandedTemplate === template.id ? (
@@ -344,7 +499,9 @@ export default function GeneratePosts({
                       )}
                     </button>
                   </div>
-                  <p className="text-sm text-gray-600 mt-2">{template.description}</p>
+                  <p className="text-sm text-gray-600 mt-2">
+                    {template.description}
+                  </p>
                 </div>
 
                 {/* Expanded template example */}
@@ -355,9 +512,13 @@ export default function GeneratePosts({
                         <div className="w-8 h-8 rounded-full bg-[#EEF8F5] flex items-center justify-center mr-2">
                           <FileText className="h-4 w-4 text-[#45c19a]" />
                         </div>
-                        <div className="text-sm font-medium text-[#1a1a2e]">Example Post</div>
+                        <div className="text-sm font-medium text-[#1a1a2e]">
+                          Example Post
+                        </div>
                       </div>
-                      <p className="text-sm text-gray-700 whitespace-pre-line">{template.example}</p>
+                      <p className="text-sm text-gray-700 whitespace-pre-line">
+                        {template.example}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -373,7 +534,7 @@ export default function GeneratePosts({
           }`}
         >
           <h3 className="text-lg font-medium text-[#1a1a2e] mb-4 flex items-center">
-            <GradientBadge number={5} />
+            <GradientBadge number={6} />
             Custom Prompt (Optional)
           </h3>
           <div className="relative">
@@ -390,7 +551,9 @@ export default function GeneratePosts({
               } bg-white`}
             />
             {promptFocus && (
-              <div className="absolute bottom-3 right-3 text-xs text-gray-400">{data.customPrompt.length} characters</div>
+              <div className="absolute bottom-3 right-3 text-xs text-gray-400">
+                {data.customPrompt.length} characters
+              </div>
             )}
           </div>
         </div>
@@ -400,7 +563,9 @@ export default function GeneratePosts({
           <div className="absolute inset-0 bg-gradient-to-r from-[#45c19a] to-[#6DC7A9] blur-lg opacity-30 rounded-xl"></div>
           <Button
             onClick={onGenerate}
-            disabled={!data.templateId || !data.toneId || data.platform.length === 0}
+            disabled={
+              !data.templateId || !data.tone || data.platform.length === 0
+            }
             className="w-full bg-gradient-to-r from-[#45c19a] to-[#6DC7A9] hover:from-[#3bb389] hover:to-[#5DB999] text-white py-8 text-lg font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden group"
           >
             <div className="absolute inset-0 w-full h-full bg-white/10 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
@@ -410,5 +575,5 @@ export default function GeneratePosts({
         </div>
       </div>
     </div>
-  )
+  );
 }

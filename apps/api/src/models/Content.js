@@ -1,49 +1,65 @@
 import mongoose from "mongoose";
 
-export const postSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
+export const postSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    tags: {
+      type: [String],
+    },
+    platform: {
+      type: String,
+      enum: ["linkedin", "x", "both"],
+    },
+    length: {
+      type: String,
+      enum: ["short", "medium", "long"],
+    },
+    customLength: {
+      type: Number,
+      min: 100,
+      max: 1000,
+    },
+    tone: {
+      type: String,
+      enum: [
+        "professional",
+        "narrative",
+        "informative",
+        "persuasive",
+        "casual",
+        "formal",
+        "neutral",
+        "enthusiastic",
+      ],
+    },
+
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  description: {
-    type: String,
-    required: true,
-  },
-  tags: {
-    type: [String],
-  },
-  platform: {
-    type: String,
-    enum: ["linkedin", "x", "both"],
-  },
-  length:{
-    type: String,
-    enum: ["short", "medium", "long"],
-  },
-  customLength:{
-    type: Number,
-    min: 100,
-    max: 1000,
-  },
-  tone:{
-    type: String,
-    enum: ["professional", "narrative" , "informative" , "persuasive" , "casual", "formal", "neutral"],
-  },
-  
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-}, {
-  validate: [
-    {
-      validator: function() {
-        return (this.length && !this.customLength) || (!this.length && this.customLength);
+  {
+    validate: [
+      {
+        validator: function () {
+          return (
+            (this.length && !this.customLength) ||
+            (!this.length && this.customLength)
+          );
+        },
+        message:
+          "Either length or customLength must be specified, but not both",
       },
-      message: "Either length or customLength must be specified, but not both"
-    }
-  ]
-});
+    ],
+  }
+);
 
 const contentSchema = new mongoose.Schema({
   label: {
