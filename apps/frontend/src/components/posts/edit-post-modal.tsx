@@ -20,64 +20,20 @@ import {
   ChevronLeft,
   Bookmark,
   MoreHorizontal,
-  Check,
   ChevronDown,
+  AlertCircle,
 } from "lucide-react";
 import { Post } from "@/types/content";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Slider } from "@/components/ui/slider";
+import EnhanceSection from "./EnhanceSection";
+import { tonesArray, lengthArray } from "@/types/post-attributes";
 import { useState } from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface EditPostModalProps {
   onClose: () => void;
   initialData: Post | null;
   onSave: (data: Partial<Post>) => Promise<void>;
 }
-
-const toneOptions = [
-  {
-    id: "professional",
-    label: "Professional",
-    description: "Formal and business-like tone",
-  },
-  {
-    id: "narrative",
-    label: "Narrative",
-    description: "Storytelling approach",
-  },
-  {
-    id: "informative",
-    label: "Informative",
-    description: "Educational and detailed",
-  },
-  {
-    id: "persuasive",
-    label: "Persuasive",
-    description: "Convincing and influential",
-  },
-  {
-    id: "casual",
-    label: "Casual",
-    description: "Relaxed and conversational",
-  },
-  {
-    id: "formal",
-    label: "Formal",
-    description: "Structured and traditional",
-  },
-  {
-    id: "enthusiastic",
-    label: "Enthusiastic",
-    description: "Excited and energetic",
-  },
-  { id: "neutral", label: "Neutral", description: "Balanced and impartial" },
-];
-
-const lengthOptions = [
-  { id: "short", label: "Short", description: "50-100 words" },
-  { id: "medium", label: "Medium", description: "100-200 words" },
-  { id: "long", label: "Long", description: "200-300 words" },
-];
 
 const postFormSchema = z
   .object({
@@ -88,26 +44,14 @@ const postFormSchema = z
     platform: z.enum(["x", "linkedin", "both"], {
       required_error: "Please select a platform",
     }),
-    tone: z.enum(
-      [
-        "professional",
-        "narrative",
-        "informative",
-        "persuasive",
-        "casual",
-        "formal",
-        "enthusiastic",
-        "neutral",
-      ],
-      {
-        required_error: "Please select a tone",
-      }
-    ),
+    tone: z.enum(tonesArray, {
+      required_error: "Please select a tone",
+    }),
   })
   .and(
     z.union([
       z.object({
-        length: z.enum(["short", "medium", "long"]),
+        length: z.enum(lengthArray),
         customLength: z.undefined(),
       }),
       z.object({
@@ -124,14 +68,12 @@ export default function EditPostModal({
   initialData,
   onSave,
 }: EditPostModalProps) {
-  const [customLength] = useState(initialData?.customLength || 150);
-
   const {
     register,
     handleSubmit,
     watch,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitted },
   } = useForm<PostFormValues>({
     resolver: zodResolver(postFormSchema),
     defaultValues: {
@@ -152,26 +94,9 @@ export default function EditPostModal({
 
   const watchLength = watch("length");
   const watchCustomLength = watch("customLength");
-  const isUsingCustomLength =
-    watchLength === undefined && watchCustomLength !== undefined;
+  const watchTone = watch("tone");
 
-  const handleLengthChange = (value: string) => {
-    if (value === "custom") {
-      setValue("length", undefined);
-      setValue("customLength", customLength);
-    } else {
-      setValue("length", value as "short" | "medium" | "long", {
-        shouldValidate: true,
-      });
-      setValue("customLength", undefined);
-    }
-  };
-
-  const handleCustomLengthChange = (value: number[]) => {
-    setValue("customLength", value[0]);
-  };
-
-  const handleSave = (data: PostFormValues) => {
+  const onSubmit = handleSubmit((data) => {
     const { length, customLength, ...baseData } = data;
 
     const postData: Partial<Post> = {
@@ -180,13 +105,21 @@ export default function EditPostModal({
     };
 
     if (customLength !== undefined) {
-      (postData as any).customLength = customLength;
+      postData.customLength = customLength;
     } else if (length !== undefined) {
-      (postData as any).length = length;
+      postData.length = length;
     }
 
     onSave(postData);
     onClose();
+  });
+
+  const renderErrorMessages = () => {
+    return Object.entries(errors).map(([key, error]) => (
+      <li key={key}>
+        {key.charAt(0).toUpperCase() + key.slice(1)}: {error.message}
+      </li>
+    ));
   };
 
   const getPlatformIcon = (platform: string) => {
@@ -231,7 +164,18 @@ export default function EditPostModal({
           </div>
         </div>
 
-        <form onSubmit={handleSubmit(handleSave)} className="p-6">
+        <form onSubmit={onSubmit} className="p-6">
+          {isSubmitted && Object.keys(errors).length > 0 && (
+            <Alert className="mb-6 border-red-500/50 bg-red-500/10 text-red-500">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                <ul className="list-disc pl-5 text-sm">
+                  {renderErrorMessages()}
+                </ul>
+              </AlertDescription>
+            </Alert>
+          )}
+
           <div className="flex items-center gap-2 mb-6">
             <div className="flex items-center gap-2 text-sm font-medium text-mint-800">
               <span className="text-mint-500">{initialData.sourceTitle}</span>
@@ -258,11 +202,6 @@ export default function EditPostModal({
                     className="text-xl font-semibold border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0 h-auto"
                     placeholder="Post Title"
                   />
-                  {errors.title && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {errors.title.message}
-                    </p>
-                  )}
                 </div>
               </div>
 
@@ -315,11 +254,6 @@ export default function EditPostModal({
                   className="min-h-[300px] focus-visible:ring-0 focus-visible:ring-offset-0 p-4 bg-white/5 rounded"
                   placeholder="Write your post description here..."
                 />
-                {errors.description && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.description.message}
-                  </p>
-                )}
               </div>
 
               <div>
@@ -410,137 +344,20 @@ export default function EditPostModal({
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                {errors.platform && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.platform.message}
-                  </p>
-                )}
               </div>
 
               {/* Tone Selection */}
-              <div>
-                <Label className="text-sm block mb-2">Tone</Label>
-                <div className="grid grid-cols-2 gap-2">
-                  {toneOptions.map((tone) => (
-                    <div
-                      key={tone.id}
-                      className={`p-2 rounded border text-center cursor-pointer transition-all ${
-                        watch("tone") === tone.id
-                          ? "border-mint-500 bg-mint-50"
-                          : "border-white/30 hover:border-mint-200"
-                      }`}
-                      onClick={() =>
-                        setValue("tone", tone.id as any, {
-                          shouldValidate: true,
-                        })
-                      }
-                    >
-                      <div className="text-sm font-medium">{tone.label}</div>
-                      <div className="text-xs text-gray-500 mt-1">
-                        {tone.description}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                {errors.tone && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.tone?.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Length Selection */}
-              <div>
-                <Label className="text-sm block mb-2">Length</Label>
-                <RadioGroup
-                  value={
-                    isUsingCustomLength ? "custom" : watchLength || "medium"
-                  }
-                  onValueChange={handleLengthChange}
-                  className="grid grid-cols-2 gap-2"
-                >
-                  {lengthOptions.map((option) => (
-                    <div
-                      key={option.id}
-                      className="flex items-center space-x-2"
-                    >
-                      <RadioGroupItem
-                        value={option.id}
-                        id={`length-${option.id}`}
-                        className="sr-only"
-                      />
-                      <Label
-                        htmlFor={`length-${option.id}`}
-                        className={`flex flex-col items-center justify-center p-2 rounded border w-full h-full cursor-pointer transition-all ${
-                          !isUsingCustomLength && watchLength === option.id
-                            ? "border-mint-500 bg-mint-50"
-                            : "border-white/30 hover:border-mint-200"
-                        }`}
-                      >
-                        <span className="text-sm font-medium">
-                          {option.label}
-                        </span>
-                        <span className="text-xs text-gray-500 mt-1">
-                          {option.description}
-                        </span>
-                      </Label>
-                    </div>
-                  ))}
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem
-                      value="custom"
-                      id="length-custom"
-                      className="sr-only"
-                    />
-                    <Label
-                      htmlFor="length-custom"
-                      className={`flex flex-col items-center justify-center p-2 rounded border w-full h-full cursor-pointer transition-all ${
-                        isUsingCustomLength
-                          ? "border-mint-500 bg-mint-50"
-                          : "border-white/30 hover:border-mint-200"
-                      }`}
-                    >
-                      <span className="text-sm font-medium">Custom</span>
-                      <span className="text-xs text-gray-500 mt-1">
-                        Specify length
-                      </span>
-                    </Label>
-                  </div>
-                </RadioGroup>
-
-                {isUsingCustomLength && (
-                  <div className="p-3 border rounded mt-2">
-                    <div className="flex justify-between mb-2">
-                      <Label className="text-sm">Custom Word Count</Label>
-                      <span className="text-sm font-medium">
-                        {watchCustomLength} words
-                      </span>
-                    </div>
-                    <Slider
-                      value={[watchCustomLength || 150]}
-                      min={50}
-                      max={500}
-                      step={10}
-                      onValueChange={handleCustomLengthChange}
-                    />
-                    <div className="flex justify-between mt-1 text-xs text-gray-500">
-                      <span>50</span>
-                      <span>250</span>
-                      <span>500</span>
-                    </div>
-                  </div>
-                )}
-                {errors.length && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.length.message}
-                  </p>
-                )}
-                {errors.customLength && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.customLength.message}
-                  </p>
-                )}
-              </div>
+              <EnhanceSection
+                initialData={initialData}
+                toneWatch={watchTone}
+                lengthWatch={watchLength}
+                customLengthWatch={watchCustomLength}
+                onSetLength={(length) => setValue("length", length)}
+                onSetCustomLength={(customLength) =>
+                  setValue("customLength", customLength)
+                }
+                onSetTone={(tone) => setValue("tone", tone)}
+              />
             </div>
           </div>
 
