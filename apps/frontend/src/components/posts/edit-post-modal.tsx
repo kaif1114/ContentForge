@@ -26,7 +26,6 @@ import {
 import { Post } from "@/types/content";
 import EnhanceSection from "./EnhanceSection";
 import { tonesArray, lengthArray } from "@/types/post-attributes";
-import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface EditPostModalProps {
