@@ -1,6 +1,6 @@
 import express from "express";
-import generatePosts from "../routes/posts/posts.js";
-import generateIdeas from "../routes/ideas.js";
+import postsRouter from "../routes/posts/posts.js";
+import ideasRouter from "../routes/ideas/ideas.js";
 import scrape from "../routes/scrape.js";
 import content from "../routes/content-sources.js";
 import auth from "../routes/auth/auth.js";
@@ -13,8 +13,8 @@ export function routes(app) {
   app.use(errorHandler);
 
   app.use("/scrape", authMiddleware, scrape);
-  app.use("/ideas", authMiddleware, generateIdeas);
-  app.use("/posts", authMiddleware, generatePosts);
-  app.use("/content-sources", authMiddleware, content); 
+  app.use("/ideas", authMiddleware, ideasRouter);
+  app.use("/posts", authMiddleware, postsRouter);
+  app.use("/content-sources", authMiddleware, content);
   app.use("/auth", auth);
 }

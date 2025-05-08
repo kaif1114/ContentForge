@@ -15,6 +15,11 @@ const ideaSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Content",
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 });
 
 export const Idea = mongoose.model("Idea", ideaSchema);
