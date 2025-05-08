@@ -1,17 +1,17 @@
 import api from "@/utils/axios";
 import { useQuery } from "@tanstack/react-query";
-import { Post } from "@/types/content";
 import { PaginationParams, PaginatedResponse } from "@/types/pagination";
+import { Idea } from "@/types/idea";
 
-export const usePosts = (params: PaginationParams = {}) => {
+export function useIdeas(params: PaginationParams = {}) {
   const { page = 1, limit = 10 } = params;
 
   return useQuery({
-    queryKey: ["posts", { page, limit }],
+    queryKey: ["ideas", { page, limit }],
     queryFn: async () => {
-      return api.get<PaginatedResponse<Post>>("/posts", {
+      return api.get<PaginatedResponse<Idea>>("/ideas", {
         params: { page, limit },
       });
     },
   });
-};
+}

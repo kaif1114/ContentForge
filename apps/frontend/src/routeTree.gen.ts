@@ -17,10 +17,10 @@ import { Route as LoginImport } from './routes/login'
 import { Route as CreateImport } from './routes/create'
 import { Route as SidebarLayoutRouteImport } from './routes/_sidebarLayout/route'
 import { Route as IndexImport } from './routes/index'
-import { Route as SidebarLayoutTopicsImport } from './routes/_sidebarLayout/topics'
 import { Route as SidebarLayoutSourcesImport } from './routes/_sidebarLayout/sources'
 import { Route as SidebarLayoutSettingsImport } from './routes/_sidebarLayout/settings'
 import { Route as SidebarLayoutPostsImport } from './routes/_sidebarLayout/posts'
+import { Route as SidebarLayoutIdeasImport } from './routes/_sidebarLayout/ideas'
 
 // Create/Update Routes
 
@@ -59,12 +59,6 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const SidebarLayoutTopicsRoute = SidebarLayoutTopicsImport.update({
-  id: '/topics',
-  path: '/topics',
-  getParentRoute: () => SidebarLayoutRouteRoute,
-} as any)
-
 const SidebarLayoutSourcesRoute = SidebarLayoutSourcesImport.update({
   id: '/sources',
   path: '/sources',
@@ -80,6 +74,12 @@ const SidebarLayoutSettingsRoute = SidebarLayoutSettingsImport.update({
 const SidebarLayoutPostsRoute = SidebarLayoutPostsImport.update({
   id: '/posts',
   path: '/posts',
+  getParentRoute: () => SidebarLayoutRouteRoute,
+} as any)
+
+const SidebarLayoutIdeasRoute = SidebarLayoutIdeasImport.update({
+  id: '/ideas',
+  path: '/ideas',
   getParentRoute: () => SidebarLayoutRouteRoute,
 } as any)
 
@@ -129,6 +129,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
     }
+    '/_sidebarLayout/ideas': {
+      id: '/_sidebarLayout/ideas'
+      path: '/ideas'
+      fullPath: '/ideas'
+      preLoaderRoute: typeof SidebarLayoutIdeasImport
+      parentRoute: typeof SidebarLayoutRouteImport
+    }
     '/_sidebarLayout/posts': {
       id: '/_sidebarLayout/posts'
       path: '/posts'
@@ -150,30 +157,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SidebarLayoutSourcesImport
       parentRoute: typeof SidebarLayoutRouteImport
     }
-    '/_sidebarLayout/topics': {
-      id: '/_sidebarLayout/topics'
-      path: '/topics'
-      fullPath: '/topics'
-      preLoaderRoute: typeof SidebarLayoutTopicsImport
-      parentRoute: typeof SidebarLayoutRouteImport
-    }
   }
 }
 
 // Create and export the route tree
 
 interface SidebarLayoutRouteRouteChildren {
+  SidebarLayoutIdeasRoute: typeof SidebarLayoutIdeasRoute
   SidebarLayoutPostsRoute: typeof SidebarLayoutPostsRoute
   SidebarLayoutSettingsRoute: typeof SidebarLayoutSettingsRoute
   SidebarLayoutSourcesRoute: typeof SidebarLayoutSourcesRoute
-  SidebarLayoutTopicsRoute: typeof SidebarLayoutTopicsRoute
 }
 
 const SidebarLayoutRouteRouteChildren: SidebarLayoutRouteRouteChildren = {
+  SidebarLayoutIdeasRoute: SidebarLayoutIdeasRoute,
   SidebarLayoutPostsRoute: SidebarLayoutPostsRoute,
   SidebarLayoutSettingsRoute: SidebarLayoutSettingsRoute,
   SidebarLayoutSourcesRoute: SidebarLayoutSourcesRoute,
-  SidebarLayoutTopicsRoute: SidebarLayoutTopicsRoute,
 }
 
 const SidebarLayoutRouteRouteWithChildren =
@@ -186,10 +186,10 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/register': typeof RegisterRoute
+  '/ideas': typeof SidebarLayoutIdeasRoute
   '/posts': typeof SidebarLayoutPostsRoute
   '/settings': typeof SidebarLayoutSettingsRoute
   '/sources': typeof SidebarLayoutSourcesRoute
-  '/topics': typeof SidebarLayoutTopicsRoute
 }
 
 export interface FileRoutesByTo {
@@ -199,10 +199,10 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/register': typeof RegisterRoute
+  '/ideas': typeof SidebarLayoutIdeasRoute
   '/posts': typeof SidebarLayoutPostsRoute
   '/settings': typeof SidebarLayoutSettingsRoute
   '/sources': typeof SidebarLayoutSourcesRoute
-  '/topics': typeof SidebarLayoutTopicsRoute
 }
 
 export interface FileRoutesById {
@@ -213,10 +213,10 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/register': typeof RegisterRoute
+  '/_sidebarLayout/ideas': typeof SidebarLayoutIdeasRoute
   '/_sidebarLayout/posts': typeof SidebarLayoutPostsRoute
   '/_sidebarLayout/settings': typeof SidebarLayoutSettingsRoute
   '/_sidebarLayout/sources': typeof SidebarLayoutSourcesRoute
-  '/_sidebarLayout/topics': typeof SidebarLayoutTopicsRoute
 }
 
 export interface FileRouteTypes {
@@ -228,10 +228,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/oauth-callback'
     | '/register'
+    | '/ideas'
     | '/posts'
     | '/settings'
     | '/sources'
-    | '/topics'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -240,10 +240,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/oauth-callback'
     | '/register'
+    | '/ideas'
     | '/posts'
     | '/settings'
     | '/sources'
-    | '/topics'
   id:
     | '__root__'
     | '/'
@@ -252,10 +252,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/oauth-callback'
     | '/register'
+    | '/_sidebarLayout/ideas'
     | '/_sidebarLayout/posts'
     | '/_sidebarLayout/settings'
     | '/_sidebarLayout/sources'
-    | '/_sidebarLayout/topics'
   fileRoutesById: FileRoutesById
 }
 
@@ -301,10 +301,10 @@ export const routeTree = rootRoute
     "/_sidebarLayout": {
       "filePath": "_sidebarLayout/route.tsx",
       "children": [
+        "/_sidebarLayout/ideas",
         "/_sidebarLayout/posts",
         "/_sidebarLayout/settings",
-        "/_sidebarLayout/sources",
-        "/_sidebarLayout/topics"
+        "/_sidebarLayout/sources"
       ]
     },
     "/create": {
@@ -319,6 +319,10 @@ export const routeTree = rootRoute
     "/register": {
       "filePath": "register.tsx"
     },
+    "/_sidebarLayout/ideas": {
+      "filePath": "_sidebarLayout/ideas.tsx",
+      "parent": "/_sidebarLayout"
+    },
     "/_sidebarLayout/posts": {
       "filePath": "_sidebarLayout/posts.tsx",
       "parent": "/_sidebarLayout"
@@ -329,10 +333,6 @@ export const routeTree = rootRoute
     },
     "/_sidebarLayout/sources": {
       "filePath": "_sidebarLayout/sources.tsx",
-      "parent": "/_sidebarLayout"
-    },
-    "/_sidebarLayout/topics": {
-      "filePath": "_sidebarLayout/topics.tsx",
       "parent": "/_sidebarLayout"
     }
   }
