@@ -137,7 +137,7 @@ export default function EditPostModal({
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 ">
       <div className="absolute inset-0 backdrop-blur-xs" onClick={onClose} />
-      <div className="w-full max-w-5xl overflow-hidden modal-bg rounded-xl">
+      <div className="w-full max-w-5xl overflow-hidden modal-bg">
         <div className="flex flex-row items-center justify-between p-4 border-b">
           <div className="flex items-center gap-2">
             <Button

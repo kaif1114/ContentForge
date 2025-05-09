@@ -5,6 +5,8 @@ import { ContentIdeaCard } from "@/components/ideas/IdeaCard";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import AddButton from "@/components/ui/add-button";
+import { CreateModal } from "@/components/ideas/CreateModal";
 
 export const Route = createFileRoute("/_sidebarLayout/ideas")({
   component: RouteComponent,
@@ -13,7 +15,8 @@ export const Route = createFileRoute("/_sidebarLayout/ideas")({
 function RouteComponent() {
   const [selectedIdeaId, setSelectedIdeaId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const limit = 10;
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const limit = 9;
 
   const { data, isLoading, error, isError } = useIdeas({ page, limit });
 
@@ -25,6 +28,20 @@ function RouteComponent() {
       setPage(newPage);
       setSelectedIdeaId(null);
     }
+  };
+
+  const handleCreateIdea = (
+    selectedSources: string[],
+    numberOfIdeas: number
+  ) => {
+    // Here you would implement the actual API call to create ideas
+    console.log(
+      "Creating ideas from sources:",
+      selectedSources,
+      "Count:",
+      numberOfIdeas
+    );
+    // After API call, you'd refresh the ideas list
   };
 
   if (isLoading) {
@@ -82,15 +99,35 @@ function RouteComponent() {
         <h1 className="text-2xl font-bold mb-6">Content Ideas</h1>
         <div className="flex flex-col items-center justify-center bg-background/80 border border-border rounded-lg py-12">
           <p className="text-muted-foreground mb-4">No ideas found.</p>
-          <Button variant="outline">Create Your First Idea</Button>
+          <Button variant="outline" onClick={() => setIsCreateModalOpen(true)}>
+            Create Your First Idea
+          </Button>
+          {isCreateModalOpen && (
+            <CreateModal
+              onClose={() => setIsCreateModalOpen(false)}
+              onSubmit={handleCreateIdea}
+            />
+          )}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container py-6">
-      <h1 className="text-2xl font-bold mb-6">Content Ideas</h1>
+    <div className=" py-6">
+      {isCreateModalOpen && (
+        <CreateModal
+          onClose={() => setIsCreateModalOpen(false)}
+          onSubmit={handleCreateIdea}
+        />
+      )}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold mb-6">Content Ideas</h1>
+        <AddButton
+          onClick={() => setIsCreateModalOpen(true)}
+          text="Create Idea"
+        />
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {ideas.map((idea) => (

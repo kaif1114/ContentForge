@@ -37,20 +37,20 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  
+
   /* Custom ContentForge Color System */
-  --cf-mint-light: #EEF8F5;
-  --cf-mint-medium: #DEF0EA;
+  --cf-mint-light: #eef8f5;
+  --cf-mint-medium: #def0ea;
   --cf-primary-green: #45c19a;
   --cf-primary-green-hover: #3bb389;
-  --cf-secondary-green: #6DC7A9;
-  --cf-secondary-green-hover: #5DB999;
+  --cf-secondary-green: #6dc7a9;
+  --cf-secondary-green-hover: #5db999;
   --cf-purple: #6c5ce7;
   --cf-purple-light: #e2e0f5;
   --cf-beige-light: #f0e9e0;
   --cf-text-dark: #1a1a2e;
-  --cf-card-gradient-start: rgba(69,193,154,1);
-  --cf-card-gradient-end: rgba(161,208,193,1);
+  --cf-card-gradient-start: rgba(69, 193, 154, 1);
+  --cf-card-gradient-end: rgba(161, 208, 193, 1);
 }
 
 .dark {
@@ -123,7 +123,7 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  
+
   --color-cf-mint-light: var(--cf-mint-light);
   --color-cf-mint-medium: var(--cf-mint-medium);
   --color-cf-primary-green: var(--cf-primary-green);
@@ -249,25 +249,26 @@
     @apply text-white;
   }
 
-  .modal-bg{
-    @apply bg-gradient-to-b from-white/90 to-white/80 backdrop-blur-md border border-gray-200 rounded-3xl shadow-xl
+  .modal-bg {
+    @apply bg-gradient-to-b from-white/90 to-white/80 backdrop-blur-md border border-gray-200 rounded-3xl shadow-xl;
   }
 }
 
 .wayflyer-gradient {
-  background: linear-gradient(to bottom, rgba(243, 245, 247, 1) 0%, 
-                                         rgba(171, 215, 205, 0.6) 8%, 
-                                         rgba(171, 215, 205, 0.3) 15%,
-                                         rgba(212, 238, 232, 0.2) 35%, 
-                                         rgba(220, 242, 237, 0.1) 40%,
-                                         rgba(243, 245, 247, 1) 100%);
+  background: linear-gradient(
+    to bottom,
+    rgba(243, 245, 247, 1) 0%,
+    rgba(171, 215, 205, 0.6) 8%,
+    rgba(171, 215, 205, 0.3) 15%,
+    rgba(212, 238, 232, 0.2) 35%,
+    rgba(220, 242, 237, 0.1) 40%,
+    rgba(243, 245, 247, 1) 100%
+  );
 }
 
 .font-inter {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
-
-
 
 /* Custom animation for the counter */
 @keyframes pulse {
