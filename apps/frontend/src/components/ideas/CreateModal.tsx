@@ -109,7 +109,6 @@ export function CreateModal({ onClose, onAddIdeas }: CreateModalProps) {
 
           <div className="max-h-60 overflow-y-auto space-y-2">
             {isLoading ? (
-              // Loading skeletons
               Array(3)
                 .fill(0)
                 .map((_, index) => (
