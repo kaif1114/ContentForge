@@ -71,11 +71,9 @@ function RouteComponent() {
 
   const discardSelectedPosts = async () => {
     try {
-      // Create a promise array for all deletion operations
       const deletePromises = selectedPostIds.map((postId) =>
         deletePost(postId, {
           onSuccess: () => {
-            // Update the query cache after successful deletion
             queryClient.invalidateQueries({ queryKey: ["posts"] });
           },
         })
@@ -260,42 +258,43 @@ function RouteComponent() {
 
       <div className="flex-grow flex flex-col">
         <div className="grid grid-cols-1 min-[450px]:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-          {posts.map((post, index) => (
-            <motion.div
-              key={post._id}
-              className={`w-full flex justify-center ${
-                isDeletingPost && selectedPostIds.includes(post._id)
-                  ? "opacity-50"
-                  : ""
-              }`}
-            >
-              {isDeletingPost && selectedPostIds.includes(post._id) ? (
-                <div className="w-full h-full flex items-center justify-center p-10">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cf-primary-green"></div>
-                </div>
-              ) : (
-                <div className="w-full relative">
-                  {selectionMode && (
-                    <button
-                      onClick={() => togglePostSelection(post._id)}
-                      className="absolute top-2 left-2 z-10 focus:outline-none bg-white rounded-full p-1 shadow-md"
-                    >
-                      {selectedPostIds.includes(post._id) ? (
-                        <CheckSquare className="h-5 w-5 text-cf-primary-green" />
-                      ) : (
-                        <Square className="h-5 w-5 text-gray-300" />
-                      )}
-                    </button>
-                  )}
-                  <PostCard
-                    post={post}
-                    onEdit={() => setPostToEdit(post)}
-                    onDiscard={handleDiscardPost}
-                  />
-                </div>
-              )}
-            </motion.div>
-          ))}
+          {posts.map((post, index) => {
+            const includesPostId = selectedPostIds.includes(post._id);
+            return (
+              <motion.div
+                key={post._id}
+                className={`w-full flex justify-center ${
+                  isDeletingPost && includesPostId ? "opacity-50" : ""
+                }`}
+              >
+                {isDeletingPost && includesPostId ? (
+                  <div className="w-full h-full flex items-center justify-center p-10">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cf-primary-green"></div>
+                  </div>
+                ) : (
+                  <div className="w-full relative">
+                    {selectionMode && (
+                      <button
+                        onClick={() => togglePostSelection(post._id)}
+                        className="absolute top-2 left-2 z-10 focus:outline-none bg-white rounded-full p-1 shadow-md"
+                      >
+                        {includesPostId ? (
+                          <CheckSquare className="h-5 w-5 text-cf-primary-green" />
+                        ) : (
+                          <Square className="h-5 w-5 text-gray-300" />
+                        )}
+                      </button>
+                    )}
+                    <PostCard
+                      post={post}
+                      onEdit={() => setPostToEdit(post)}
+                      onDiscard={handleDiscardPost}
+                    />
+                  </div>
+                )}
+              </motion.div>
+            );
+          })}
         </div>
 
         <div className="mt-auto">

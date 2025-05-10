@@ -1,18 +1,22 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Idea } from "../../types/idea";
-import { Check, FileText, Video, Clock } from "lucide-react";
+import { Check, Trash2, CheckSquare, Square } from "lucide-react";
 
 interface ContentIdeaCardProps {
   idea: Idea;
   isSelected: boolean;
   onSelect: () => void;
+  onDelete?: (ideaId: string) => void;
+  selectionMode?: boolean;
 }
 
 export function ContentIdeaCard({
   idea,
   isSelected,
   onSelect,
+  onDelete,
+  selectionMode = false,
 }: ContentIdeaCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -32,8 +36,25 @@ export function ContentIdeaCard({
         }
       }}
     >
-      {/* Selection indicator */}
-      {isSelected && (
+      {/* Selection indicator when in selection mode */}
+      {selectionMode && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect();
+          }}
+          className="absolute top-2 left-2 z-10 focus:outline-none bg-white rounded-full p-1 shadow-md"
+        >
+          {isSelected ? (
+            <CheckSquare className="h-5 w-5 text-[var(--cf-primary-green)]" />
+          ) : (
+            <Square className="h-5 w-5 text-gray-300" />
+          )}
+        </button>
+      )}
+
+      {/* Standard selection indicator */}
+      {isSelected && !selectionMode && (
         <div className="absolute top-2 left-2 bg-[var(--cf-primary-green)] rounded-full p-1">
           <Check className="w-3 h-3 text-white" />
         </div>
@@ -55,25 +76,41 @@ export function ContentIdeaCard({
         className={`absolute right-4 bottom-4 transition-all duration-150 md:opacity-0 md:translate-y-2 
                       ${isHovered ? "md:opacity-100 md:translate-y-0" : ""}`}
       >
-        <Button
-          variant="ghost"
-          className="text-[var(--cf-primary-green)] hover:bg-white/50 hover:backdrop-blur-md rounded-xl"
-          onClick={(e) => {
-            e.stopPropagation();
-            // In a real app, this would open a modal to generate posts
-            console.log("Generate posts from idea:", idea._id);
-          }}
-        >
-          Generate Posts
-        </Button>
+        <div className="flex gap-2">
+          {onDelete && !selectionMode && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-destructive hover:bg-destructive/10 hover:text-destructive rounded-xl"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(idea._id);
+              }}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            className="text-[var(--cf-primary-green)] hover:bg-white/50 hover:backdrop-blur-md rounded-xl"
+            onClick={(e) => {
+              e.stopPropagation();
+              // In a real app, this would open a modal to generate posts
+              console.log("Generate posts from idea:", idea._id);
+            }}
+          >
+            Generate Posts
+          </Button>
+        </div>
       </div>
 
-      {/* Card overlay for selection */}
-      <div
-        className="absolute inset-0 cursor-pointer rounded-xl"
-        onClick={onSelect}
-        aria-label={`Select idea: ${idea.title}`}
-      />
+      {!selectionMode && (
+        <div
+          className="absolute inset-0 cursor-pointer rounded-xl"
+          onClick={onSelect}
+          aria-label={`Select idea: ${idea.title}`}
+        />
+      )}
     </div>
   );
 }
