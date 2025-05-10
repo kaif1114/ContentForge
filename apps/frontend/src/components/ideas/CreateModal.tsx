@@ -1,26 +1,44 @@
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { X, Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { useContentSources } from "@/hooks/useContentSources";
 import { ContentSource } from "@/types/content";
+import useAddIdeas from "@/hooks/useCreateIdeas";
 
 interface CreateModalProps {
   onClose: () => void;
-  onSubmit: (selectedSources: string[], numberOfIdeas: number) => void;
+  onAddIdeas: () => Promise<void>;
 }
 
-export function CreateModal({ onClose, onSubmit }: CreateModalProps) {
+export function CreateModal({ onClose, onAddIdeas }: CreateModalProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedSources, setSelectedSources] = useState<string[]>([]);
-  const [numberOfIdeas, setNumberOfIdeas] = useState<number>(6);
+  const [selectedSource, setSelectedSource] = useState<string>("");
+  const [numberOfIdeas, setNumberOfIdeas] = useState<number>(3);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [allSources, setAllSources] = useState<ContentSource[]>([]);
-  const { data: contentSourcesResponse, isLoading } = useContentSources({
+  const {
+    data: contentSourcesResponse,
+    isLoading,
+    isError,
+    error,
+  } = useContentSources({
     page: currentPage,
     limit: 5,
   });
+  const {
+    mutateAsync: addIdeas,
+    isPending: isAddingIdeas,
+    isError: isAddingIdeasError,
+    error: addingIdeasError,
+  } = useAddIdeas();
+
+  const handleCreateIdea = async () => {
+    await addIdeas({ contentId: selectedSource, count: numberOfIdeas });
+    await onAddIdeas();
+    onClose();
+  };
 
   useEffect(() => {
     if (contentSourcesResponse?.data.data) {
@@ -37,11 +55,7 @@ export function CreateModal({ onClose, onSubmit }: CreateModalProps) {
   );
 
   const handleSelectSource = (sourceId: string) => {
-    if (selectedSources.includes(sourceId)) {
-      setSelectedSources(selectedSources.filter((id) => id !== sourceId));
-    } else {
-      setSelectedSources([...selectedSources, sourceId]);
-    }
+    setSelectedSource(sourceId);
   };
 
   const handleLoadMore = () => {
@@ -51,11 +65,6 @@ export function CreateModal({ onClose, onSubmit }: CreateModalProps) {
   const hasMoreSources =
     contentSourcesResponse?.data.pagination &&
     currentPage < contentSourcesResponse.data.pagination.totalPages;
-
-  const handleSubmit = () => {
-    onSubmit(selectedSources, numberOfIdeas);
-    onClose();
-  };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -68,7 +77,7 @@ export function CreateModal({ onClose, onSubmit }: CreateModalProps) {
           <X size={18} />
         </button>
 
-        <h2 className="text-2xl font-bold mb-6">Generate New Ideas</h2>
+        <h2 className="text-2xl font-bold mb-6">Create New Ideas</h2>
 
         <div className="mb-6">
           <h3 className="text-lg font-medium mb-2">Select Content Source</h3>
@@ -80,28 +89,70 @@ export function CreateModal({ onClose, onSubmit }: CreateModalProps) {
             className="mb-2"
           />
 
-          <div className="max-h-60 overflow-y-auto space-y-2">
-            {filteredSources?.map((source) => (
-              <div
-                key={source._id}
-                className={`flex items-center rounded-lg cursor-pointer text-sm border p-4 ${
-                  selectedSources.includes(source._id)
-                    ? "border-primary bg-primary/10"
-                    : "border-border"
-                }`}
-                onClick={() => handleSelectSource(source._id)}
+          {isError && (
+            <div className="flex flex-col items-center gap-3 p-4 rounded-lg bg-destructive/10 text-destructive mb-4">
+              <AlertCircle className="h-5 w-5" />
+              <p className="text-sm text-center">
+                {error?.message || "Failed to load content sources."}
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs"
+                onClick={() => setCurrentPage(1)}
               >
-                <div className="mr-3 text-primary">{source.type}</div>
-                <div>
-                  <div className="font-medium">{source.label}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {source.type}
+                <RefreshCw className="h-3 w-3 mr-1" />
+                Try Again
+              </Button>
+            </div>
+          )}
+
+          <div className="max-h-60 overflow-y-auto space-y-2">
+            {isLoading ? (
+              // Loading skeletons
+              Array(3)
+                .fill(0)
+                .map((_, index) => (
+                  <div
+                    key={`skeleton-${index}`}
+                    className="flex items-center rounded-lg border border-border p-4"
+                  >
+                    <div className="mr-3 h-5 w-16 bg-primary/10 rounded animate-pulse"></div>
+                    <div className="w-full">
+                      <div className="h-4 w-3/4 bg-primary/10 rounded animate-pulse mb-2"></div>
+                      <div className="h-3 w-1/2 bg-primary/10 rounded animate-pulse"></div>
+                    </div>
+                  </div>
+                ))
+            ) : filteredSources?.length > 0 ? (
+              filteredSources.map((source) => (
+                <div
+                  key={source._id}
+                  className={`flex items-center rounded-lg cursor-pointer text-sm border p-4 ${
+                    selectedSource == source._id
+                      ? "border-primary bg-primary/10"
+                      : "border-border"
+                  }`}
+                  onClick={() => handleSelectSource(source._id)}
+                >
+                  <div className="mr-3 text-primary">{source.type}</div>
+                  <div>
+                    <div className="font-medium">{source.label}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {source.type}
+                    </div>
                   </div>
                 </div>
+              ))
+            ) : (
+              <div className="text-center p-4 text-muted-foreground">
+                {searchQuery
+                  ? "No matching sources found."
+                  : "No content sources available."}
               </div>
-            ))}
+            )}
 
-            {hasMoreSources && (
+            {!isLoading && !isError && hasMoreSources && (
               <div className="flex justify-center mt-2">
                 <Button
                   variant="outline"
@@ -110,7 +161,14 @@ export function CreateModal({ onClose, onSubmit }: CreateModalProps) {
                   disabled={isLoading}
                   className="w-full"
                 >
-                  {isLoading ? "Loading..." : "Load More Sources"}
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                      Loading...
+                    </>
+                  ) : (
+                    "Load More Sources"
+                  )}
                 </Button>
               </div>
             )}
@@ -141,11 +199,36 @@ export function CreateModal({ onClose, onSubmit }: CreateModalProps) {
           </div>
         </div>
 
-        <div className="flex justify-end">
-          <Button variant="outline" onClick={onClose} className="mr-2">
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit}>Generate</Button>
+        <div className="flex flex-col gap-4">
+          {isAddingIdeasError && (
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-destructive/10 text-destructive">
+              <AlertCircle className="h-4 w-4" />
+              <p className="text-sm">
+                {addingIdeasError?.message ||
+                  "Failed to create ideas. Please try again."}
+              </p>
+            </div>
+          )}
+
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={onClose} className="mr-2">
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCreateIdea}
+              disabled={selectedSource === "" || isAddingIdeas}
+              className="min-w-[100px]"
+            >
+              {isAddingIdeas ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                "Create"
+              )}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

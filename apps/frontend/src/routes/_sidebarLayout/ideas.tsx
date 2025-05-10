@@ -7,7 +7,6 @@ import { ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import AddButton from "@/components/ui/add-button";
 import { CreateModal } from "@/components/ideas/CreateModal";
-
 export const Route = createFileRoute("/_sidebarLayout/ideas")({
   component: RouteComponent,
 });
@@ -18,7 +17,10 @@ function RouteComponent() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const limit = 9;
 
-  const { data, isLoading, error, isError } = useIdeas({ page, limit });
+  const { data, isLoading, error, isError, refetch } = useIdeas({
+    page,
+    limit,
+  });
 
   const ideas = data?.data?.data || [];
   const totalPages = data?.data?.pagination?.totalPages || 1;
@@ -28,20 +30,6 @@ function RouteComponent() {
       setPage(newPage);
       setSelectedIdeaId(null);
     }
-  };
-
-  const handleCreateIdea = (
-    selectedSources: string[],
-    numberOfIdeas: number
-  ) => {
-    // Here you would implement the actual API call to create ideas
-    console.log(
-      "Creating ideas from sources:",
-      selectedSources,
-      "Count:",
-      numberOfIdeas
-    );
-    // After API call, you'd refresh the ideas list
   };
 
   if (isLoading) {
@@ -105,7 +93,9 @@ function RouteComponent() {
           {isCreateModalOpen && (
             <CreateModal
               onClose={() => setIsCreateModalOpen(false)}
-              onSubmit={handleCreateIdea}
+              onAddIdeas={async () => {
+                await refetch();
+              }}
             />
           )}
         </div>
@@ -118,7 +108,9 @@ function RouteComponent() {
       {isCreateModalOpen && (
         <CreateModal
           onClose={() => setIsCreateModalOpen(false)}
-          onSubmit={handleCreateIdea}
+          onAddIdeas={async () => {
+            await refetch();
+          }}
         />
       )}
       <div className="flex items-center justify-between mb-6">
