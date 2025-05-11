@@ -6,7 +6,7 @@ import content from "../routes/content-sources.js";
 import auth from "../routes/auth/auth.js";
 import authMiddleware from "../middleware/auth.js";
 import { errorHandler } from "../middleware/error.js";
-
+import schedule from "../routes/schedule/schedule.js";
 export function routes(app) {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
@@ -16,5 +16,6 @@ export function routes(app) {
   app.use("/ideas", authMiddleware, ideasRouter);
   app.use("/posts", authMiddleware, postsRouter);
   app.use("/content-sources", authMiddleware, content);
+  app.use("/schedule", authMiddleware, schedule);
   app.use("/auth", auth);
 }
