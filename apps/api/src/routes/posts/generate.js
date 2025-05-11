@@ -56,6 +56,7 @@ async function generatePosts(req, res) {
       description: post.description,
       platform,
       tone,
+      user: req.user,
     };
 
     if (length !== undefined) {
