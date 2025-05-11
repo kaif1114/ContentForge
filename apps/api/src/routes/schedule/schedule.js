@@ -21,6 +21,8 @@ async function schedulePost(req, res) {
   }
   const { postId, scheduleDate, platform } = validation.data;
 
+  const session = await mongoose.startSession();
+
   try {
     const postObjectId = new mongoose.Types.ObjectId(postId);
 
@@ -68,25 +70,47 @@ async function schedulePost(req, res) {
         },
       });
     }
-    await Schedule.create({
-      userId: req.user,
-      postId,
-      scheduleDate,
-      platform,
-    });
+
+    session.startTransaction();
+
+    await Schedule.create(
+      [
+        {
+          userId: req.user,
+          postId,
+          scheduleDate,
+          platform,
+        },
+      ],
+      { session }
+    );
+
+    await Content.updateOne(
+      { "posts._id": postObjectId },
+      { $set: { "posts.$.status": "scheduled" } },
+      { session }
+    );
+
+    await session.commitTransaction();
+
     res.status(201).json({
       message: "Post scheduled successfully",
       scheduleDate,
       platform,
       postId,
+      status: "scheduled",
     });
   } catch (error) {
+    await session.abortTransaction();
+
     if (error instanceof mongoose.Error.CastError) {
       return res.status(400).json({ error: "Invalid post ID format" });
     }
     return res
       .status(500)
       .json({ error: "Server error", details: error.message });
+  } finally {
+    session.endSession();
   }
 }
 

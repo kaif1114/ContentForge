@@ -39,7 +39,11 @@ export const postSchema = new mongoose.Schema(
         "enthusiastic",
       ],
     },
-
+    status: {
+      type: String,
+      enum: ["scheduled", "unscheduled", "posted", "failed", "cancelled"],
+      default: "scheduled",
+    },
     createdAt: {
       type: Date,
       default: Date.now,
