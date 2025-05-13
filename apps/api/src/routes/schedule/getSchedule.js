@@ -4,10 +4,17 @@ async function getSchedule(req, res) {
   const month = parseInt(req.query.month) || new Date().getMonth();
   const year = parseInt(req.query.year) || new Date().getFullYear();
 
-  const startDate = `${year}-${month}-1`;
-  const endDate = `${year}-${month + 1}-1`;
   const schedules = await Schedule.aggregate([
-    { $match: { $expr: { $eq: [{ $month: "$scheduleDate" }, 7] } } },
+    {
+      $match: {
+        $expr: {
+          $and: [
+            { $eq: [{ $month: "$scheduleDate" }, month] },
+            { $eq: [{ $year: "$scheduleDate" }, year] },
+          ],
+        },
+      },
+    },
     {
       $lookup: {
         from: "contents",

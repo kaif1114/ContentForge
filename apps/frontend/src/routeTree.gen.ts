@@ -21,6 +21,7 @@ import { Route as SidebarLayoutSourcesImport } from './routes/_sidebarLayout/sou
 import { Route as SidebarLayoutSettingsImport } from './routes/_sidebarLayout/settings'
 import { Route as SidebarLayoutPostsImport } from './routes/_sidebarLayout/posts'
 import { Route as SidebarLayoutIdeasImport } from './routes/_sidebarLayout/ideas'
+import { Route as SidebarLayoutContentCalendarImport } from './routes/_sidebarLayout/content-calendar'
 
 // Create/Update Routes
 
@@ -83,6 +84,13 @@ const SidebarLayoutIdeasRoute = SidebarLayoutIdeasImport.update({
   getParentRoute: () => SidebarLayoutRouteRoute,
 } as any)
 
+const SidebarLayoutContentCalendarRoute =
+  SidebarLayoutContentCalendarImport.update({
+    id: '/content-calendar',
+    path: '/content-calendar',
+    getParentRoute: () => SidebarLayoutRouteRoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -129,6 +137,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
     }
+    '/_sidebarLayout/content-calendar': {
+      id: '/_sidebarLayout/content-calendar'
+      path: '/content-calendar'
+      fullPath: '/content-calendar'
+      preLoaderRoute: typeof SidebarLayoutContentCalendarImport
+      parentRoute: typeof SidebarLayoutRouteImport
+    }
     '/_sidebarLayout/ideas': {
       id: '/_sidebarLayout/ideas'
       path: '/ideas'
@@ -163,6 +178,7 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface SidebarLayoutRouteRouteChildren {
+  SidebarLayoutContentCalendarRoute: typeof SidebarLayoutContentCalendarRoute
   SidebarLayoutIdeasRoute: typeof SidebarLayoutIdeasRoute
   SidebarLayoutPostsRoute: typeof SidebarLayoutPostsRoute
   SidebarLayoutSettingsRoute: typeof SidebarLayoutSettingsRoute
@@ -170,6 +186,7 @@ interface SidebarLayoutRouteRouteChildren {
 }
 
 const SidebarLayoutRouteRouteChildren: SidebarLayoutRouteRouteChildren = {
+  SidebarLayoutContentCalendarRoute: SidebarLayoutContentCalendarRoute,
   SidebarLayoutIdeasRoute: SidebarLayoutIdeasRoute,
   SidebarLayoutPostsRoute: SidebarLayoutPostsRoute,
   SidebarLayoutSettingsRoute: SidebarLayoutSettingsRoute,
@@ -186,6 +203,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/register': typeof RegisterRoute
+  '/content-calendar': typeof SidebarLayoutContentCalendarRoute
   '/ideas': typeof SidebarLayoutIdeasRoute
   '/posts': typeof SidebarLayoutPostsRoute
   '/settings': typeof SidebarLayoutSettingsRoute
@@ -199,6 +217,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/register': typeof RegisterRoute
+  '/content-calendar': typeof SidebarLayoutContentCalendarRoute
   '/ideas': typeof SidebarLayoutIdeasRoute
   '/posts': typeof SidebarLayoutPostsRoute
   '/settings': typeof SidebarLayoutSettingsRoute
@@ -213,6 +232,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/register': typeof RegisterRoute
+  '/_sidebarLayout/content-calendar': typeof SidebarLayoutContentCalendarRoute
   '/_sidebarLayout/ideas': typeof SidebarLayoutIdeasRoute
   '/_sidebarLayout/posts': typeof SidebarLayoutPostsRoute
   '/_sidebarLayout/settings': typeof SidebarLayoutSettingsRoute
@@ -228,6 +248,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/oauth-callback'
     | '/register'
+    | '/content-calendar'
     | '/ideas'
     | '/posts'
     | '/settings'
@@ -240,6 +261,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/oauth-callback'
     | '/register'
+    | '/content-calendar'
     | '/ideas'
     | '/posts'
     | '/settings'
@@ -252,6 +274,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/oauth-callback'
     | '/register'
+    | '/_sidebarLayout/content-calendar'
     | '/_sidebarLayout/ideas'
     | '/_sidebarLayout/posts'
     | '/_sidebarLayout/settings'
@@ -301,6 +324,7 @@ export const routeTree = rootRoute
     "/_sidebarLayout": {
       "filePath": "_sidebarLayout/route.tsx",
       "children": [
+        "/_sidebarLayout/content-calendar",
         "/_sidebarLayout/ideas",
         "/_sidebarLayout/posts",
         "/_sidebarLayout/settings",
@@ -318,6 +342,10 @@ export const routeTree = rootRoute
     },
     "/register": {
       "filePath": "register.tsx"
+    },
+    "/_sidebarLayout/content-calendar": {
+      "filePath": "_sidebarLayout/content-calendar.tsx",
+      "parent": "/_sidebarLayout"
     },
     "/_sidebarLayout/ideas": {
       "filePath": "_sidebarLayout/ideas.tsx",
