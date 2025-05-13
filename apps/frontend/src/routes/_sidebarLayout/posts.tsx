@@ -12,6 +12,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { CheckSquare, Square, X, Trash2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import useDeletePost from "@/hooks/useDeletePost";
+import AddScheduleModal from "@/components/posts/AddScheduleModal";
 
 export const Route = createFileRoute("/_sidebarLayout/posts")({
   component: RouteComponent,
@@ -26,6 +27,7 @@ function RouteComponent() {
   const [postToEdit, setPostToEdit] = useState<Post | null>(null);
   const [selectedPostIds, setSelectedPostIds] = useState<string[]>([]);
   const [selectionMode, setSelectionMode] = useState(false);
+  const [postToSchedule, setPostToSchedule] = useState<Post | null>(null);
   const { mutateAsync: updatePost } = useUpdatePost();
   const { mutateAsync: deletePost, isPending: isDeletingPost } =
     useDeletePost();
@@ -289,6 +291,7 @@ function RouteComponent() {
                       post={post}
                       onEdit={() => setPostToEdit(post)}
                       onDiscard={handleDiscardPost}
+                      onSchedule={() => setPostToSchedule(post)}
                     />
                   </div>
                 )}
@@ -349,6 +352,13 @@ function RouteComponent() {
           onClose={() => setPostToEdit(null)}
           initialData={postToEdit}
           onSave={handleEditPost}
+        />
+      )}
+      {postToSchedule && (
+        <AddScheduleModal
+          isOpen={!!postToSchedule}
+          onClose={() => setPostToSchedule(null)}
+          post={postToSchedule}
         />
       )}
     </div>
