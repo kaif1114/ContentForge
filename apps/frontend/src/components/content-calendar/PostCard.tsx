@@ -1,27 +1,17 @@
-import { parseISO, format } from "date-fns";
 import { Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
+import { Schedule } from "@/types/schedule";
 interface PostCardProps {
-  post: any;
+  schedule: Schedule;
   onClick: () => void;
   compact?: boolean;
 }
 
 export default function PostCard({
-  post,
+  schedule,
   onClick,
   compact = false,
 }: PostCardProps) {
-  const postDate = parseISO(post.scheduleDate);
-  const startTime = format(postDate, "hh:mm a");
-  const endTime = format(
-    new Date(postDate.getTime() + 60 * 60 * 1000),
-    "hh:mm a"
-  );
-
-  // Determine color based on platform
   const getPlatformColor = (platform: string) => {
     switch (platform.toLowerCase()) {
       case "x":
@@ -37,7 +27,7 @@ export default function PostCard({
     }
   };
 
-  const platformColor = getPlatformColor(post.platform);
+  const platformColor = getPlatformColor(schedule.platform);
 
   if (compact) {
     return (
@@ -48,10 +38,9 @@ export default function PostCard({
         )}
         onClick={onClick}
       >
-        <div className="font-medium truncate">{post.post.title}</div>
+        <div className="font-medium truncate">{schedule.post.title}</div>
         <div className="flex items-center text-gray-500">
           <Clock className="h-3 w-3 mr-1" />
-          {startTime}
         </div>
       </div>
     );
@@ -65,28 +54,9 @@ export default function PostCard({
       )}
       onClick={onClick}
     >
-      <div className="font-medium">{post.post.title}</div>
+      <div className="font-medium">{schedule.post.title}</div>
       <div className="flex items-center text-gray-500 text-sm mt-1">
         <Clock className="h-3 w-3 mr-1" />
-        {startTime} - {endTime}
-      </div>
-
-      <div className="flex items-center mt-2">
-        <div className="flex -space-x-2">
-          <Avatar className="h-6 w-6 border-2 border-white">
-            <AvatarImage src="/placeholder.svg?height=24&width=24" />
-            <AvatarFallback>U1</AvatarFallback>
-          </Avatar>
-          <Avatar className="h-6 w-6 border-2 border-white">
-            <AvatarImage src="/placeholder.svg?height=24&width=24" />
-            <AvatarFallback>U2</AvatarFallback>
-          </Avatar>
-          <Avatar className="h-6 w-6 border-2 border-white">
-            <AvatarImage src="/placeholder.svg?height=24&width=24" />
-            <AvatarFallback>U3</AvatarFallback>
-          </Avatar>
-        </div>
-        <span className="text-xs text-gray-500 ml-2">+2 Other</span>
       </div>
     </div>
   );

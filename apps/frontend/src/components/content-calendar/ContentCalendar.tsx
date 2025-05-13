@@ -56,8 +56,7 @@ export default function ContentCalendar() {
     }
   };
 
-  // Get the appropriate date format based on the current view
-  const getDateRangeDisplay = () => {
+  const getDateFormat = () => {
     if (view === "day") {
       return format(currentDate, "MMMM d, yyyy");
     } else if (view === "week") {
@@ -70,7 +69,7 @@ export default function ContentCalendar() {
     }
   };
 
-  // Add a function to check if the current view has any scheduled content
+  //check if the current view has any scheduled content
   const hasContentInCurrentView = () => {
     if (!schedule?.data || schedule.data.length === 0) return false;
 
@@ -94,7 +93,7 @@ export default function ContentCalendar() {
 
   if (isError) {
     return (
-      <div className="bg-white rounded-lg shadow">
+      <div className="modal-bg rounded-lg shadow">
         <div className="p-4 border-b">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
@@ -129,9 +128,7 @@ export default function ContentCalendar() {
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <div className="flex items-center gap-2">
-                <h2 className="text-xl font-semibold">
-                  {getDateRangeDisplay()}
-                </h2>
+                <h2 className="text-xl font-semibold">{getDateFormat()}</h2>
                 <ChevronRight
                   className="h-4 w-4 cursor-pointer"
                   onClick={() => navigateDate("next")}
@@ -158,7 +155,7 @@ export default function ContentCalendar() {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow">
+      <div className="modal-bg rounded-lg shadow">
         <div className="p-4 border-b">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
@@ -193,9 +190,7 @@ export default function ContentCalendar() {
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <div className="flex items-center gap-2">
-                <h2 className="text-xl font-semibold">
-                  {getDateRangeDisplay()}
-                </h2>
+                <h2 className="text-xl font-semibold">{getDateFormat()}</h2>
                 <ChevronRight
                   className="h-4 w-4 cursor-pointer"
                   onClick={() => navigateDate("next")}
@@ -325,9 +320,7 @@ export default function ContentCalendar() {
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <div className="flex items-center gap-2">
-                <h2 className="text-xl font-semibold">
-                  {getDateRangeDisplay()}
-                </h2>
+                <h2 className="text-xl font-semibold">{getDateFormat()}</h2>
                 <ChevronRight
                   className="h-4 w-4 cursor-pointer"
                   onClick={() => navigateDate("next")}
@@ -369,7 +362,6 @@ export default function ContentCalendar() {
     addDays(startOfWeek, i)
   );
 
-  // Filter posts for the current view
   const getPostsForDay = (day: Date) => {
     return (
       schedule?.data?.filter((post: Schedule) => {
@@ -379,14 +371,11 @@ export default function ContentCalendar() {
     );
   };
 
-  // Hours for the day view
   const hours = Array.from({ length: 24 }, (_, i) => i + 12); // 9 AM to 8 PM
-
-  // Checking if the current view has content
   const hasContent = hasContentInCurrentView();
 
   return (
-    <div className="modal-bg rounded-lg shadow">
+    <div className="modal-bg rounded-lg shadow flex flex-col h-[calc(100vh-100px)]">
       <div className="p-4 border-b">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -422,7 +411,7 @@ export default function ContentCalendar() {
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-semibold">{getDateRangeDisplay()}</h2>
+              <h2 className="text-xl font-semibold">{getDateFormat()}</h2>
               <ChevronRight
                 className="h-4 w-4 cursor-pointer"
                 onClick={() => navigateDate("next")}
@@ -437,8 +426,8 @@ export default function ContentCalendar() {
         </div>
       </div>
 
-      <div className="p-4">
-        <div className="flex justify-end mb-4 space-x-2">
+      <div className="p-4 border-b">
+        <div className="flex justify-end space-x-2">
           <div className="bg-gray-100 rounded-full p-1 flex">
             <Button
               variant={view === "day" ? "default" : "ghost"}
@@ -472,7 +461,9 @@ export default function ContentCalendar() {
             </Button>
           </div>
         </div>
+      </div>
 
+      <div className="flex-1 overflow-y-auto p-4">
         {/* No content message when the current view has no scheduled content */}
         {!hasContent && (
           <div className="text-center py-12 border rounded-lg">
@@ -512,11 +503,11 @@ export default function ContentCalendar() {
                         const postDate = parseISO(post.scheduleDate);
                         return postDate.getHours() === hour;
                       })
-                      .map((post: Schedule) => (
+                      .map((schedule: Schedule) => (
                         <PostCard
-                          key={post._id}
-                          post={post}
-                          onClick={() => handlePostClick(post)}
+                          key={schedule._id}
+                          schedule={schedule}
+                          onClick={() => handlePostClick(schedule)}
                         />
                       ))}
                   </div>
@@ -556,11 +547,11 @@ export default function ContentCalendar() {
                           const postDate = parseISO(post.scheduleDate);
                           return postDate.getHours() === hour;
                         })
-                        .map((post: Schedule) => (
+                        .map((schedule: Schedule) => (
                           <PostCard
-                            key={post._id}
-                            post={post}
-                            onClick={() => handlePostClick(post)}
+                            key={schedule._id}
+                            schedule={schedule}
+                            onClick={() => handlePostClick(schedule)}
                           />
                         ))}
                     </div>
@@ -599,11 +590,11 @@ export default function ContentCalendar() {
                 )}
               >
                 <div className="font-medium mb-1">{format(day, "d")}</div>
-                {getPostsForDay(day).map((post: Schedule) => (
+                {getPostsForDay(day).map((schedule: Schedule) => (
                   <PostCard
-                    key={post._id}
-                    post={post}
-                    onClick={() => handlePostClick(post)}
+                    key={schedule._id}
+                    schedule={schedule}
+                    onClick={() => handlePostClick(schedule)}
                     compact
                   />
                 ))}
