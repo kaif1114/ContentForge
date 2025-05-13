@@ -60,7 +60,7 @@ async function getSchedule(req, res) {
   ]);
 
   if (!schedules || schedules.length === 0) {
-    return res.status(404).json({ message: "No schedule found" });
+    return res.status(200).json([]);
   }
   const responseData = schedules.map((item) => ({
     _id: item._id,

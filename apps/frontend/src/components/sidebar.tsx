@@ -31,8 +31,8 @@ const topNavigation = [
 const bottomNavigation = [
   {
     icon: <div className="w-5 h-5 bg-purple-500 rounded-full" />,
-    label: "Chartly",
-    href: "/chartly",
+    label: "Content Calendar",
+    href: "/content-calendar",
   },
   {
     icon: (
