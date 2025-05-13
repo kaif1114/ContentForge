@@ -19,6 +19,7 @@ import PostCard from "./PostCard";
 import PostDetailModal from "./PostDetailModal";
 import { useSchedule } from "@/hooks/useSchedule";
 import { Schedule } from "@/types/schedule";
+import DatePickerCalendar from "./DatePickerCalendar";
 type ViewType = "day" | "week" | "month";
 
 export default function ContentCalendar() {
@@ -70,12 +71,9 @@ export default function ContentCalendar() {
     }
   };
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedDate = e.target.value;
-    if (selectedDate) {
-      setCurrentDate(parse(selectedDate, "yyyy-MM-dd", new Date()));
-      setIsDatePickerOpen(false);
-    }
+  const handleDateChange = (date: Date) => {
+    setCurrentDate(date);
+    setIsDatePickerOpen(false);
   };
 
   if (isError) {
@@ -96,13 +94,11 @@ export default function ContentCalendar() {
                   Jump to date
                 </Button>
                 {isDatePickerOpen && (
-                  <div className="absolute top-full left-0 mt-1 bg-white border rounded-md shadow-lg p-2 z-10">
-                    <input
-                      type="date"
-                      className="border rounded p-1"
-                      onChange={handleDateChange}
-                      defaultValue={format(currentDate, "yyyy-MM-dd")}
-                      autoFocus
+                  <div className="absolute top-full left-0 mt-1 z-20">
+                    <DatePickerCalendar
+                      selectedDate={currentDate}
+                      onDateSelect={handleDateChange}
+                      onClose={() => setIsDatePickerOpen(false)}
                     />
                   </div>
                 )}
@@ -162,13 +158,11 @@ export default function ContentCalendar() {
                   Jump to date
                 </Button>
                 {isDatePickerOpen && (
-                  <div className="absolute top-full left-0 mt-1 bg-white border rounded-md shadow-lg p-2 z-10">
-                    <input
-                      type="date"
-                      className="border rounded p-1"
-                      onChange={handleDateChange}
-                      defaultValue={format(currentDate, "yyyy-MM-dd")}
-                      autoFocus
+                  <div className="absolute top-full left-0 mt-1 z-20">
+                    <DatePickerCalendar
+                      selectedDate={currentDate}
+                      onDateSelect={handleDateChange}
+                      onClose={() => setIsDatePickerOpen(false)}
                     />
                   </div>
                 )}
@@ -296,13 +290,11 @@ export default function ContentCalendar() {
                   Jump to date
                 </Button>
                 {isDatePickerOpen && (
-                  <div className="absolute top-full left-0 mt-1 bg-white border rounded-md shadow-lg p-2 z-10">
-                    <input
-                      type="date"
-                      className="border rounded p-1"
-                      onChange={handleDateChange}
-                      defaultValue={format(currentDate, "yyyy-MM-dd")}
-                      autoFocus
+                  <div className="absolute top-full left-0 mt-1 z-20">
+                    <DatePickerCalendar
+                      selectedDate={currentDate}
+                      onDateSelect={handleDateChange}
+                      onClose={() => setIsDatePickerOpen(false)}
                     />
                   </div>
                 )}
@@ -375,7 +367,7 @@ export default function ContentCalendar() {
   const hours = Array.from({ length: 12 }, (_, i) => i + 9); // 9 AM to 8 PM
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <div className="modal-bg rounded-lg shadow">
       <div className="p-4 border-b">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -391,13 +383,12 @@ export default function ContentCalendar() {
                 Jump to date
               </Button>
               {isDatePickerOpen && (
-                <div className="absolute top-full left-0 mt-1 bg-white border rounded-md shadow-lg p-2 z-10">
-                  <input
-                    type="date"
-                    className="border rounded p-1"
-                    onChange={handleDateChange}
-                    defaultValue={format(currentDate, "yyyy-MM-dd")}
-                    autoFocus
+                <div className="absolute top-full left-0 mt-1 z-20">
+                  <DatePickerCalendar
+                    selectedDate={currentDate}
+                    onDateSelect={handleDateChange}
+                    onClose={() => setIsDatePickerOpen(false)}
+                    events={schedule?.data}
                   />
                 </div>
               )}
