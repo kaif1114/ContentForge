@@ -10,7 +10,6 @@ import {
   isSameDay,
   parseISO,
   addDays,
-  parse,
 } from "date-fns";
 import { ChevronLeft, ChevronRight, CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -68,6 +67,23 @@ export default function ContentCalendar() {
       return `${format(weekStart, "MMM d")} - ${format(weekEnd, "MMM d, yyyy")}`;
     } else {
       return format(currentDate, "MMMM yyyy");
+    }
+  };
+
+  // Add a function to check if the current view has any scheduled content
+  const hasContentInCurrentView = () => {
+    if (!schedule?.data || schedule.data.length === 0) return false;
+
+    if (view === "day") {
+      return getPostsForDay(currentDate).length > 0;
+    } else if (view === "week") {
+      const hasPostsInWeek = daysInWeek.some(
+        (day) => getPostsForDay(day).length > 0
+      );
+      return hasPostsInWeek;
+    } else {
+      // For month view, we already check !schedule?.data above
+      return true;
     }
   };
 
@@ -364,7 +380,10 @@ export default function ContentCalendar() {
   };
 
   // Hours for the day view
-  const hours = Array.from({ length: 12 }, (_, i) => i + 9); // 9 AM to 8 PM
+  const hours = Array.from({ length: 24 }, (_, i) => i + 12); // 9 AM to 8 PM
+
+  // Checking if the current view has content
+  const hasContent = hasContentInCurrentView();
 
   return (
     <div className="modal-bg rounded-lg shadow">
@@ -454,7 +473,20 @@ export default function ContentCalendar() {
           </div>
         </div>
 
-        {view === "day" && (
+        {/* No content message when the current view has no scheduled content */}
+        {!hasContent && (
+          <div className="text-center py-12 border rounded-lg">
+            <div className="text-gray-400 mb-2">
+              <CalendarIcon className="h-12 w-12 mx-auto" />
+            </div>
+            <h3 className="text-xl font-medium mb-2">No scheduled content</h3>
+            <p className="text-gray-500 mb-4">
+              There are no posts scheduled for this {view}.
+            </p>
+          </div>
+        )}
+
+        {hasContent && view === "day" && (
           <div className="border rounded-lg">
             <div className="grid grid-cols-[100px_1fr] border-b">
               <div className="p-4 font-medium border-r">UTC +1</div>
@@ -494,7 +526,7 @@ export default function ContentCalendar() {
           </div>
         )}
 
-        {view === "week" && (
+        {hasContent && view === "week" && (
           <div className="border rounded-lg">
             <div className="grid grid-cols-[100px_1fr_1fr_1fr_1fr_1fr_1fr_1fr] border-b">
               <div className="p-4 font-medium border-r">UTC +1</div>
@@ -539,7 +571,8 @@ export default function ContentCalendar() {
           </div>
         )}
 
-        {view === "month" && (
+        {/* Month view content */}
+        {hasContent && view === "month" && (
           <div className="grid grid-cols-7 gap-2">
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
               <div key={day} className="text-center font-medium p-2">
