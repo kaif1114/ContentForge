@@ -11,7 +11,7 @@ async function scrapeUrl(url) {
   if (!scrapeResult.success) {
     throw new Error("Failed to scrape");
   }
-  return scrapeResult.markdown;
+  return scrapeResult.markdown && scrapeResult.markdown.length > 0 ? scrapeResult.markdown : null;
 }
 
 export default scrapeUrl;
