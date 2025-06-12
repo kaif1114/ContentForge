@@ -22,7 +22,11 @@
     "packages/*"
   ],
   "dependencies": {
+<<<<<<< Updated upstream
     "react-router-dom": "^7.3.0",
+=======
+    "react-icons": "^5.5.0",
+>>>>>>> Stashed changes
     "zod": "^3.24.2"
   }
 }
