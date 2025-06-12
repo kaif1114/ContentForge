@@ -11,7 +11,7 @@ import useUser from "@/hooks/useUser"
 import { useState } from "react"
 
 export function TopBar() {
-  const { data: user, isError, error, isLoading } = useUser()
+  const { data: user, isError, isLoading } = useUser()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const handleLogout = async () => {
@@ -115,9 +115,6 @@ export function TopBar() {
             </Link>
             <Link to="/sources" className="flex items-center gap-2 py-2 text-gray-700 hover:text-cf-primary-green">
               <span>Sources</span>
-            </Link>
-            <Link to="/topics" className="flex items-center gap-2 py-2 text-gray-700 hover:text-cf-primary-green">
-              <span>Topics</span>
             </Link>
             <Link to="/settings" className="flex items-center gap-2 py-2 text-gray-700 hover:text-cf-primary-green">
               <span>Settings</span>
