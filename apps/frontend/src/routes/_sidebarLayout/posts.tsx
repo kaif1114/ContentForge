@@ -260,7 +260,7 @@ function RouteComponent() {
 
       <div className="flex-grow flex flex-col">
         <div className="grid grid-cols-1 min-[450px]:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-          {posts.map((post, index) => {
+          {posts.map((post) => {
             const includesPostId = selectedPostIds.includes(post._id);
             return (
               <motion.div

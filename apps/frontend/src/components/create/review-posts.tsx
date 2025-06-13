@@ -2,23 +2,17 @@ import { useState } from "react"
 import {
   Edit,
   Sparkles,
-  Check,
   X,
   MessageSquare,
   ThumbsDown,
   Linkedin,
   Twitter,
-  Tag,
-  PenSquare,
   Trash2,
   CheckSquare,
   Square
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Input } from "@/components/ui/input"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import TagInput from "../ui/tag-input"
+import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import { Post } from "@/types/content"
 import useDeletePost from "@/hooks/useDeletePost"
 import { useQueryClient } from "@tanstack/react-query"
@@ -38,7 +32,7 @@ export default function ReviewPosts({
   const [postToEdit, setPostToEdit] = useState<Post | null>(null)
   const queryClient = useQueryClient()
 
-  const { mutateAsync: deletePost, isPending: isDeletingPost, isError: isDeletingPostError, error: deletingPostError,  } = useDeletePost()
+  const { mutateAsync: deletePost, isPending: isDeletingPost  } = useDeletePost()
   const posts = queryClient.getQueryData<{data: Post[]}>(['generatedPosts'])
 
 
@@ -310,21 +304,23 @@ export default function ReviewPosts({
           </div>
         </>
       )}
-      <EditPostModal  onClose={() => setPostToEdit(null)} initialData={postToEdit} onSave={() => {}} />
+      <EditPostModal  onClose={() => setPostToEdit(null)} initialData={postToEdit} onSave={function (_data: Partial<Post>): Promise<void> {
+        throw new Error("Function not implemented.")
+      } } />
     </div>
   )
 }
 
-interface LabelProps {
-  htmlFor?: string
-  className?: string
-  children: React.ReactNode
-}
+// interface LabelProps {
+//   htmlFor?: string
+//   className?: string
+//   children: React.ReactNode
+// }
 
-function Label({ htmlFor, className, children }: LabelProps) {
-  return (
-    <label htmlFor={htmlFor} className={`text-sm font-medium ${className || ""}`}>
-      {children}
-    </label>
-  )
-}
+// function Label({ htmlFor, className, children }: LabelProps) {
+//   return (
+//     <label htmlFor={htmlFor} className={`text-sm font-medium ${className || ""}`}>
+//       {children}
+//     </label>
+//   )
+// }

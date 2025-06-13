@@ -60,8 +60,6 @@ export default function Create() {
     mutateAsync: generatePosts,
     isPending,
     isSuccess,
-    isError,
-    error,
   } = useGeneratePosts();
 
   const handleNext = async () => {

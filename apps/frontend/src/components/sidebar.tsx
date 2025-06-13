@@ -1,4 +1,4 @@
-import { Lightbulb, CreditCard, BookOpen, BarChart3, Plus } from "lucide-react";
+import { Lightbulb, CreditCard, BookOpen, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
