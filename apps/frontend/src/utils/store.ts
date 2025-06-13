@@ -14,7 +14,7 @@ interface AuthStore{
     logout: () => void,
 }
 
-const authStore = create<AuthStore>((set) => ({
+const authStore = create<AuthStore>((set: (partial: Partial<AuthStore>) => void) => ({
     accessToken: '',
     user: {
         id: '',

@@ -31,7 +31,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 interface EditPostModalProps {
   onClose: () => void;
   initialData: Post | null;
-  onSave: (data: Partial<Post>) => Promise<void>;
+  onSave: (data: Partial<Post>) => Promise<any>;
 }
 
 const postFormSchema = z

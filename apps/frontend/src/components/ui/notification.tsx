@@ -1,5 +1,5 @@
 import { X, CheckCircle, XCircle, AlertCircle, HelpCircle } from "lucide-react";
-import { ReactNode } from "react";
+
 
 type NotificationVariant = "success" | "error" | "warning" | "info" | "question";
 

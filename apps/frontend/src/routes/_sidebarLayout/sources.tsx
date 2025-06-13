@@ -19,7 +19,7 @@ export default function RouteComponent() {
     data: sourcesResponse,
     isLoading,
     isError,
-    error,
+
     refetch,
   } = useContentSources({
     page: currentPage,

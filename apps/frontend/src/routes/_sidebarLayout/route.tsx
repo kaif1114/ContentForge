@@ -1,4 +1,4 @@
-import { Sidebar } from '@/components/Sidebar'
+import { Sidebar } from '@/components/sidebar'
 import { TopBar } from '@/components/Topbar'
 import { checkAuth } from '@/utils/auth'
 import { createFileRoute, Outlet } from '@tanstack/react-router'
