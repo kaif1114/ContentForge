@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { ExternalLink } from "lucide-react"
 import type { ContentSource } from "@/types/content"
