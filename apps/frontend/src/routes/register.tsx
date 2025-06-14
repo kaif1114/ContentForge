@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Notification } from "@/components/ui/notification"
 import { AxiosError } from "axios";
+import authStore from "@/utils/store";
 
 
 export const Route = createFileRoute('/register')({
@@ -38,6 +39,7 @@ export default function RegistrationPage() {
     })
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
+  const { setAccessToken, setUser } = authStore()
   const [notification, setNotification] = useState<{
     title: string;
     message: string;
@@ -76,14 +78,45 @@ export default function RegistrationPage() {
         })
       }
     },
-    onSuccess: () => {
+    onSuccess: async (response) => {
+      // Get the token from the Authorization header
+      const authHeader = response.headers.authorization || response.headers.Authorization;
+      if (authHeader) {
+        const token = authHeader.startsWith("Bearer ") ? 
+          authHeader.substring(7) : authHeader;
+        
+        // Set the token in the store
+        setAccessToken(token);
+        
+        // Set user data from response (register returns name and email)
+        if (response.data.name && response.data.email) {
+          // Fetch full user data to get ID
+          try {
+            const userResponse = await api.get('/auth/me');
+            setUser({
+              id: userResponse.data.id,
+              email: userResponse.data.email,
+              name: userResponse.data.name
+            });
+          } catch (error) {
+            console.error('Failed to fetch user data:', error);
+            // Fallback: use response data without ID
+            setUser({
+              id: '', // Will be updated when user makes authenticated requests
+              email: response.data.email,
+              name: response.data.name
+            });
+          }
+        }
+      }
+      
       setNotification({
         variant: "success",
         title: "Success!",
         message: "Your account has been created successfully. Redirecting you..."
       })
       setTimeout(() => {
-        navigate({ to: "/" })
+        navigate({ to: "/posts" })
       }, 2500)
     }
   })
