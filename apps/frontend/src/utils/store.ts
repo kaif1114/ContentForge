@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import api from './axios'
 
 interface User{
     id: string,
@@ -8,20 +9,17 @@ interface User{
 }
 
 interface AuthStore{
-    accessToken: string,
     user: User,
     isAuthenticated: boolean,
-    setAccessToken: (accessToken: string) => void,
     setUser: (user: User) => void,
     logout: () => void,
-    checkAuth: () => boolean,
+    checkAuth: () => Promise<boolean>,
     initializeAuth: () => void,
 }
 
 const authStore = create<AuthStore>()(
   persist(
     (set, get) => ({
-      accessToken: '',
       user: {
         id: '',
         email: '',
@@ -29,78 +27,60 @@ const authStore = create<AuthStore>()(
       },
       isAuthenticated: false,
       
-      setAccessToken: (accessToken: string) => {
-        set({ accessToken, isAuthenticated: !!accessToken });
-        // Also store in localStorage for axios interceptor
-        if (accessToken) {
-          localStorage.setItem("access", accessToken);
-        }
-      },
+    
       
       setUser: (user: User) => set({ user }),
       
       logout: () => {
         set({ 
-          accessToken: '', 
           user: { id: '', email: '', name: '' },
           isAuthenticated: false 
         });
         localStorage.removeItem("access");
       },
       
-      checkAuth: () => {
-        const { accessToken } = get();
-        if (!accessToken) {
-          // Check localStorage as fallback
-          const storedToken = localStorage.getItem("access");
-          if (storedToken) {
-            get().setAccessToken(storedToken);
-            return true;
-          }
+      checkAuth: async () => {
+
+        const storedToken = localStorage.getItem("access");
+        if (!storedToken) {
+          get().logout();
           return false;
         }
-        
+
         try {
-          // Decode JWT to check expiration
-          const payload = JSON.parse(atob(accessToken.split('.')[1]));
-          const isExpired = payload.exp * 1000 < Date.now();
-          
-          if (isExpired) {
-            get().logout();
-            return false;
+          const response = await api.get("/auth/verify");
+          if (response.data?.authenticated) {
+            set({ isAuthenticated: true });
+            return true;
           }
-          
-          return true;
-        } catch {
+
+          get().logout();
+          return false;
+        } catch (error) {
           get().logout();
           return false;
         }
       },
       
-      initializeAuth: () => {
+      initializeAuth: async () => {
         const storedToken = localStorage.getItem("access");
+
         if (storedToken) {
           try {
-            // Check if token is valid before setting it
-            const payload = JSON.parse(atob(storedToken.split('.')[1]));
-            const isExpired = payload.exp * 1000 < Date.now();
-            
-            if (!isExpired) {
-              get().setAccessToken(storedToken);
+            const response = await api.get("/auth/verify");
+            if (response.data?.authenticated) {
+              set({ isAuthenticated: true });
+              return true;
             } else {
-              // Token is expired, clear it
               localStorage.removeItem("access");
               get().logout();
             }
           } catch (error) {
-            // Invalid token format, clear it
             localStorage.removeItem("access");
             get().logout();
           }
         } else {
-          // No token found, ensure we're logged out
           set({ 
-            accessToken: '', 
             user: { id: '', email: '', name: '' },
             isAuthenticated: false 
           });

@@ -14,33 +14,22 @@ export const Route = createFileRoute('/')({
 
 function RouteComponent() {
   // Get auth state
-  const { accessToken, user, isAuthenticated, checkAuth, initializeAuth } = authStore();
+  const { user, isAuthenticated, initializeAuth } = authStore();
   
   // Initialize auth on component mount
   useEffect(() => {
     initializeAuth();
-    checkAuth();
-  }, [initializeAuth, checkAuth]);
+  }, [initializeAuth]);
   
   // More robust authentication check - ensure all required fields exist
   const isLoggedIn = isAuthenticated && 
-                     accessToken && 
-                     accessToken.trim() !== '' && 
                      user && 
                      user.id && 
                      user.id.trim() !== '' &&
                      user.email &&
                      user.email.trim() !== '';
 
-  // Debug: Add this temporarily to see what's in the store
-  console.log('Auth Debug:', { 
-    accessToken: !!accessToken, 
-    user, 
-    isAuthenticated,
-    isLoggedIn,
-    userIdExists: !!(user && user.id && user.id.trim() !== ''),
-    userEmailExists: !!(user && user.email && user.email.trim() !== '')
-  });
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-emerald-50 to-teal-100">

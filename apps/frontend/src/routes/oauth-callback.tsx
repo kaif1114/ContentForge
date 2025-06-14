@@ -13,7 +13,7 @@ export const Route = createFileRoute('/oauth-callback')({
 export default function OAuthCallback() {
     const {userId} =  Route.useSearch()
     const navigate = useNavigate()
-    const { setAccessToken, setUser } = authStore()
+    const { setUser } = authStore()
     
     useEffect(() => {
 
@@ -27,17 +27,9 @@ export default function OAuthCallback() {
                "x-fp": fingerprint
            }
           })
-          
-          // Get the token from the Authorization header
-          const authHeader = response.headers.authorization || response.headers.Authorization;
-          if (authHeader) {
-            const token = authHeader.startsWith("Bearer ") ? 
-              authHeader.substring(7) : authHeader;
-            
-            // Set the token in the store
-            setAccessToken(token);
-            
+   
             // Fetch user data
+           if(response.status === 200){
             try {
               const userResponse = await api.get('/auth/me');
               setUser({
@@ -45,12 +37,13 @@ export default function OAuthCallback() {
                 email: userResponse.data.email,
                 name: userResponse.data.name
               });
+              navigate({to: "/posts"})
             } catch (error) {
               console.error('Failed to fetch user data:', error);
             }
-          }
+           }
           
-          navigate({to: "/posts"})
+         
         } catch (error) {
           console.error('OAuth completion failed:', error);
           navigate({to: "/login"})
@@ -58,7 +51,7 @@ export default function OAuthCallback() {
      }
         completeOAuth(userId)
         
-    }, [userId, navigate, setAccessToken, setUser])
+    }, [userId, navigate, setUser])
 
     return <div>Completing login...</div>
 }
