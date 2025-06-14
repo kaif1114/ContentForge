@@ -35,5 +35,5 @@ export default async function login(req, res) {
     res.cookie("securefp", fingerprint, { httpOnly: true, secure: process.env.NODE_ENV === "production", maxAge: process.env.FINGERPRINT_EXPIRATION_DAYS * 24 * 60 * 60 * 1000, sameSite: "none" });
     res.cookie("tokenrf", refreshToken, { httpOnly: true, secure: process.env.NODE_ENV === "production", maxAge: process.env.REFRESH_TOKEN_EXPIRATION_DAYS * 24 * 60 * 60 * 1000, sameSite: "none" });
     
-    res.json({message: "Logged in successfully"});
+    res.status(200).json({message: "Logged in successfully", id: user._id.toString(), email: user.email, name: user.name});
 }

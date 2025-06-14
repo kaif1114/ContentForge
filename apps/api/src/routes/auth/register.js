@@ -38,6 +38,6 @@ export default async function register(req, res)  {
         sameSite: "none"
     });
     
-    res.json({ name: user.name, email: user.email});
+    res.status(201).json({ name: user.name, email: user.email, id: user._id.toString()});
 };
 

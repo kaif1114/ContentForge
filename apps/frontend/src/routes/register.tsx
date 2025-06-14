@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Notification } from "@/components/ui/notification"
 import { AxiosError } from "axios";
+import authStore from "@/utils/store";
 
 
 export const Route = createFileRoute('/register')({
@@ -38,6 +39,7 @@ export default function RegistrationPage() {
     })
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
+  const { setUser } = authStore()
   const [notification, setNotification] = useState<{
     title: string;
     message: string;
@@ -76,15 +78,22 @@ export default function RegistrationPage() {
         })
       }
     },
-    onSuccess: () => {
-      setNotification({
-        variant: "success",
-        title: "Success!",
-        message: "Your account has been created successfully. Redirecting you..."
-      })
-      setTimeout(() => {
-        navigate({ to: "/" })
-      }, 2500)
+    onSuccess: async (response) => {
+        if (response.status === 201 && response.data.name && response.data.email) {
+          setUser({
+              id: response.data.id,
+              email: response.data.email,
+              name: response.data.name
+            });
+            setNotification({
+              variant: "success",
+              title: "Success!",
+              message: "Your account has been created successfully. Redirecting you..."
+            })
+            setTimeout(() => {
+              navigate({ to: "/posts" })
+            }, 1000)
+        }
     }
   })
 

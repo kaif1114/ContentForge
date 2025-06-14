@@ -9,6 +9,7 @@ import api from '@/utils/axios'
 import { useMutation } from '@tanstack/react-query'
 import { Notification } from '../components/ui/notification'
 import { getFingerprint } from '@/utils/fingerprint'
+import authStore from '@/utils/store'
 
 const schema = z.object({
   email: z.string().email({message: "Please enter a valid email"}),
@@ -29,6 +30,7 @@ export default function LoginPage() {
     variant: "success" | "error" | "warning" | "info" | "question";
   } | null>(null)
   const navigate = useNavigate()
+  const { setUser } = authStore()
   const {register, handleSubmit, formState: {errors}} = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -69,15 +71,25 @@ export default function LoginPage() {
         })
       }
     },
-    onSuccess: () => {
-      setNotification({
-        variant: "success",
-        title: "Welcome Back!",
-        message: "You've successfully logged in."
-      })
-      setTimeout(() => {
-        navigate({ to: "/" })
-      }, 1500)
+    onSuccess: async (response) => {   
+      if (response.status === 200) {
+          setUser({
+            id: response.data.id,
+            email: response.data.email,
+            name: response.data.name
+          });
+          setNotification({
+            variant: "success",
+            title: "Welcome Back!",
+            message: "You've successfully logged in."
+          })
+          setTimeout(() => {
+            navigate({ to: "/posts" })
+          }, 1000)
+       
+      }
+      
+      
     }
   })
 

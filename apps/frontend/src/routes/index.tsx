@@ -5,12 +5,32 @@ import { Link } from '@tanstack/react-router';
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Squirrel } from "lucide-react";
+import authStore from "@/utils/store";
+import { useEffect } from "react";
 
 export const Route = createFileRoute('/')({
   component: RouteComponent
 });
 
 function RouteComponent() {
+  // Get auth state
+  const { user, isAuthenticated, initializeAuth } = authStore();
+  
+  // Initialize auth on component mount
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
+  
+  // More robust authentication check - ensure all required fields exist
+  const isLoggedIn = isAuthenticated && 
+                     user && 
+                     user.id && 
+                     user.id.trim() !== '' &&
+                     user.email &&
+                     user.email.trim() !== '';
+
+  
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-emerald-50 to-teal-100">
       {/* Navigation */}
@@ -18,7 +38,9 @@ function RouteComponent() {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-wayflyer-green flex items-center justify-center">
-              <Squirrel size={28} className="stroke-[#45c19a] sm:h-[35px] sm:w-[35px]" />
+              <Link to="/">
+                <Squirrel size={28} className="stroke-[#45c19a] sm:h-[35px] sm:w-[35px]" />
+              </Link>
             </div>
             <span className="text-xl font-semibold text-gray-900">ContentForge</span>
           </div>
@@ -29,11 +51,26 @@ function RouteComponent() {
             <Link to="/posts" className="text-gray-700 hover:text-gray-900">Posts</Link>
           </div>
 
+          {/* Conditional Navigation Buttons */}
           <div className="flex items-center space-x-4">
-            <Link to="/login" className="text-gray-700 hover:text-gray-900">Login</Link>
-            <Button className="bg-teal-600 hover:bg-teal-700 text-white rounded-full px-6">
-              Sign Up
-            </Button>
+            {isLoggedIn ? (
+              // Show Dashboard button when logged in
+              <Link to="/posts">
+                <Button className="bg-teal-600 hover:bg-teal-700 text-white rounded-full px-6">
+                  Dashboard
+                </Button>
+              </Link>
+            ) : (
+              // Show Login/Sign Up when not logged in
+              <>
+                <Link to="/login" className="text-gray-700 hover:text-gray-900">Login</Link>
+                <Link to="/register">
+                  <Button className="bg-teal-600 hover:bg-teal-700 text-white rounded-full px-6">
+                    Sign Up
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </nav>
@@ -61,7 +98,7 @@ function RouteComponent() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link to="/register">
+              <Link to="/posts">
                 <Button size="lg" className="bg-teal-600 hover:bg-teal-700 text-white rounded-full px-8 py-3">
                   Get Started
                 </Button>
