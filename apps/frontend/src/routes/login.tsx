@@ -9,6 +9,7 @@ import api from '@/utils/axios'
 import { useMutation } from '@tanstack/react-query'
 import { Notification } from '../components/ui/notification'
 import { getFingerprint } from '@/utils/fingerprint'
+import authStore from '@/utils/store'
 
 const schema = z.object({
   email: z.string().email({message: "Please enter a valid email"}),
@@ -29,6 +30,7 @@ export default function LoginPage() {
     variant: "success" | "error" | "warning" | "info" | "question";
   } | null>(null)
   const navigate = useNavigate()
+  const { setAccessToken, setUser } = authStore()
   const {register, handleSubmit, formState: {errors}} = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -69,14 +71,36 @@ export default function LoginPage() {
         })
       }
     },
-    onSuccess: () => {
+    onSuccess: async (response) => {
+      // Get the token from the Authorization header
+      const authHeader = response.headers.authorization || response.headers.Authorization;
+      if (authHeader) {
+        const token = authHeader.startsWith("Bearer ") ? 
+          authHeader.substring(7) : authHeader;
+        
+        // Set the token in the store
+        setAccessToken(token);
+        
+        // Fetch user data
+        try {
+          const userResponse = await api.get('/auth/me');
+          setUser({
+            id: userResponse.data.id,
+            email: userResponse.data.email,
+            name: userResponse.data.name
+          });
+        } catch (error) {
+          console.error('Failed to fetch user data:', error);
+        }
+      }
+      
       setNotification({
         variant: "success",
         title: "Welcome Back!",
         message: "You've successfully logged in."
       })
       setTimeout(() => {
-        navigate({ to: "/" })
+        navigate({ to: "/posts" })
       }, 1500)
     }
   })
