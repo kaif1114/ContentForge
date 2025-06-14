@@ -40,6 +40,6 @@ export default async function register(req, res)  {
         domain: process.env.NODE_ENV === "production" ? process.env.FRONTEND_URL : "localhost" 
     });
     
-    res.json({ name: user.name, email: user.email});
+    res.status(201).json({ name: user.name, email: user.email, id: user._id.toString()});
 };
 

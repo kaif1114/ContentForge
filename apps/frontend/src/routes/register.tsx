@@ -39,7 +39,7 @@ export default function RegistrationPage() {
     })
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
-  const { setAccessToken, setUser } = authStore()
+  const { setUser } = authStore()
   const [notification, setNotification] = useState<{
     title: string;
     message: string;
@@ -79,45 +79,21 @@ export default function RegistrationPage() {
       }
     },
     onSuccess: async (response) => {
-      // Get the token from the Authorization header
-      const authHeader = response.headers.authorization || response.headers.Authorization;
-      if (authHeader) {
-        const token = authHeader.startsWith("Bearer ") ? 
-          authHeader.substring(7) : authHeader;
-        
-        // Set the token in the store
-        setAccessToken(token);
-        
-        // Set user data from response (register returns name and email)
-        if (response.data.name && response.data.email) {
-          // Fetch full user data to get ID
-          try {
-            const userResponse = await api.get('/auth/me');
-            setUser({
-              id: userResponse.data.id,
-              email: userResponse.data.email,
-              name: userResponse.data.name
-            });
-          } catch (error) {
-            console.error('Failed to fetch user data:', error);
-            // Fallback: use response data without ID
-            setUser({
-              id: '', // Will be updated when user makes authenticated requests
+        if (response.status === 201 && response.data.name && response.data.email) {
+          setUser({
+              id: response.data.id,
               email: response.data.email,
               name: response.data.name
             });
-          }
+            setNotification({
+              variant: "success",
+              title: "Success!",
+              message: "Your account has been created successfully. Redirecting you..."
+            })
+            setTimeout(() => {
+              navigate({ to: "/posts" })
+            }, 1000)
         }
-      }
-      
-      setNotification({
-        variant: "success",
-        title: "Success!",
-        message: "Your account has been created successfully. Redirecting you..."
-      })
-      setTimeout(() => {
-        navigate({ to: "/posts" })
-      }, 2500)
     }
   })
 
