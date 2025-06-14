@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Loader2, AlertCircle, RefreshCw } from "lucide-react";
+import { X, Loader2, AlertCircle, RefreshCw, Youtube, Link } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
@@ -11,6 +11,17 @@ interface CreateModalProps {
   onClose: () => void;
   onAddIdeas: () => Promise<void>;
 }
+
+const getSourceIcon = (type: string) => {
+  switch (type.toLowerCase()) {
+    case 'youtube':
+      return <Youtube className="h-4 w-4 text-red-500" />;
+    case 'url':
+      return <Link className="h-4 w-4 text-blue-500" />;
+    default:
+      return <Link className="h-4 w-4 text-gray-500" />;
+  }
+};
 
 export function CreateModal({ onClose, onAddIdeas }: CreateModalProps) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -134,10 +145,12 @@ export function CreateModal({ onClose, onAddIdeas }: CreateModalProps) {
                   }`}
                   onClick={() => handleSelectSource(source._id)}
                 >
-                  <div className="mr-3 text-primary">{source.type}</div>
+                  <div className="mr-3 flex items-center justify-center">
+                    {getSourceIcon(source.type)}
+                  </div>
                   <div>
                     <div className="font-medium">{source.label}</div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-sm text-muted-foreground capitalize">
                       {source.type}
                     </div>
                   </div>
