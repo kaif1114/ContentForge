@@ -4,7 +4,7 @@ async function logout(req, res) {
     expires: new Date(0),
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    sameSite: 'none',
     path: '/'
    })
    res.cookie("securefp", "", {
@@ -12,7 +12,7 @@ async function logout(req, res) {
     expires: new Date(0),
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    sameSite: 'none',
     path: '/'
    })
    return res.status(200).send("Logged out successfully");

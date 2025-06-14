@@ -73,13 +73,13 @@ export async function completeOAuth(req, res) {
             httpOnly: true, 
             secure: process.env.NODE_ENV === "production", 
             maxAge: process.env.FINGERPRINT_EXPIRATION_DAYS * 24 * 60 * 60 * 1000, 
-            sameSite: "lax" 
+            sameSite: "none" 
         });
         res.cookie("tokenrf", refreshToken, { 
             httpOnly: true, 
             secure: process.env.NODE_ENV === "production", 
             maxAge: process.env.REFRESH_TOKEN_EXPIRATION_DAYS * 24 * 60 * 60 * 1000, 
-            sameSite: "lax" 
+            sameSite: "none" 
         });
         
         res.json({ message: "OAuth login completed successfully" });
