@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { X, Loader2, AlertCircle, RefreshCw } from "lucide-react";
+import { X, Loader2, AlertCircle, RefreshCw, Link, Youtube } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
@@ -11,6 +12,18 @@ interface CreateModalProps {
   onClose: () => void;
   onAddIdeas: () => Promise<void>;
 }
+
+// Helper function to get the appropriate icon for content type
+const getContentTypeIcon = (type: string) => {
+  switch (type.toLowerCase()) {
+    case 'youtube':
+      return <Youtube className="h-5 w-5 text-red-500" />;
+    case 'url':
+      return <Link className="h-5 w-5 text-blue-500" />;
+    default:
+      return <Link className="h-5 w-5 text-gray-500" />;
+  }
+};
 
 export function CreateModal({ onClose, onAddIdeas }: CreateModalProps) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -116,7 +129,7 @@ export function CreateModal({ onClose, onAddIdeas }: CreateModalProps) {
                     key={`skeleton-${index}`}
                     className="flex items-center rounded-lg border border-border p-4"
                   >
-                    <div className="mr-3 h-5 w-16 bg-primary/10 rounded animate-pulse"></div>
+                    <div className="mr-3 h-5 w-5 bg-primary/10 rounded animate-pulse"></div>
                     <div className="w-full">
                       <div className="h-4 w-3/4 bg-primary/10 rounded animate-pulse mb-2"></div>
                       <div className="h-3 w-1/2 bg-primary/10 rounded animate-pulse"></div>
@@ -127,17 +140,19 @@ export function CreateModal({ onClose, onAddIdeas }: CreateModalProps) {
               filteredSources.map((source) => (
                 <div
                   key={source._id}
-                  className={`flex items-center rounded-lg cursor-pointer text-sm border p-4 ${
+                  className={`flex items-center rounded-lg cursor-pointer text-sm border p-4 transition-all hover:shadow-md ${
                     selectedSource == source._id
                       ? "border-primary bg-primary/10"
-                      : "border-border"
+                      : "border-border hover:border-primary/50"
                   }`}
                   onClick={() => handleSelectSource(source._id)}
                 >
-                  <div className="mr-3 text-primary">{source.type}</div>
-                  <div>
-                    <div className="font-medium">{source.label}</div>
-                    <div className="text-sm text-muted-foreground">
+                  <div className="mr-3 flex items-center justify-center">
+                    {getContentTypeIcon(source.type)}
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium text-gray-900">{source.label}</div>
+                    <div className="text-sm text-muted-foreground capitalize">
                       {source.type}
                     </div>
                   </div>
