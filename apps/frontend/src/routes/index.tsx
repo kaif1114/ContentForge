@@ -30,7 +30,7 @@ function RouteComponent() {
           </div>
 
           <div className="flex items-center space-x-4">
-            <Link to="/login" className="text-gray-700 hover:text-gray-900">Login</Link>
+            <Link to="/login" className="text-gray-700 hover:text-gray-900">Sign in</Link>
             <Button className="bg-teal-600 hover:bg-teal-700 text-white rounded-full px-6">
               Sign Up
             </Button>
