@@ -5,8 +5,7 @@ async function logout(req, res) {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    path: '/',
-    domain: process.env.NODE_ENV === "production" ? process.env.FRONTEND_DOMAIN : "localhost"
+    path: '/'
    })
    res.cookie("securefp", "", {
     maxAge: 0,
@@ -14,8 +13,7 @@ async function logout(req, res) {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    path: '/',
-    domain: process.env.NODE_ENV === "production" ? process.env.FRONTEND_DOMAIN : "localhost"
+    path: '/'
    })
    return res.status(200).send("Logged out successfully");
 }
