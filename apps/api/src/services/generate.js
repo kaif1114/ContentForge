@@ -1,7 +1,5 @@
-import OpenAI from "openai";
-import { zodResponseFormat } from "openai/helpers/zod.mjs";
-
-const openai = new OpenAI();
+import { generateObject } from "ai";
+import { openai } from "@ai-sdk/openai";
 
 async function generate(
   content,
@@ -10,30 +8,18 @@ async function generate(
   responseFormat,
   userPromptFn
 ) {
-  const completion = await openai.beta.chat.completions.parse({
-    model: "gpt-4o-2024-08-06",
-    messages: [
-      {
-        role: "system",
-        content: systemPromptFn(),
-      },
-      {
-        role: "user",
-        content: userPromptFn
-          ? userPromptFn()
-          : `
-        Content Type: ${contentType}
-        Content: 
-        ${content}`,
-      },
-    ],
-    response_format: zodResponseFormat(
-      responseFormat.schema,
-      responseFormat.name
-    ),
+  const prompt = userPromptFn
+    ? userPromptFn()
+    : `Content Type: ${contentType}\nContent:\n${content}`;
+
+  const { object } = await generateObject({
+    model: openai("gpt-4o-2024-08-06", { structuredOutputs: true }),
+    schema: responseFormat.schema,
+    schemaName: responseFormat.name,
+    prompt: `${systemPromptFn()}\n\n${prompt}`,
   });
 
-  return completion.choices[0].message.parsed;
+  return object;
 }
 
 export default generate;
