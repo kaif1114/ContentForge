@@ -17,7 +17,7 @@ import { generateAuthToken, generateRefreshToken } from "../../services/tokens.j
             secure: process.env.NODE_ENV === "production", 
             maxAge: process.env.REFRESH_TOKEN_EXPIRATION_DAYS * 24 * 60 * 60 * 1000, 
             sameSite: "lax", 
-            domain: process.env.NODE_ENV === "production" ? process.env.FRONTEND_URL : "localhost" });
+            domain: process.env.NODE_ENV === "production" ? process.env.FRONTEND_DOMAIN : "localhost" });
         // res.cookie("securefp", fingerprint, { 
         //         httpOnly: true, 
         //         secure: process.env.NODE_ENV === "production", 
