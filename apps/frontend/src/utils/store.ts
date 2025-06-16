@@ -10,8 +10,10 @@ interface User{
 
 interface AuthStore{
     user: User,
+    accessToken: string,
     isAuthenticated: boolean,
     setUser: (user: User) => void,
+    setAccessToken: (token: string) => void,
     logout: () => void,
     checkAuth: () => Promise<boolean>,
     initializeAuth: () => void,
@@ -25,22 +27,29 @@ const authStore = create<AuthStore>()(
         email: '',
         name: '',
       },
+      accessToken: '',
       isAuthenticated: false,
       
-    
+      setUser: (user: User) => set({ 
+        user, 
+        isAuthenticated: true 
+      }),
       
-      setUser: (user: User) => set({ user }),
+      setAccessToken: (token: string) => {
+        localStorage.setItem("access", token);
+        set({ accessToken: token });
+      },
       
       logout: () => {
         set({ 
           user: { id: '', email: '', name: '' },
+          accessToken: '',
           isAuthenticated: false 
         });
         localStorage.removeItem("access");
       },
       
       checkAuth: async () => {
-
         const storedToken = localStorage.getItem("access");
         if (!storedToken) {
           get().logout();
@@ -50,7 +59,10 @@ const authStore = create<AuthStore>()(
         try {
           const response = await api.get("/auth/verify");
           if (response.data?.authenticated) {
-            set({ isAuthenticated: true });
+            set({ 
+              isAuthenticated: true,
+              accessToken: storedToken 
+            });
             return true;
           }
 
@@ -69,7 +81,10 @@ const authStore = create<AuthStore>()(
           try {
             const response = await api.get("/auth/verify");
             if (response.data?.authenticated) {
-              set({ isAuthenticated: true });
+              set({ 
+                isAuthenticated: true,
+                accessToken: storedToken 
+              });
               return true;
             } else {
               localStorage.removeItem("access");
@@ -82,6 +97,7 @@ const authStore = create<AuthStore>()(
         } else {
           set({ 
             user: { id: '', email: '', name: '' },
+            accessToken: '',
             isAuthenticated: false 
           });
         }

@@ -1,7 +1,7 @@
 import type { ContentSource } from "@/types/content"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Eye, Youtube, Globe, AlertCircle, RefreshCw } from "lucide-react"
+import { Eye, Youtube, Globe, AlertCircle, RefreshCw, Sparkles } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { motion } from "framer-motion"
 import { format } from "date-fns"
@@ -15,6 +15,7 @@ const truncateUrl = (url: string, maxLength: number = 30) => {
 interface ContentSourcesListProps {
   sources: ContentSource[]
   onViewContent: (source: ContentSource) => void
+  onGeneratePosts?: (source: ContentSource) => void
   isLoading?: boolean
   isError?: boolean
   errorMessage?: string
@@ -73,7 +74,8 @@ export function ContentSourcesErrorState({ errorMessage, onRetry }: { errorMessa
 
 export function ContentSourcesList({ 
   sources, 
-  onViewContent, 
+  onViewContent,
+  onGeneratePosts,
   isLoading = false, 
   isError = false,
   errorMessage,
@@ -137,15 +139,30 @@ export function ContentSourcesList({
               <span className="text-gray-500 text-sm">
                 Added {source.createdAt ? format(new Date(source.createdAt), "MMMM do, yyyy") : "recently"}
               </span>
-              <Button
-                onClick={() => onViewContent(source)}
-                variant="ghost"
-                size="sm"
-                className="text-gray-600 hover:text-gray-900"
-              >
-                <Eye className="w-4 h-4 mr-2" />
-                View Content
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => onViewContent(source)}
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-600 hover:text-gray-900"
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  View Content
+                </Button>
+                {onGeneratePosts && (
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onGeneratePosts(source);
+                    }}
+                    size="sm"
+                    className="bg-gradient-to-r from-cf-primary-green to-cf-secondary-green hover:from-cf-secondary-green hover:to-cf-primary-green text-white"
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Generate Posts
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </motion.div>

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useIdeas } from "@/hooks/useIdeas";
 import { ContentIdeaCard } from "@/components/ideas/IdeaCard";
+import { GeneratePostsModal } from "@/components/ideas/GeneratePostsModal";
 import { Button } from "@/components/ui/button";
 import {
   ChevronLeft,
@@ -17,6 +18,7 @@ import { CreateModal } from "@/components/ideas/CreateModal";
 import useDeleteIdea from "@/hooks/useDeleteIdea";
 import toast, { Toaster } from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { Idea } from "@/types/idea";
 
 export const Route = createFileRoute("/_sidebarLayout/ideas")({
   component: RouteComponent,
@@ -27,6 +29,7 @@ function RouteComponent() {
   const [selectionMode, setSelectionMode] = useState(false);
   const [page, setPage] = useState(1);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [generatePostsIdea, setGeneratePostsIdea] = useState<Idea | null>(null);
   const { mutateAsync: deleteIdea, isPending: isDeletingIdea } =
     useDeleteIdea();
   const queryClient = useQueryClient();
@@ -53,6 +56,10 @@ function RouteComponent() {
   const handleDeleteIdea = (ideaId: string) => {
     setSelectionMode(true);
     setSelectedIdeaIds([ideaId]);
+  };
+
+  const handleGeneratePosts = (idea: Idea) => {
+    setGeneratePostsIdea(idea);
   };
 
   const toggleIdeaSelection = (ideaId: string) => {
@@ -182,6 +189,13 @@ function RouteComponent() {
         />
       )}
 
+      {generatePostsIdea && (
+        <GeneratePostsModal
+          idea={generatePostsIdea}
+          onClose={() => setGeneratePostsIdea(null)}
+        />
+      )}
+
       {/* Selection Mode Controls */}
       {selectionMode && (
         <div className="bg-[#DEF0EA] p-4 rounded-xl mb-6 sticky top-0 z-10 shadow-md">
@@ -244,6 +258,7 @@ function RouteComponent() {
                     toggleIdeaSelection(idea._id);
                   }}
                   onDelete={handleDeleteIdea}
+                  onGeneratePosts={handleGeneratePosts}
                   selectionMode={selectionMode}
                 />
               )}

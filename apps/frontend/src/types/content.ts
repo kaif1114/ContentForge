@@ -30,6 +30,7 @@ export type Post = {
   createdAt: string;
   sourceTitle: string;
   sourceId: string;
+  sourceType?: "content" | "idea";
   tags: string[];
 } & (
   | {

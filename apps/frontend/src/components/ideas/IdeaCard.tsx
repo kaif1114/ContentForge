@@ -8,6 +8,7 @@ interface ContentIdeaCardProps {
   isSelected: boolean;
   onSelect: () => void;
   onDelete?: (ideaId: string) => void;
+  onGeneratePosts?: (idea: Idea) => void;
   selectionMode?: boolean;
 }
 
@@ -16,6 +17,7 @@ export function ContentIdeaCard({
   isSelected,
   onSelect,
   onDelete,
+  onGeneratePosts,
   selectionMode = false,
 }: ContentIdeaCardProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -90,17 +92,18 @@ export function ContentIdeaCard({
               <Trash2 className="h-4 w-4" />
             </Button>
           )}
-          <Button
-            variant="ghost"
-            className="text-[var(--cf-primary-green)] hover:bg-white/50 hover:backdrop-blur-md rounded-xl"
-            onClick={(e) => {
-              e.stopPropagation();
-              // In a real app, this would open a modal to generate posts
-              console.log("Generate posts from idea:", idea._id);
-            }}
-          >
-            Generate Posts
-          </Button>
+          {onGeneratePosts && (
+            <Button
+              variant="ghost"
+              className="text-[var(--cf-primary-green)] hover:bg-white/50 hover:backdrop-blur-md rounded-xl"
+              onClick={(e) => {
+                e.stopPropagation();
+                onGeneratePosts(idea);
+              }}
+            >
+              Generate Posts
+            </Button>
+          )}
         </div>
       </div>
 

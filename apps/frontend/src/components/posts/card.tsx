@@ -82,6 +82,17 @@ export default function PostCard({
               <Badge className="bg-cf-mint-light text-cf-primary-green border-cf-primary-green">
                 Draft
               </Badge>
+              {post.sourceType && (
+                <Badge 
+                  className={`text-xs font-medium ${
+                    post.sourceType === "content" 
+                      ? "bg-gradient-to-r from-cf-primary-green to-cf-secondary-green text-white border-0" 
+                      : "bg-gradient-to-r from-blue-500 to-purple-600 text-white border-0"
+                  }`}
+                >
+                  {post.sourceType === "content" ? "From Sources" : "From Ideas"}
+                </Badge>
+              )}
               {onDiscard && (
                 <button
                   onClick={() => onDiscard(post._id)}
@@ -164,18 +175,54 @@ function TooltipContent({
   const offsetX = 15;
   const offsetY = 10;
 
+  // Calculate position to keep tooltip within viewport
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  const tooltipWidth = 280; // Reduced from 320px
+  const tooltipMaxHeight = 300; // Reduced from 400px
+  
+  let left = cursorPosition.x + offsetX;
+  let top = cursorPosition.y + offsetY;
+  
+  // Adjust if tooltip would go off-screen horizontally
+  if (left + tooltipWidth > viewportWidth - 20) {
+    left = cursorPosition.x - tooltipWidth - offsetX;
+  }
+  
+  // Adjust if tooltip would go off-screen vertically
+  if (top + tooltipMaxHeight > viewportHeight - 20) {
+    top = cursorPosition.y - tooltipMaxHeight - offsetY;
+  }
+
   return (
     <div
-      className="fixed shadow-xl border border-gray-200 bg-white rounded-lg p-4 w-80 max-h-[400px] overflow-y-auto z-[9999]"
+      className="fixed shadow-2xl border border-gray-200/80 bg-white/95 backdrop-blur-sm rounded-2xl p-5 w-70 max-h-[300px] overflow-y-auto z-[9999] transition-all duration-200"
       style={{
-        left: `${cursorPosition.x + offsetX}px`,
-        top: `${cursorPosition.y + offsetY}px`,
-        pointerEvents: "none", // Ensures the tooltip doesn't interfere with mouse events
+        left: `${left}px`,
+        top: `${top}px`,
+        pointerEvents: "none",
+        width: "280px",
       }}
     >
-      <div className="prose prose-sm max-w-none">
+      {/* Header with subtle styling */}
+      <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-100">
+        <div className="w-2 h-2 bg-cf-primary-green rounded-full"></div>
+        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Post Content</span>
+      </div>
+      
+      {/* Content with improved typography */}
+      <div className="prose prose-sm max-w-none prose-p:text-gray-700 prose-p:leading-relaxed prose-p:my-2 prose-headings:text-gray-800 prose-headings:font-semibold prose-headings:my-2 prose-a:text-cf-primary-green hover:prose-a:text-cf-secondary-green prose-strong:text-gray-800 prose-em:text-gray-600">
         <ReactMarkdown>{content}</ReactMarkdown>
       </div>
+      
+      {/* Subtle arrow indicator */}
+      <div 
+        className="absolute w-3 h-3 bg-white/95 border-l border-t border-gray-200/80 transform rotate-45"
+        style={{
+          left: left > cursorPosition.x ? 'calc(100% - 6px)' : '-6px',
+          top: '20px',
+        }}
+      />
     </div>
   );
 }
