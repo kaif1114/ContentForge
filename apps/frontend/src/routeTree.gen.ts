@@ -22,7 +22,6 @@ import { Route as SidebarLayoutSettingsImport } from './routes/_sidebarLayout/se
 import { Route as SidebarLayoutPostsImport } from './routes/_sidebarLayout/posts'
 import { Route as SidebarLayoutIdeasImport } from './routes/_sidebarLayout/ideas'
 import { Route as SidebarLayoutContentCalendarImport } from './routes/_sidebarLayout/content-calendar'
-import { Route as SidebarLayoutPostsPostIdImport } from './routes/_sidebarLayout/posts.$postId'
 
 // Create/Update Routes
 
@@ -91,12 +90,6 @@ const SidebarLayoutContentCalendarRoute =
     path: '/content-calendar',
     getParentRoute: () => SidebarLayoutRouteRoute,
   } as any)
-
-const SidebarLayoutPostsPostIdRoute = SidebarLayoutPostsPostIdImport.update({
-  id: '/$postId',
-  path: '/$postId',
-  getParentRoute: () => SidebarLayoutPostsRoute,
-} as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -179,33 +172,15 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SidebarLayoutSourcesImport
       parentRoute: typeof SidebarLayoutRouteImport
     }
-    '/_sidebarLayout/posts/$postId': {
-      id: '/_sidebarLayout/posts/$postId'
-      path: '/$postId'
-      fullPath: '/posts/$postId'
-      preLoaderRoute: typeof SidebarLayoutPostsPostIdImport
-      parentRoute: typeof SidebarLayoutPostsImport
-    }
   }
 }
 
 // Create and export the route tree
 
-interface SidebarLayoutPostsRouteChildren {
-  SidebarLayoutPostsPostIdRoute: typeof SidebarLayoutPostsPostIdRoute
-}
-
-const SidebarLayoutPostsRouteChildren: SidebarLayoutPostsRouteChildren = {
-  SidebarLayoutPostsPostIdRoute: SidebarLayoutPostsPostIdRoute,
-}
-
-const SidebarLayoutPostsRouteWithChildren =
-  SidebarLayoutPostsRoute._addFileChildren(SidebarLayoutPostsRouteChildren)
-
 interface SidebarLayoutRouteRouteChildren {
   SidebarLayoutContentCalendarRoute: typeof SidebarLayoutContentCalendarRoute
   SidebarLayoutIdeasRoute: typeof SidebarLayoutIdeasRoute
-  SidebarLayoutPostsRoute: typeof SidebarLayoutPostsRouteWithChildren
+  SidebarLayoutPostsRoute: typeof SidebarLayoutPostsRoute
   SidebarLayoutSettingsRoute: typeof SidebarLayoutSettingsRoute
   SidebarLayoutSourcesRoute: typeof SidebarLayoutSourcesRoute
 }
@@ -213,7 +188,7 @@ interface SidebarLayoutRouteRouteChildren {
 const SidebarLayoutRouteRouteChildren: SidebarLayoutRouteRouteChildren = {
   SidebarLayoutContentCalendarRoute: SidebarLayoutContentCalendarRoute,
   SidebarLayoutIdeasRoute: SidebarLayoutIdeasRoute,
-  SidebarLayoutPostsRoute: SidebarLayoutPostsRouteWithChildren,
+  SidebarLayoutPostsRoute: SidebarLayoutPostsRoute,
   SidebarLayoutSettingsRoute: SidebarLayoutSettingsRoute,
   SidebarLayoutSourcesRoute: SidebarLayoutSourcesRoute,
 }
@@ -230,10 +205,9 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/content-calendar': typeof SidebarLayoutContentCalendarRoute
   '/ideas': typeof SidebarLayoutIdeasRoute
-  '/posts': typeof SidebarLayoutPostsRouteWithChildren
+  '/posts': typeof SidebarLayoutPostsRoute
   '/settings': typeof SidebarLayoutSettingsRoute
   '/sources': typeof SidebarLayoutSourcesRoute
-  '/posts/$postId': typeof SidebarLayoutPostsPostIdRoute
 }
 
 export interface FileRoutesByTo {
@@ -245,10 +219,9 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/content-calendar': typeof SidebarLayoutContentCalendarRoute
   '/ideas': typeof SidebarLayoutIdeasRoute
-  '/posts': typeof SidebarLayoutPostsRouteWithChildren
+  '/posts': typeof SidebarLayoutPostsRoute
   '/settings': typeof SidebarLayoutSettingsRoute
   '/sources': typeof SidebarLayoutSourcesRoute
-  '/posts/$postId': typeof SidebarLayoutPostsPostIdRoute
 }
 
 export interface FileRoutesById {
@@ -261,10 +234,9 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/_sidebarLayout/content-calendar': typeof SidebarLayoutContentCalendarRoute
   '/_sidebarLayout/ideas': typeof SidebarLayoutIdeasRoute
-  '/_sidebarLayout/posts': typeof SidebarLayoutPostsRouteWithChildren
+  '/_sidebarLayout/posts': typeof SidebarLayoutPostsRoute
   '/_sidebarLayout/settings': typeof SidebarLayoutSettingsRoute
   '/_sidebarLayout/sources': typeof SidebarLayoutSourcesRoute
-  '/_sidebarLayout/posts/$postId': typeof SidebarLayoutPostsPostIdRoute
 }
 
 export interface FileRouteTypes {
@@ -281,7 +253,6 @@ export interface FileRouteTypes {
     | '/posts'
     | '/settings'
     | '/sources'
-    | '/posts/$postId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -295,7 +266,6 @@ export interface FileRouteTypes {
     | '/posts'
     | '/settings'
     | '/sources'
-    | '/posts/$postId'
   id:
     | '__root__'
     | '/'
@@ -309,7 +279,6 @@ export interface FileRouteTypes {
     | '/_sidebarLayout/posts'
     | '/_sidebarLayout/settings'
     | '/_sidebarLayout/sources'
-    | '/_sidebarLayout/posts/$postId'
   fileRoutesById: FileRoutesById
 }
 
@@ -384,10 +353,7 @@ export const routeTree = rootRoute
     },
     "/_sidebarLayout/posts": {
       "filePath": "_sidebarLayout/posts.tsx",
-      "parent": "/_sidebarLayout",
-      "children": [
-        "/_sidebarLayout/posts/$postId"
-      ]
+      "parent": "/_sidebarLayout"
     },
     "/_sidebarLayout/settings": {
       "filePath": "_sidebarLayout/settings.tsx",
@@ -396,10 +362,6 @@ export const routeTree = rootRoute
     "/_sidebarLayout/sources": {
       "filePath": "_sidebarLayout/sources.tsx",
       "parent": "/_sidebarLayout"
-    },
-    "/_sidebarLayout/posts/$postId": {
-      "filePath": "_sidebarLayout/posts.$postId.tsx",
-      "parent": "/_sidebarLayout/posts"
     }
   }
 }
