@@ -6,22 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   Bold,
   Italic,
   Underline,
   Link2,
-  ImageIcon,
-  ChevronLeft,
-  Bookmark,
-  MoreHorizontal,
-  ChevronDown,
   AlertCircle,
+  X,
 } from "lucide-react";
 import { Post } from "@/types/content";
 import EnhanceSection from "./EnhanceSection";
@@ -135,246 +125,199 @@ export default function EditPostModal({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 ">
-      <div className="absolute inset-0 backdrop-blur-xs" onClick={onClose} />
-      <div className="w-full max-w-5xl overflow-hidden modal-bg">
-        <div className="flex flex-row items-center justify-between p-4 border-b">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full"
-              onClick={onClose}
-            >
-              <ChevronLeft className="h-5 w-5 text-mint-700" />
-            </Button>
-            <div className="text-lg font-medium">Edit Post</div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <Link2 className="h-5 w-5 text-mint-700" />
-            </Button>
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <Bookmark className="h-5 w-5 text-mint-700" />
-            </Button>
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <MoreHorizontal className="h-5 w-5 text-mint-700" />
-            </Button>
-          </div>
-        </div>
-
-        <form onSubmit={onSubmit} className="p-6">
-          {isSubmitted && Object.keys(errors).length > 0 && (
-            <Alert className="mb-6 border-red-500/50 bg-red-500/10 text-red-500">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                <ul className="list-disc pl-5 text-sm">
-                  {renderErrorMessages()}
-                </ul>
-              </AlertDescription>
-            </Alert>
-          )}
-
-          <div className="flex items-center gap-2 mb-6">
-            <div className="flex items-center gap-2 text-sm font-medium text-mint-800">
-              <span className="text-mint-500">{initialData.sourceTitle}</span>
-            </div>
-            <div className="ml-2 px-2 py-0.5 text-xs font-medium rounded">
-              Draft
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 postFormSchema">
-            {/* Left Column - Post Content */}
-            <div className="md:col-span-2 space-y-4">
-              <div className="flex items-center gap-4 mb-4">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-hidden">
+        {/* Simplified Header */}
+        <div className="relative bg-gradient-to-r from-cf-primary-green to-cf-secondary-green p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="p-2 bg-white/20 backdrop-blur-sm rounded-xl">
                 <img
                   src={getPlatformIcon(watch("platform") || "x")}
                   alt={watch("platform")}
-                  width={24}
-                  height={24}
+                  width={20}
+                  height={20}
                   className="object-contain"
                 />
-                <div className="flex-1 flex flex-col">
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">Edit Post</h2>
+                <p className="text-white/80 text-sm">{initialData?.sourceTitle}</p>
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-white/20 rounded-xl transition-all duration-200"
+            >
+              <X className="w-5 h-5 text-white" />
+            </button>
+          </div>
+        </div>
+
+        <form onSubmit={onSubmit} className="flex flex-col h-[calc(95vh-120px)]">
+          {/* Error Alert */}
+          {isSubmitted && Object.keys(errors).length > 0 && (
+            <div className="p-6 pb-0">
+              <Alert className="border-red-500/50 bg-red-500/10 text-red-500">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  <ul className="list-disc pl-5 text-sm">
+                    {renderErrorMessages()}
+                  </ul>
+                </AlertDescription>
+              </Alert>
+            </div>
+          )}
+
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-6 space-y-6">
+              {/* Post Content Section */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-cf-primary-green/10 rounded-lg flex items-center justify-center">
+                    <span className="text-cf-primary-green font-bold text-sm">✏️</span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-800">Content</h3>
+                </div>
+
+                {/* Title Input */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">Post Title</Label>
                   <Input
                     {...register("title")}
-                    className="text-xl font-semibold border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 p-0 h-auto"
-                    placeholder="Post Title"
+                    className="text-lg font-medium border-2 focus:border-cf-primary-green"
+                    placeholder="Enter your post title..."
+                  />
+                </div>
+
+                {/* Rich Text Toolbar */}
+                <div className="flex items-center gap-1 p-2 bg-gray-50 rounded-xl border">
+                  <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <Bold className="h-4 w-4 text-gray-600" />
+                  </Button>
+                  <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <Italic className="h-4 w-4 text-gray-600" />
+                  </Button>
+                  <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <Underline className="h-4 w-4 text-gray-600" />
+                  </Button>
+                  <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <Link2 className="h-4 w-4 text-gray-600" />
+                  </Button>
+                </div>
+
+                {/* Description Textarea */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">Post Content</Label>
+                  <Textarea
+                    {...register("description")}
+                    className="min-h-[200px] border-2 focus:border-cf-primary-green resize-none"
+                    placeholder="Write your post content here..."
                   />
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 p-2 rounded border border-white/20">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 rounded"
-                >
-                  <Bold className="h-4 w-4 text-mint-700" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 rounded"
-                >
-                  <Italic className="h-4 w-4 text-mint-700" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 rounded"
-                >
-                  <Underline className="h-4 w-4 text-mint-700" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 rounded"
-                >
-                  <Link2 className="h-4 w-4 text-mint-700" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 rounded"
-                >
-                  <ImageIcon className="h-4 w-4 text-mint-700" />
-                </Button>
+              {/* Settings Section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Platform Selection */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-cf-primary-green/10 rounded-lg flex items-center justify-center">
+                      <span className="text-cf-primary-green font-bold text-sm">🚀</span>
+                    </div>
+                    <Label className="text-lg font-semibold text-gray-800">Platform</Label>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { value: "x", label: "X", icon: "/x.png" },
+                      { value: "linkedin", label: "LinkedIn", icon: "/linkedin.png" },
+                      { value: "both", label: "Both", icon: "/linkedin_and_x.png" },
+                    ].map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => setValue("platform", option.value as any, { shouldValidate: true })}
+                        className={`p-3 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2 ${
+                          watch("platform") === option.value
+                            ? "border-cf-primary-green bg-cf-mint-light"
+                            : "border-gray-200 hover:border-gray-300 bg-white"
+                        }`}
+                      >
+                        <img src={option.icon} alt={option.label} width={20} height={20} />
+                        <span className="text-xs font-medium">{option.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Enhanced Settings */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-cf-primary-green/10 rounded-lg flex items-center justify-center">
+                      <span className="text-cf-primary-green font-bold text-sm">⚙️</span>
+                    </div>
+                    <Label className="text-lg font-semibold text-gray-800">Settings</Label>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <EnhanceSection
+                      initialData={initialData}
+                      toneWatch={watchTone}
+                      lengthWatch={watchLength}
+                      customLengthWatch={watchCustomLength}
+                      onSetLength={(length) => setValue("length", length)}
+                      onSetCustomLength={(customLength) => setValue("customLength", customLength)}
+                      onSetTone={(tone) => setValue("tone", tone)}
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div className="flex flex-col">
-                <Textarea
-                  {...register("description")}
-                  className="min-h-[300px] focus-visible:ring-0 focus-visible:ring-offset-0 p-4 bg-white/5 rounded"
-                  placeholder="Write your post description here..."
-                />
-              </div>
-
-              <div>
-                <Label className="text-sm mb-2 block">Tags</Label>
-                <div className="flex flex-wrap gap-2 p-2 bg-white/5 rounded">
-                  {["modify", "the", "modal", "component"].map((tag, index) => (
+              {/* Tags Section */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-cf-primary-green/10 rounded-lg flex items-center justify-center">
+                    <span className="text-cf-primary-green font-bold text-sm">#</span>
+                  </div>
+                  <Label className="text-lg font-semibold text-gray-800">Tags</Label>
+                </div>
+                <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                  {["AI", "Content", "Social Media", "Marketing"].map((tag, index) => (
                     <div
                       key={index}
-                      className="px-3 py-1 bg-white/10 rounded-full text-sm"
+                      className="px-3 py-1 bg-cf-primary-green/10 text-cf-primary-green rounded-full text-sm font-medium"
                     >
                       {tag}
                     </div>
                   ))}
+                  <button
+                    type="button"
+                    className="px-3 py-1 border-2 border-dashed border-gray-300 rounded-full text-sm text-gray-500 hover:border-cf-primary-green hover:text-cf-primary-green transition-colors"
+                  >
+                    + Add Tag
+                  </button>
                 </div>
               </div>
             </div>
-
-            {/* Right Column - Settings */}
-            <div className="space-y-6 bg-white/5 p-4 rounded-lg">
-              <div>
-                <Label className="text-sm block mb-2">Platform</Label>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-between h-10 gap-2"
-                    >
-                      <div className="flex items-center gap-2">
-                        <img
-                          src={getPlatformIcon(watch("platform") || "x")}
-                          alt={watch("platform")}
-                          width={18}
-                          height={18}
-                        />
-                        <span>
-                          {watch("platform") === "x"
-                            ? "X"
-                            : watch("platform") === "linkedin"
-                              ? "LinkedIn"
-                              : "X & LinkedIn"}
-                        </span>
-                      </div>
-                      <ChevronDown className="h-4 w-4 opacity-50" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-[200px]">
-                    <DropdownMenuItem
-                      onClick={() =>
-                        setValue("platform", "x", { shouldValidate: true })
-                      }
-                    >
-                      <div className="flex items-center gap-2">
-                        <img src="/x.png" alt="X" width={16} height={16} />
-                        <span>X</span>
-                      </div>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() =>
-                        setValue("platform", "linkedin", {
-                          shouldValidate: true,
-                        })
-                      }
-                    >
-                      <div className="flex items-center gap-2">
-                        <img
-                          src="/linkedin.png"
-                          alt="LinkedIn"
-                          width={16}
-                          height={16}
-                        />
-                        <span>LinkedIn</span>
-                      </div>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() =>
-                        setValue("platform", "both", { shouldValidate: true })
-                      }
-                    >
-                      <div className="flex items-center gap-2">
-                        <img
-                          src="/linkedin_and_x.png"
-                          alt="Both"
-                          width={16}
-                          height={16}
-                        />
-                        <span>X & LinkedIn</span>
-                      </div>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-
-              {/* Tone Selection */}
-              <EnhanceSection
-                initialData={initialData}
-                toneWatch={watchTone}
-                lengthWatch={watchLength}
-                customLengthWatch={watchCustomLength}
-                onSetLength={(length) => setValue("length", length)}
-                onSetCustomLength={(customLength) =>
-                  setValue("customLength", customLength)
-                }
-                onSetTone={(tone) => setValue("tone", tone)}
-              />
-            </div>
           </div>
 
-          <div className="flex justify-between border-t border-white/30 mt-3">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              className="border-white/40 hover:bg-white/10"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              className="bg-mint-600 hover:bg-mint-700 text-white border-none"
-            >
-              Save Changes
-            </Button>
+          {/* Footer */}
+          <div className="p-6 border-t border-gray-100 bg-gray-50/50">
+            <div className="flex gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                className="flex-1 h-12 text-base font-medium border-2 hover:bg-gray-50"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="flex-1 h-12 text-base font-medium bg-gradient-to-r from-cf-primary-green to-cf-secondary-green hover:from-cf-secondary-green hover:to-cf-primary-green text-white shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                Save Changes
+              </Button>
+            </div>
           </div>
         </form>
       </div>

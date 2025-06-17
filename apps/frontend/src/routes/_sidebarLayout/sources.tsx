@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { AddSourceModal } from "../../components/sources/Modal";
 import { ContentViewModal } from "../../components/sources/ContentViewModal";
+import { GeneratePostsModal } from "../../components/sources/GeneratePostsModal";
 import { ContentSourcesList } from "../../components/sources/List";
 import { useContentSources } from "@/hooks/useContentSources";
 import AddButton from "@/components/ui/add-button";
@@ -19,20 +20,22 @@ export default function RouteComponent() {
     data: sourcesResponse,
     isLoading,
     isError,
-
     refetch,
   } = useContentSources({
     page: currentPage,
     limit: itemsPerPage,
   });
 
-  const [selectedSource, setSelectedSource] = useState<ContentSource | null>(
-    null
-  );
+  const [selectedSource, setSelectedSource] = useState<ContentSource | null>(null);
+  const [generatePostsSource, setGeneratePostsSource] = useState<ContentSource | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
 
   const handleViewContent = (source: ContentSource) => {
     setSelectedSource(source);
+  };
+
+  const handleGeneratePosts = (source: ContentSource) => {
+    setGeneratePostsSource(source);
   };
 
   const handleRetry = () => {
@@ -71,6 +74,7 @@ export default function RouteComponent() {
           <ContentSourcesList
             sources={sourcesResponse?.data.data || []}
             onViewContent={handleViewContent}
+            onGeneratePosts={handleGeneratePosts}
             isLoading={isLoading}
             isError={isError}
             errorMessage="Failed to load content sources. Please try again."
@@ -135,6 +139,13 @@ export default function RouteComponent() {
             onClose={() => {
               setSelectedSource(null);
             }}
+          />
+        )}
+
+        {generatePostsSource && (
+          <GeneratePostsModal
+            source={generatePostsSource}
+            onClose={() => setGeneratePostsSource(null)}
           />
         )}
       </div>

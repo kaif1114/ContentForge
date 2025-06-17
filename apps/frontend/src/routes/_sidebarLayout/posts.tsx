@@ -149,33 +149,50 @@ function RouteComponent() {
 
   if (posts.length === 0)
     return (
-      <div className="flex flex-col items-center justify-center min-h-[70vh]">
+      <div className="flex flex-col items-center justify-center min-h-[70vh] px-4">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="p-8 rounded-lg bg-white shadow-md text-center max-w-lg"
+          className="p-6 md:p-8 rounded-2xl bg-white shadow-lg text-center max-w-2xl w-full"
         >
-          <div className="text-gray-400 text-5xl mb-4">📝</div>
-          <h2 className="text-xl font-semibold text-gray-700">
-            No posts found
+          <div className="text-6xl md:text-7xl mb-6">🚀</div>
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
+            Ready to Create Amazing Posts?
           </h2>
-          <p className="text-gray-500 mt-2">
-            Start creating posts by adding a new content source or generating
-            posts from your saved content sources.
+          <p className="text-gray-600 mb-8 text-sm md:text-base leading-relaxed">
+            Generate engaging content from your sources or creative ideas. Choose your preferred method to get started.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 mt-6 justify-center">
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
             <Link
               to="/sources"
-              className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
+              className="group relative overflow-hidden rounded-xl p-6 bg-gradient-to-br from-cf-primary-green to-cf-secondary-green text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
             >
-              Add Content Source
+              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+              <div className="relative z-10">
+                <div className="text-3xl mb-3">📚</div>
+                <h3 className="font-bold text-lg mb-2">From Content Sources</h3>
+                <p className="text-sm opacity-90">Generate posts from your saved articles, videos, and web content</p>
+              </div>
             </Link>
+            
             <Link
-              to="/sources"
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+              to="/ideas"
+              className="group relative overflow-hidden rounded-xl p-6 bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
             >
-              Generate From Existing Sources
+              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+              <div className="relative z-10">
+                <div className="text-3xl mb-3">💡</div>
+                <h3 className="font-bold text-lg mb-2">From Creative Ideas</h3>
+                <p className="text-sm opacity-90">Transform your brainstormed ideas into compelling social posts</p>
+              </div>
             </Link>
+          </div>
+          
+          <div className="mt-8 pt-6 border-t border-gray-100">
+            <p className="text-xs text-gray-500">
+              New to ContentForge? Start by adding content sources or creating your first idea!
+            </p>
           </div>
         </motion.div>
       </div>

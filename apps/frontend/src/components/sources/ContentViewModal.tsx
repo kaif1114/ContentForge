@@ -61,7 +61,7 @@ export function ContentViewModal({
         <Separator className="shrink-0" />
         
         <div className="flex-1 overflow-y-auto px-6 py-4">
-          <div className="flex flex-col gap-2 mb-4">
+          {/* <div className="flex flex-col gap-2 mb-4">
             <h2 className="text-xl font-bold">
               How to Create an AI Agent for Customer Support
             </h2>
@@ -70,7 +70,7 @@ export function ContentViewModal({
               <span className="text-sm text-muted-foreground">Dec 28, 2024</span>
               <span className="text-sm text-muted-foreground">13 minute read</span>
             </div>
-          </div>
+          </div> */}
           
           <div className="prose prose-p:my-3 prose-headings:font-bold prose-headings:my-4 prose-h1:text-xl prose-h2:text-lg prose-h3:text-base prose-a:text-green-600 hover:prose-a:underline max-w-none">
             <ReactMarkdown 
