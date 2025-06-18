@@ -29,15 +29,13 @@ export default async function register(req, res)  {
         httpOnly: true, 
         secure: process.env.NODE_ENV === "production", 
         maxAge: process.env.FINGERPRINT_EXPIRATION_DAYS * 24 * 60 * 60 * 1000, 
-        sameSite: "lax", 
-        domain: process.env.NODE_ENV === "production" ? process.env.FRONTEND_URL : "localhost"
+        sameSite: "none"
      });
     res.cookie("tokenrf", refreshToken, { 
         httpOnly: true, 
         secure: process.env.NODE_ENV === "production", 
         maxAge: process.env.REFRESH_TOKEN_EXPIRATION_DAYS * 24 * 60 * 60 * 1000, 
-        sameSite: "lax", 
-        domain: process.env.NODE_ENV === "production" ? process.env.FRONTEND_URL : "localhost" 
+        sameSite: "none"
     });
     
     res.status(201).json({ name: user.name, email: user.email, id: user._id.toString()});

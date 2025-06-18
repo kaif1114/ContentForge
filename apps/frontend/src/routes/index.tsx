@@ -85,27 +85,27 @@ function RouteComponent() {
             className="mb-8"
           >
             <Badge className="bg-teal-100 text-teal-700 hover:bg-teal-100 mb-6">
-              Content Creation Made Easy
+              AI-Powered Social Media Automation
              </Badge>
             
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              Boost Your <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">Productivity</span>,<br />
-              Simplify Your Life
+              Automate Your <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">Social Posts</span>,<br />
+              Scale Your Reach
             </h1>
             
             <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-              We're here to simplify the intricacies of your life, providing a user-friendly platform that not only manages your tasks effortlessly but also enhances your overall efficiency.
+              Transform your content into engaging social media posts automatically. Generate multiple posts from your sources, customize tone and length, and schedule across LinkedIn and Twitter with AI-powered content creation.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link to="/posts">
                 <Button size="lg" className="bg-teal-600 hover:bg-teal-700 text-white rounded-full px-8 py-3">
-                  Get Started
+                  Start Automating
                 </Button>
               </Link>
               <a href="https://deepwiki.com/kaif1114/ContentForge/1-overview">
               <Button variant="outline" size="lg" className="rounded-full px-8 py-3 border-teal-200 text-teal-700 hover:bg-teal-50">
-                Preview Platform
+                View Demo
               </Button>
               
              </a>
@@ -158,17 +158,23 @@ function RouteComponent() {
               <div className="lg:col-span-2 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-gradient-to-r from-emerald-400 to-teal-400 rounded-xl p-6 text-white">
-                    <h3 className="font-semibold text-black mb-2">R&D for New Banking Mobile App</h3>
+                    <h3 className="font-semibold text-black mb-2">AI Content Generation</h3>
                     <div className="flex -space-x-2">
-                      <h5>R&D is the process of researching and developing new products or services. it is a crucial step in the product development process. Most of the time, it is done by the product team and the R&D team. </h5>
+                      <h5>Transform your articles, blogs, and documents into engaging social media posts. Our AI analyzes your content and generates multiple posts with different tones, lengths, and styles for maximum engagement across platforms.</h5>
                     </div>
                   </div>
                   
                   <div className="bg-gradient-to-r from-teal-200 to-cyan-400 rounded-xl p-6 text-white relative">
-                    <h3 className="font-semibold text-black mb-2">Check Posts</h3>
+                    <h3 className="font-semibold text-black mb-2">Manage Your Posts</h3>
+                    <p className="text-sm text-black/80 mb-3">View, edit, and schedule all your generated posts</p>
+                    <div className="flex items-center gap-2 text-xs text-black/70">
+                      <span className="bg-white/20 px-2 py-1 rounded-full">📊 Analytics</span>
+                      <span className="bg-white/20 px-2 py-1 rounded-full">✏️ Edit</span>
+                      <span className="bg-white/20 px-2 py-1 rounded-full">📅 Schedule</span>
+                    </div>
                     <div className="absolute top-4 right-4">
                       <div className="w-12 h-12 bg-yellow-300 rounded-full flex items-center justify-center">
-                        👋
+                        🚀
                       </div>
                     </div>
                   </div>
@@ -176,15 +182,20 @@ function RouteComponent() {
 
                 <div className="bg-gray-50 rounded-xl p-6">
                   <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-semibold text-gray-900">Posts Created</h3>
+                    <h3 className="font-semibold text-gray-900">Recent Activity</h3>
                     <div className="flex space-x-2">
-                      <Badge variant="secondary">Archive</Badge>
-                      <Badge className="bg-teal-600 text-white">New</Badge>
+                      <Badge variant="secondary">LinkedIn</Badge>
+                      <Badge className="bg-teal-600 text-white">Twitter</Badge>
                     </div>
                   </div>
-                  <div className="text-sm text-gray-600">11 Posts For Twitter and LinkedIn</div>
+                  <div className="text-sm text-gray-600 mb-2">24 Posts Generated This Week</div>
+                  <div className="text-xs text-gray-500 mb-3">From 8 content sources • Professional & Casual tones</div>
                   <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                    <div className="bg-teal-600 h-2 rounded-full" style={{width: '15%'}}></div>
+                    <div className="bg-gradient-to-r from-teal-600 to-emerald-600 h-2 rounded-full" style={{width: '75%'}}></div>
+                  </div>
+                  <div className="flex justify-between items-center mt-3">
+                    <span className="text-xs text-gray-500">Weekly Goal: 30 posts</span>
+                    <span className="text-xs font-medium text-teal-600">80% Complete</span>
                   </div>
                 </div>
               </div>
